@@ -1,0 +1,15 @@
+label_37  当前速度：
+label_36 当前值：
+label_39 当前速率：
+label_print_targetspeed 目标速度：
+label_jcl 目标值：
+label_fan_speed 当前速率
+
+
+    def g28xy(self):  # 开启底板调平
+        self.p.send_now("G28")
+        self.p.send_now("L29")
+        self.diban_new = None
+
+
+https://github.com/tomosyan/INLONG.git
