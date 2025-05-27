@@ -1,0 +1,7 @@
+2025-03-28T16:01:23.085904+0800 ERROR name 'subprocess' is not defined
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:576
+2025-03-28T16:03:14.942712+0800 INFO GET GCODE SUCCESS!
+2025-03-28T16:03:16.128875+0800 ERROR name 'subprocess' is not defined
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:576

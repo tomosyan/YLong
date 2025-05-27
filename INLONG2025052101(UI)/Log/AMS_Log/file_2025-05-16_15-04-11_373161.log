@@ -1,0 +1,30 @@
+2025-05-16T15:04:13.062954+0800 INFO INLONG CONNECT FAILED!
+2025-05-16T15:04:15.378796+0800 INFO 获取播放库句柄成功
+2025-05-16T15:04:18.888162+0800 INFO Login device fail, error code is: 7
+2025-05-16T15:04:18.936502+0800 INFO Login device succesed
+2025-05-16T15:04:19.958548+0800 INFO Open preview fail, error code is: 3
+2025-05-16T15:04:19.958548+0800 INFO Open preview successed
+2025-05-16T15:04:23.767571+0800 INFO 打印开始
+2025-05-16T15:04:23.768569+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328
+2025-05-16T15:04:24.299603+0800 INFO 打印开始
+2025-05-16T15:04:24.300594+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328
+2025-05-16T15:04:25.609271+0800 INFO 打印开始
+2025-05-16T15:04:25.609271+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328
+2025-05-16T15:04:26.075776+0800 INFO 打印开始
+2025-05-16T15:04:26.075776+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328
+2025-05-16T15:04:27.365852+0800 INFO 打印开始
+2025-05-16T15:04:27.365852+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328
+2025-05-16T15:04:28.242447+0800 INFO 打印开始
+2025-05-16T15:04:28.243443+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG20250501301\AMPS1200.py
+error line:2328

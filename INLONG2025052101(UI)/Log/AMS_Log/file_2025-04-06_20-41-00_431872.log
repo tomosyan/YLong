@@ -1,0 +1,4 @@
+2025-04-06T20:41:04.074262+0800 INFO UPDATE gcode:100方块.gcodeSUCCESS!
+2025-04-06T20:41:05.551122+0800 ERROR 'ui_dialog_log' object has no attribute 'label_up'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:617

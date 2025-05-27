@@ -1,0 +1,28 @@
+2025-05-22T16:23:26.229993+0800 INFO L109 time:2025/05/22 16:23:26#./GCODE/100方块.gcode#
+2025-05-22T16:23:26.230994+0800 INFO Not connected to printer.
+2025-05-22T16:23:28.307830+0800 ERROR SENT: G250 S31
+2025-05-22T16:23:28.308828+0800 ERROR write command G250 S31
+2025-05-22T16:23:28.308828+0800 ERROR socket error Attempting to use a port that is not opencommand G250 S31
+2025-05-22T16:23:28.336830+0800 ERROR Can't write to printer (disconnected ?):
+Traceback (most recent call last):
+  File "D:\INLONG2025052101(UI)\printcore.py", line 944, in _send
+    self.printer.write((command_temp + "\n").encode('gbk'))
+  File "D:\INLONG2025050801\.venv\lib\site-packages\serial\serialwin32.py", line 306, in write
+    raise PortNotOpenError()
+serial.serialutil.PortNotOpenError: Attempting to use a port that is not open
+
+2025-05-22T16:23:28.338830+0800 INFO M257 S1
+2025-05-22T16:23:28.338830+0800 INFO Not connected to printer.
+2025-05-22T16:23:28.338830+0800 INFO L110 S81
+2025-05-22T16:23:28.338830+0800 INFO Not connected to printer.
+2025-05-22T16:23:30.806768+0800 INFO G250 S888
+
+2025-05-22T16:23:30.807766+0800 INFO Not connected to printer.
+2025-05-22T16:23:30.807766+0800 INFO M257 S0
+2025-05-22T16:23:30.807766+0800 INFO Not connected to printer.
+2025-05-22T16:23:32.995767+0800 INFO L109
+2025-05-22T16:23:32.996766+0800 INFO Not connected to printer.
+2025-05-22T16:23:32.996766+0800 INFO M109 S0
+2025-05-22T16:23:32.996766+0800 INFO Not connected to printer.
+2025-05-22T16:23:32.996766+0800 INFO M257 S1
+2025-05-22T16:23:32.996766+0800 INFO Not connected to printer.

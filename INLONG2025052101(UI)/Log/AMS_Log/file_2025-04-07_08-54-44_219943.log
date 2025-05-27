@@ -1,0 +1,5 @@
+2025-04-07T08:54:44.791137+0800 ERROR 'Ui_mainwindow' object has no attribute 'statuschecker'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:314
+2025-04-07T08:54:48.983348+0800 INFO Login device fail, error code is: 7
+2025-04-07T08:54:49.074053+0800 INFO Open preview fail, error code is: 3

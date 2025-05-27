@@ -1,0 +1,36 @@
+[2022-10-27 11:35:40.159][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[C:/Users/XEV/Desktop/…„œÒÕ∑/20221014/lib22/win/zlib1.dll] syserror[126]
+[2022-10-27 11:35:40.159][ERR] Load zlib failed[syserr: 126]
+[2022-10-27 11:35:40.159][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2022-10-27 11:35:40.159][INF] The COM:Core ver is 6.1.9.4, 2022_04_12. Async:1.
+[2022-10-27 11:35:40.159][INF] This HCNetSDK ver is 6.1.9.4 Ver 2022_04_12.
+[2022-10-27 11:35:44.153][INF] Login dev 192.168.1.64:8000.
+[2022-10-27 11:35:44.153][INF] dwTotalNum[2048]
+[2022-10-27 11:35:44.156][INF] Private connect 192.168.1.64:8000 sock=1708 this=0x28a8ff14 cmd=0x10000 port=64620
+[2022-10-27 11:35:44.156][INF] LogonDev1 in[192.168.1.64:8000]
+[2022-10-27 11:35:44.169][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[C:\Users\XEV\Desktop\…„œÒÕ∑\20221014\lib22\win\libcrypto-1_1-x64.dll], hHandleRet[-499908608]
+[2022-10-27 11:35:44.171][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[C:\Users\XEV\Desktop\…„œÒÕ∑\20221014\lib22\win\libssl-1_1-x64.dll], hHandleRet[208928768]
+[2022-10-27 11:35:44.171][INF] SSLTRANSAPI::IsAllAPILoaded, SSL_library_init Unload
+[2022-10-27 11:35:44.171][INF] OpenSSL, Not All Function Loaded!
+[2022-10-27 11:35:44.171][INF] SSLTRANSAPI::PrintVersion, OpenSSL version info [OpenSSL 1.1.1l  24 Aug 2021]
+[2022-10-27 11:35:44.171][INF] CSSLTrans::SSLCtxInit, dwSSLVersion[6], m_fnTLSServerMethod
+[2022-10-27 11:35:45.850][DBG] CComBase::Load, Load szDllPath[C:/Users/XEV/Desktop/…„œÒÕ∑/20221014/lib22/win/HCNetSDKCom/HCPreview.dll] SUCC
+[2022-10-27 11:35:45.850][INF] AbilityAnalyze---Init-- start
+[2022-10-27 11:35:45.871][INF] The COM:Preview ver is 6.1.9.4, 2022_04_12.
+[2022-10-27 11:35:45.871][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[0], cTempPath[C:/Users/XEV/Desktop/…„œÒÕ∑/20221014/lib22/win/]
+[2022-10-27 11:35:45.871][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[702218240], enumDllType[0], Path[PlayCtrl.dll], syserror[127]
+[2022-10-27 11:35:45.871][DBG] ID-IP-CHAN[0-192.168.1.64-1] [CPreviewPlayer::CreatePlayer] create player success, version is[v7.4.0.2b]
+[2022-10-27 11:35:45.873][INF] Private connect 192.168.1.64:8000 sock=1852 this=0x28a8ff14 cmd=0x30000 port=64621
+[2022-10-27 11:35:45.882][INF] ID-IP-CHAN[0-192.168.1.64-1] [CGetTCPStream::Start] Stream Head Data Callback Start
+[2022-10-27 11:35:45.882][INF] ID-IP-CHAN[0-192.168.1.64-1] [CGetTCPStream::Start] Stream Head Data Callback End
+[2022-10-27 11:35:45.884][ERR] GetOverlayFontPath Failed
+[2022-10-27 11:35:45.902][INF] ID-IP-CHAN[0-192.168.1.64-1] [CPreviewPlayer::OpenPlayer] open player[28ae58c4] success
+[2022-10-27 11:35:45.902][INF] CCoreGlobalCtrl::LoadDSo, enumDllType[2], cTempPath[C:/Users/XEV/Desktop/…„œÒÕ∑/20221014/lib22/win/HCNetSDKCom/]
+[2022-10-27 11:35:45.930][DBG] CCoreGlobalCtrl::LoadDSo, HPR_LoadDSo, hHandleRet[18743296], enumDllType[2], Path[SystemTransform.dll], syserror[0]
+[2022-10-27 11:35:45.930][INF] CStreamConvert::LoadConvertLib Load Succ, m_iInitCount = 1
+[2022-10-27 11:35:48.461][INF] Private connect 192.168.1.64:8000 sock=2504 this=0x28a90680 cmd=0x30200 port=64622
+[2022-10-27 11:35:49.480][INF] Private connect 192.168.1.64:8000 sock=2712 this=0x28a90680 cmd=0x30200 port=64623
+[2022-10-27 11:35:49.488][DBG] CStreamConvert::UnloadConvertLib, m_iInitCount = 0
+[2022-10-27 11:35:49.543][INF] COM_Logout[0][0]
+[2022-10-27 11:35:49.544][DBG] CUserMgr::UnRegisterHeartProxy[0]
+[2022-10-27 11:35:49.545][INF] Private connect 192.168.1.64:8000 sock=1548 this=0x28a8ff14 cmd=0x10100 port=64624
+[2022-10-27 11:35:49.553][INF] CTransUnitMgr::UnloadTransUnitLib

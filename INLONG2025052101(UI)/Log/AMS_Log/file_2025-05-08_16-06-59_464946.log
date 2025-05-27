@@ -1,0 +1,10 @@
+2025-05-08T16:07:00.681913+0800 INFO INLONG CONNECT FAILED!
+2025-05-08T16:07:02.205200+0800 INFO 获取播放库句柄成功
+2025-05-08T16:07:05.720756+0800 INFO Login device fail, error code is: 7
+2025-05-08T16:07:05.767134+0800 INFO Login device succesed
+2025-05-08T16:07:06.042276+0800 INFO Open preview fail, error code is: 3
+2025-05-08T16:07:06.042276+0800 INFO Open preview successed
+2025-05-08T16:07:15.695470+0800 INFO 打印开始
+2025-05-08T16:07:15.696816+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\INLONG2025050801\AMPS1200.py
+error line:2030

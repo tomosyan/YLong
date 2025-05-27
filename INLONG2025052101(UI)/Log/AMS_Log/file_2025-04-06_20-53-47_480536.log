@@ -1,0 +1,4 @@
+2025-04-06T20:53:50.442998+0800 INFO UPDATE gcode:100方块.gcodeSUCCESS!
+2025-04-06T20:53:51.311185+0800 ERROR 'Ui_mainwindow' object has no attribute 'pre_gcode_load'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:686

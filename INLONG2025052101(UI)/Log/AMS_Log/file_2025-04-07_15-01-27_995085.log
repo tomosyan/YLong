@@ -1,0 +1,12 @@
+2025-04-07T15:01:28.542358+0800 INFO INLONG CONNECT SUCCESS!
+2025-04-07T15:01:32.814192+0800 INFO Login device fail, error code is: 7
+2025-04-07T15:01:32.920193+0800 INFO Open preview fail, error code is: 3
+2025-04-07T15:01:51.257159+0800 ERROR 'Ui_mainwindow' object has no attribute 'textEdit_sendline'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:1180
+2025-04-07T15:01:58.249678+0800 ERROR 'Ui_mainwindow' object has no attribute 'textEdit_sendline'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:1180
+2025-04-07T15:02:00.406643+0800 ERROR 'Ui_mainwindow' object has no attribute 'textEdit_sendline'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:1180

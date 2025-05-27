@@ -1,0 +1,9 @@
+2025-04-07T09:00:46.513109+0800 ERROR 'Ui_mainwindow' object has no attribute 'statuschecker'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:315
+2025-04-07T09:00:50.700279+0800 INFO Login device fail, error code is: 7
+2025-04-07T09:00:50.787394+0800 INFO Open preview fail, error code is: 3
+2025-04-07T09:00:53.163343+0800 INFO 打印开始
+2025-04-07T09:00:53.163343+0800 ERROR 'Ui_mainwindow' object has no attribute 'fgcode'
+error file:D:\DY\INLONG20250320\AMPS1200.py
+error line:900

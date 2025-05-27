@@ -1,0 +1,21 @@
+[2022-10-27 09:44:23.929][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[C:/Users/XEV/Desktop/…„œÒÕ∑/20221014/lib22/zlib1.dll] syserror[126]
+[2022-10-27 09:44:23.929][ERR] Load zlib failed[syserr: 126]
+[2022-10-27 09:44:23.929][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2022-10-27 09:44:23.929][INF] The COM:Core ver is 6.1.9.4, 2022_04_12. Async:1.
+[2022-10-27 09:44:23.929][INF] This HCNetSDK ver is 6.1.9.4 Ver 2022_04_12.
+[2022-10-27 09:44:25.604][INF] Login dev 192.168.1.64:8000.
+[2022-10-27 09:44:25.604][INF] dwTotalNum[2048]
+[2022-10-27 09:44:25.628][INF] Private connect 192.168.1.64:8000 sock=2648 this=0x6b064974 cmd=0x10000 port=62575
+[2022-10-27 09:44:25.628][INF] LogonDev1 in[192.168.1.64:8000]
+[2022-10-27 09:44:25.628][ERR] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Failed, Path[C:\Users\XEV\Desktop\…„œÒÕ∑\20221014\lib22\libcrypto-1_1-x64.dll] syserror[126]
+[2022-10-27 09:44:25.628][ERR] Load BASE_DLL_LIBEAY failed[syserr: 126]
+[2022-10-27 09:44:25.628][ERR] CoreBase_CreateSSLTrans,CSSLTrans::LoadSSLLib
+[2022-10-27 09:44:25.628][ERR] CHIKEncrypt::GenerateRSAKey, CoreBase_CreateSSLTrans FAILED, error[156]
+[2022-10-27 09:44:25.628][ERR] CRSAKey::CreateRSAKey, GenerateRSAKey Failed
+[2022-10-27 09:44:25.628][ERR] CRSAKey::Start, CreateRSAKey Failed
+[2022-10-27 09:44:25.628][ERR] CCoreGlobalCtrlBase::GetRSAEncrypt, CRSAKey Start Failed
+[2022-10-27 09:44:25.628][ERR] Interim_GenerateRSAKey, GetRSAEncrypt Failed
+[2022-10-27 09:44:25.628][ERR] general public key error
+[2022-10-27 09:44:25.633][ERR] LogonDev1[192.168.1.64]
+[2022-10-27 09:44:25.634][ERR] [192.168.1.64:8000]PRO_LoginHikDevice fail[err=29].[0x-0000001,0x-0000001]
+[2022-10-27 09:44:25.634][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[0]
