@@ -12,4 +12,4 @@ label_fan_speed 当前速率
         self.diban_new = None
 
 
-https://github.com/tomosyan/INLONG.git
+https://github.com/tomosyan/YLONG.git
