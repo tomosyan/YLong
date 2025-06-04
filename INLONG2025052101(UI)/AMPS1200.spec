@@ -2,16 +2,17 @@
 
 
 a = Analysis(
-    ['AMPS1200.py'],
-    pathex=[],
+    ['D:\\git\\YLong\\INLONG2025052101(UI)\\AMPS1200.py'],
+    pathex=['D:\\INLONG2025050801\\.venv\\Lib\\site-packages'],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['PyQt5.sip'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
+    optimize=0,
 )
 pyz = PYZ(a.pure)
 

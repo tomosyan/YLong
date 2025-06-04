@@ -482,7 +482,7 @@
     }</string>
              </property>
              <property name="value">
-              <number>24</number>
+              <number>1</number>
              </property>
              <property name="format">
               <string notr="true"/>
@@ -1350,9 +1350,44 @@
              </item>
             </layout>
            </widget>
+           <widget class="myImgLabel" name="label_showcamera_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>770</width>
+              <height>421</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>770</width>
+              <height>421</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>770</width>
+              <height>421</height>
+             </size>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <zorder>label_showcamera</zorder>
+           <zorder>label_showcamera_2</zorder>
            <zorder>layoutWidget_2</zorder>
            <zorder>layoutWidget</zorder>
-           <zorder>label_showcamera</zorder>
            <zorder>pushButton_closecamera</zorder>
            <zorder>pushButton_jp</zorder>
            <zorder>label_35</zorder>

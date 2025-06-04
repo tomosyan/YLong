@@ -1,9 +1,14 @@
 import ctypes
+import queue
 import re
 import subprocess
 import threading
 import time
 from shutil import copyfile
+
+import cv2
+import numpy as np
+
 from setup import Ui_MainWindow
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -34,10 +39,99 @@ logger_a = logger.bind(name="a")
 logger_d = logger.bind(name="d")
 Operational_Sqlite = Sqlite()
 ##调试开关
-DEBUG =1
+DEBUG =0
+class FrameProcessor(QObject):
+    update_signal = pyqtSignal(QPixmap)  # 用于跨线程更新UI的信号
+
+    def __init__(self):
+        super().__init__()
+        self.frame_queue = queue.Queue(maxsize=5)  # 限制队列大小防止内存爆炸
+        self.running = True
+        self.processing_thread = threading.Thread(target=self.process_frames)
+        self.processing_thread.start()
+        self.g_width=0
+        self.g_height=0
+        self.myobject=None
+    def setSize(self,object):
+        self.g_width=object.width()
+        self.g_height=object.height()
+        self.myobject=object
+    def yuv_to_rgb(self,yuv_data, width, height):
+        # 将YUV数据转换为RGB格式
+        yuv_image = np.frombuffer(yuv_data, dtype=np.uint8).reshape((height * 3 // 2, width))
+        bgr_image = cv2.cvtColor(yuv_image, cv2.COLOR_YUV2RGB_I420)
+        return bgr_image
+
+    def bgr_to_qimage(self,bgr_data,nwidth,nheight):
+        # 将BGR数据转换为QImage对象
+        height, width, channel = bgr_data.shape
+        bytes_per_line = channel * width
+        q_image = QImage(bgr_data.data, width, height, bytes_per_line, QImage.Format_BGR888)
+        scaled = q_image.scaled(nwidth,nheight, Qt.KeepAspectRatio|Qt.SmoothTransformation)
+        return scaled
+    def add_frame(self, pBuf, nSize, nWidth, nHeight, nType, sFileName, flag_jt):
+        try:
+            # 复制数据而不是直接引用，因为回调函数中的缓冲区可能会被重用
+            frame_data = {
+                'buffer': bytes(pBuf[:nSize]),  # 复制数据
+                'width': nWidth,
+                'height': nHeight,
+                'type': nType,
+                'filename': sFileName,
+                'save_jpeg': flag_jt
+            }
+            self.frame_queue.put(frame_data, block=False)
+        except queue.Full:
+            # 队列满时丢弃最老的帧
+            try:
+                #self.frame_queue.get_nowait()
+                #self.frame_queue.put(frame_data, block=False)
+                time.sleep(0.01)  # 短暂等待
+            except queue.Empty:
+                pass
+
+    def process_frames(self):
+        while self.running:
+            try:
+                QThread.msleep(20)
+                frame_data = self.frame_queue.get(timeout=0.003)
+
+                # YUV转RGB
+                bgr_image = self.yuv_to_rgb(frame_data['buffer'], frame_data['width'], frame_data['height'])
+
+                #
+                #print("%d  %d ", self.label_showcamera_2.width(), self.label_showcamera_2.height())
+                #qt_image = self.bgr_to_qimage(bgr_image,self.label_showcamera_2.width() ,self.label_showcamera_2.height())
+                self.setSize(self.myobject)
+                qt_image = self.bgr_to_qimage(bgr_image, self.g_width,self.g_width)
+                qt_pixmap = QPixmap.fromImage(qt_image)
+
+                # 通过信号更新UI
+                self.update_signal.emit(qt_pixmap)
+
+                # 如果需要保存JPEG
+                # if frame_data['save_jpeg']:
+                #     lRet = self.Playctrldll.PlayM4_ConvertToJpegFile(
+                #         frame_data['buffer'], len(frame_data['buffer']),
+                #         frame_data['width'], frame_data['height'], frame_data['type'],
+                #         c_char_p(frame_data['filename'].encode()))
+                #
+                #     if lRet == 0:
+                #         logger_a.info('PlayM4_ConvertToJpegFile fail, error code is:' +
+                #                       str(self.Playctrldll.PlayM4_GetLastError(1)))
+                #     else:
+                #         logger_a.info('PlayM4_ConvertToJpegFile success')
+
+            except queue.Empty:
+                continue
+            except Exception as e:
+                logger_a.error(f"Frame processing error: {str(e)}")
+
+    def stop(self):
+        self.running = False
+        self.processing_thread.join()
 class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     event_loadGcode_OK = pyqtSignal(str)  # 创建槽信号
-
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -104,6 +198,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #gcode初始化
         self.label_16.setText("")
         # #进度条置0隐藏
+        self.progressBar.setMaximum(0)
+        self.progressBar.setMinimum(100)
         self.progressBar.setValue(0)
         self.progressBar.hide()
         #总时间隐藏
@@ -289,6 +385,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             button.setCheckable(True)  # 设置按钮可选中
         # 连接按钮点击信号
         self.bt_tp_group.buttonClicked.connect(self.on_tp_button_clicked)
+        self.label_showcamera.hide()
+        self.frame_processor = FrameProcessor()
+        self.frame_processor.setSize(self.label_showcamera_2)
+        self.frame_processor.update_signal.connect(self.update_ui)
     #报故处理
     def runoutordu(self, a):
         try:
@@ -745,7 +845,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 total = self.second_string_time(int(self.print_total_time))
                 self.label_sy.setText(str(left))
                 self.label_totletime.setText(str(total))
-                self.progressBar.setValue(int(self.print_left_time*100/self.print_total_time))
+                if int(self.self.print_time >= self.print_total_time):
+                    self.progressBar.setValue(100)
+                else:
+                    self.progressBar.setValue(int(self.print_time / self.print_total_time) * 100)
+                # if int(self.print_left_time/self.print_total_time)*100 >=100:
+                #     self.progressBar.setValue(100)
+                # else:
+                #     self.progressBar.setValue(int(self.print_left_time / self.print_total_time) * 100)
+
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -956,10 +1064,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def video_button(self):
         if self.flag_openclose_camera%2:
-            self.label_showcamera.show()
+            self.label_showcamera_2.show()
             self.pushButton_closecamera.setText("关闭")
         else:
-            self.label_showcamera.hide()
+            self.label_showcamera_2.hide()
             self.pushButton_closecamera.setText("打开")
         self.flag_openclose_camera += 1
 
@@ -998,6 +1106,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         lUserId = Objdll.NET_DVR_Login_V30(self.DEV_IP, self.DEV_PORT, self.DEV_USER_NAME, self.DEV_PASSWORD,
                                            byref(device_info))
         return lUserId, device_info
+
+    def update_ui(self, pixmap):
+        """用于更新UI的槽函数"""
+        self.label_showcamera_2.setPixmap(pixmap)
     def DecCBFun(self, nPort, pBuf, nSize, pFrameInfo, nUser, nReserved2):
         # 解码回调函数
         if pFrameInfo.contents.nType == 3:
@@ -1009,6 +1121,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             nType = pFrameInfo.contents.nType
             dwFrameNum = pFrameInfo.contents.dwFrameNum
             nStamp = pFrameInfo.contents.nStamp
+            # 将数据传递给处理线程
+            self.frame_processor.add_frame(
+                pBuf, nSize, nWidth, nHeight, nType,
+                sFileName, self.flag_jt
+            )
             if self.flag_jt:
                 lRet = self.Playctrldll.PlayM4_ConvertToJpegFile(pBuf, nSize, nWidth, nHeight, nType,
                                                                  c_char_p(sFileName.encode()))
@@ -2900,6 +3017,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # gcode初始化
             self.label_16.setText("")
             # 进度条置0隐藏
+            self.progressBar.setMaximum(0)
+            self.progressBar.setMinimum(100)
             self.progressBar.setValue(0)
             self.progressBar.hide()
             # 总时间隐藏
@@ -3613,8 +3732,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     try:
         import sys
-
         #QGuiApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
         first.show()
