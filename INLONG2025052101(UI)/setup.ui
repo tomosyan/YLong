@@ -21,6 +21,21 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_3">
+    <item row="1" column="10" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_system">
+      <property name="font">
+       <font>
+        <family>微软雅黑 Light</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>系统</string>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_logo">
       <property name="minimumSize">
@@ -40,132 +55,20 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <spacer name="horizontalSpacer_13">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="pushButton_vector">
-      <property name="minimumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
+    <item row="1" column="8" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_message">
+      <property name="font">
+       <font>
+        <family>微软雅黑 Light</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
-       <string/>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
+       <string>信息</string>
       </property>
      </widget>
-    </item>
-    <item row="0" column="3">
-     <spacer name="horizontalSpacer_14">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="4">
-     <widget class="QPushButton" name="pushButton_task">
-      <property name="minimumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5">
-     <spacer name="horizontalSpacer_15">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="6">
-     <widget class="QPushButton" name="pushButton_change">
-      <property name="minimumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>60</width>
-        <height>60</height>
-       </size>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="7">
-     <spacer name="horizontalSpacer_16">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
     </item>
     <item row="0" column="8">
      <widget class="QPushButton" name="pushButton_message">
@@ -192,21 +95,8 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="9">
-     <spacer name="horizontalSpacer_17">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="10">
-     <widget class="QPushButton" name="pushButton_system">
+    <item row="0" column="6">
+     <widget class="QPushButton" name="pushButton_change">
       <property name="minimumSize">
        <size>
         <width>60</width>
@@ -234,6 +124,22 @@
      <spacer name="horizontalSpacer_18">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="13">
+     <spacer name="horizontalSpacer_36">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
@@ -337,22 +243,6 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="13">
-     <spacer name="horizontalSpacer_36">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="1" column="2" alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="labelvector">
       <property name="font">
@@ -368,20 +258,69 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="4" alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="label_task">
-      <property name="font">
-       <font>
-        <family>微软雅黑 Light</family>
-        <pointsize>12</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+    <item row="0" column="4">
+     <widget class="QPushButton" name="pushButton_task">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
       </property>
       <property name="text">
-       <string>任务</string>
+       <string/>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
       </property>
      </widget>
+    </item>
+    <item row="0" column="5">
+     <spacer name="horizontalSpacer_15">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="7">
+     <spacer name="horizontalSpacer_16">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1">
+     <spacer name="horizontalSpacer_13">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="1" column="6" alignment="Qt::AlignHCenter">
      <widget class="QLabel" name="label_change">
@@ -397,33 +336,28 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="8" alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="label_message">
-      <property name="font">
-       <font>
-        <family>微软雅黑 Light</family>
-        <pointsize>12</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
+    <item row="0" column="10">
+     <widget class="QPushButton" name="pushButton_system">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
       </property>
       <property name="text">
-       <string>信息</string>
+       <string/>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="10" alignment="Qt::AlignHCenter">
-     <widget class="QLabel" name="label_system">
-      <property name="font">
-       <font>
-        <family>微软雅黑 Light</family>
-        <pointsize>12</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>系统</string>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
       </property>
      </widget>
     </item>
@@ -7204,6 +7138,72 @@ opacity: 0.3</string>
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QPushButton" name="pushButton_vector">
+      <property name="minimumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>60</width>
+        <height>60</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <spacer name="horizontalSpacer_14">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="9">
+     <spacer name="horizontalSpacer_17">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="4" alignment="Qt::AlignHCenter">
+     <widget class="QLabel" name="label_task">
+      <property name="font">
+       <font>
+        <family>微软雅黑 Light</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>任务</string>
+      </property>
      </widget>
     </item>
    </layout>
