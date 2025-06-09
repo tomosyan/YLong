@@ -133,7 +133,7 @@ class FrameProcessor(QObject):
 class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     event_loadGcode_OK = pyqtSignal(str)  # 创建槽信号
     def __init__(self):
-        super().__init__()
+        super(Ui_mainwindow, self).__init__()
         self.setupUi(self)
         self.is_fullscreen = False
         # 初始化全屏标签
@@ -171,6 +171,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.sendline_flag = None
         self.sendpid_flag = None
 
+
         # 开启温度监控定时器
         self.local_position = None
         self.temp_see = QtCore.QTimer()
@@ -198,8 +199,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #gcode初始化
         self.label_16.setText("")
         # #进度条置0隐藏
-        self.progressBar.setMaximum(0)
-        self.progressBar.setMinimum(100)
+        self.progressBar.setMaximum(100)
+        self.progressBar.setMinimum(0)
         self.progressBar.setValue(0)
         self.progressBar.hide()
         #总时间隐藏
@@ -389,6 +390,20 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.frame_processor = FrameProcessor()
         self.frame_processor.setSize(self.label_showcamera_2)
         self.frame_processor.update_signal.connect(self.update_ui)
+
+        # 引导弹窗
+        if self.comboBox.currentText() == "中文":
+            self.ui_log_power = ui_dialog_log("yindao", "CN",
+                                              "\n请按下绿色物理按钮来使能电机驱动")
+        else:
+            self.ui_log_power = ui_dialog_log("yindao", "EN",
+                                              "powered firstly \n \n please press the green button \n enable the "
+                                              "motor of xyz")
+        self.ui_log_power.pushButton.clicked.connect(self.exit_log_poweron)
+        self.ui_log_power.pushButton_2.clicked.connect(self.exit_log_poweron_2)
+        self.ui_log_power.show()
+        self.flag_pause = 0
+
     #报故处理
     def runoutordu(self, a):
         try:
@@ -762,6 +777,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.timer_use_left.killTimer(self.timer_use_left.timerId())
             self.flag_ble = 0
             self.jichu_flag = 0
+            self.progressBar.setMaximum(100)
+            self.progressBar.setMinimum(0)
             self.progressBar.setValue(0)
             logger_a.info("打印结束，结束视频保存")
             #结束打印弹窗
@@ -769,6 +786,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.ui_log_overprint = ui_dialog_log("zhuyi", "CN", "打印结束")
             else:
                 self.ui_log_overprint = ui_dialog_log("zhuyi", "EN", "AFTER PRINTING")
+            self.changeStartprintCaption(self.BT_STATE.START)
             self.ui_log_overprint.pushButton.clicked.connect(self.exit_log_overprint)
             self.ui_log_overprint.pushButton_2.clicked.connect(self.exit_log_overprint)
             self.ui_log_overprint.show()
@@ -833,11 +851,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #self.lineEdit_total.setText(b)
             '''
             print("self.p.online:",self.p.online,"self.p.printing:",self.p.printing)
+            if DEBUG==1:
+                self.p.online =True
+                self.p.printing =True
             if self.p.online and self.p.printing:
                 self.print_time += 60  # 已打印时间+60
                 self.print_total_time = (float(self.total_E) / float(self.current_E_jichu)) * float(self.print_time)
                 self.print_left_time = self.print_total_time - self.print_time
-                print("self.print_total_time:",self.print_total_time,"self.print_time:",self.print_time,"self.print_left_time:",self.print_left_time)
+                print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
+                      "self.print_left_time:", self.print_left_time)
                 if self.print_left_time >= self.print_total_time:
                     self.label_sy.setText("0s")
                     return
@@ -845,14 +867,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 total = self.second_string_time(int(self.print_total_time))
                 self.label_sy.setText(str(left))
                 self.label_totletime.setText(str(total))
-                if int(self.self.print_time >= self.print_total_time):
-                    self.progressBar.setValue(100)
-                else:
-                    self.progressBar.setValue(int(self.print_time / self.print_total_time) * 100)
-                # if int(self.print_left_time/self.print_total_time)*100 >=100:
-                #     self.progressBar.setValue(100)
-                # else:
-                #     self.progressBar.setValue(int(self.print_left_time / self.print_total_time) * 100)
+                self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
@@ -1060,7 +1075,21 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.exit_fullscreen()
                 return True
         return super().eventFilter(obj, event)
+    #点击使能提示框确认和取消事件
+    def exit_log_poweron(self):
+        try:
+            self.ui_log_power.deleteLater()
+            self.p.send_now("L110 S60")
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    def exit_log_poweron_2(self):
+        try:
+            self.ui_log_power.deleteLater()
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
     def video_button(self):
         if self.flag_openclose_camera%2:
@@ -2706,6 +2735,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # 暂停打印
     def cancelprint(self):
         try:
+            if DEBUG==1:
+                self.p.printing=True
             if self.p.printing or self.p.paused:
                 logger_a.info("结束打印")
                 if self.comboBox.currentText() == "中文":
@@ -2714,6 +2745,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_log_cancelprint = ui_dialog_log("yindao", "EN", "STOP PRINTING?")
                 self.ui_log_cancelprint.pushButton_2.clicked.connect(self.exit_log_cancelprint)
                 self.ui_log_cancelprint.pushButton.clicked.connect(self.exit_log_cancel_2)
+
                 self.ui_log_cancelprint.show()
         except Exception as e:
             print(e)
@@ -2748,10 +2780,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.pushButton_startprint.setIconSize(QSize(60, 60))  # 设置图标为 48x48 像素
             #pass
         if self.BT_STATE.PAUSE == istation:#pause
-            #############
-            icon = QIcon("./Image/pause.png")  # 设置startprint图标
-            self.pushButton_startprint.setIcon(icon)
-            self.pushButton_startprint.setIconSize(QSize(60, 60))  # 设置图标为 48x48 像素
             self.pushButton_startprint.setStyleSheet('''QPushButton{
                                                 width: 80px;
                                                 height: 80px;
@@ -2763,7 +2791,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                 border-bottom-right-radius: 40px;
                                                 opacity: 0.3;}''')
 
-            ############
+            #############
+            icon = QIcon("./Image/pause.png")  # 设置startprint图标
+            self.pushButton_startprint.setIcon(icon)
+            self.pushButton_startprint.setIconSize(QSize(60, 60))  # 设置图标为 48x48 像素
             #pass
         elif self.BT_STATE.RESUME==istation:#resume
                 self.pushButton_startprint.setStyleSheet('''QPushButton{
@@ -2785,7 +2816,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def printfile(self):
         try:
-            if (self.pushButton_startprint.text() == "START") or self.pushButton_startprint.text() == "开始":
+            if (self.pushButton_startprint.text().strip() == "START") or self.pushButton_startprint.text().strip() == "开始":
                 logger_a.info("打印开始")
                 if not self.fgcode:
                     logger_a.info("No file loaded. Please use load first.")
@@ -2805,8 +2836,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.ui_log_startprint.pushButton.clicked.connect(self.exit_startprintno)
                 self.ui_log_startprint.pushButton_2.clicked.connect(self.exit_starprint_ok)
                 self.ui_log_startprint.show()
-                self.changeStartprintCaption(self.BT_STATE.PAUSE)
-            elif (self.pushButton_startprint.text() == "PAUSE") or (self.pushButton_startprint.text() == "暂停"):
+
+            elif (self.pushButton_startprint.text().strip() == "PAUSE") or (self.pushButton_startprint.text().strip() == "暂停"):
                 logger_a.info("打印暂停")
                 if self.comboBox.currentText() == "中文":
                     self.ui_log_pauseprint = ui_dialog_log("zhuyi", "CN", "是否暂停打印？")
@@ -2816,10 +2847,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.ui_log_pauseprint.pushButton.clicked.connect(self.exit_log_pause_2)
                 self.ui_log_pauseprint.show()
                 #############
-                self.changeStartprintCaption(self.BT_STATE.START)
-
-                ############
-            elif (self.pushButton_startprint.text() == "RESUME") or (self.pushButton_startprint.text() == "恢复"):
+            elif (self.pushButton_startprint.text().strip() == "RESUME") or (self.pushButton_startprint.text().strip() == "恢复"):
                 logger_a.info("打印恢复")
 
                 if self.comboBox.currentText() == "中文":
@@ -2829,18 +2857,18 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.ui_log_resume.pushButton_2.clicked.connect(self.exit_log_resume)
                 self.ui_log_resume.pushButton.clicked.connect(self.exit_log_resume_2)
                 self.ui_log_resume.show()
-                self.changeStartprintCaption(self.BT_STATE.PAUSE)
-            # else:
-            #    if self.checkBox_language.currentText() == "中文":
-            #        self.ui_log = ui_dialog_log("zhuyi", "CN", "安全继电器状态错误\n恢复打印失败\n确定后请关门并确定状态")
-            #    else:
-            #        self.ui_log = ui_dialog_log("zhuyi", "EN",
-            #                                    "Safety relay status error \n "
-            #                                    "Print recovery failure \n "
-            #                                    "After confirmation, please close the door and determine the status")
-            #    self.ui_log.pushButton.clicked.connect(self.exit_log_pause_2)
-            #    self.ui_log.pushButton_2.clicked.connect(self.exit_log_pause_2)
-            #    self.ui_log.show()
+
+                # else:
+                #    if self.checkBox_language.currentText() == "中文":
+                #        self.ui_log = ui_dialog_log("zhuyi", "CN", "安全继电器状态错误\n恢复打印失败\n确定后请关门并确定状态")
+                #    else:
+                #        self.ui_log = ui_dialog_log("zhuyi", "EN",
+                #                                    "Safety relay status error \n "
+                #                                    "Print recovery failure \n "
+                #                                    "After confirmation, please close the door and determine the status")
+                #    self.ui_log.pushButton.clicked.connect(self.exit_log_pause_2)
+                #    self.ui_log.pushButton_2.clicked.connect(self.exit_log_pause_2)
+                #    self.ui_log.show()
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
@@ -2872,6 +2900,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.info("RESUME PRINT SUCCESS!")
             self.ui_log_resume.deleteLater()
             self.brokening = False
+            self.changeStartprintCaption(self.BT_STATE.PAUSE)
         except Exception as e:
             print(e)
 
@@ -2907,6 +2936,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.clogging_detection("stop")
             logger_a.info("PAUSE PRINT SUCCESS!")
             self.ui_log_pauseprint.deleteLater()
+            self.changeStartprintCaption(self.BT_STATE.RESUME)
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3017,13 +3047,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # gcode初始化
             self.label_16.setText("")
             # 进度条置0隐藏
-            self.progressBar.setMaximum(0)
-            self.progressBar.setMinimum(100)
+            self.progressBar.setMaximum(100)
+            self.progressBar.setMinimum(0)
             self.progressBar.setValue(0)
             self.progressBar.hide()
             # 总时间隐藏
             self.label_titlesy.hide()
             self.label_sy.hide()
+            self.changeStartprintCaption(self.BT_STATE.START)
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3732,8 +3763,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     try:
         import sys
-        #QGuiApplication.setAttribute(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
-
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
         first.show()
