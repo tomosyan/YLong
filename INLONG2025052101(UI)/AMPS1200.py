@@ -649,7 +649,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         return
                     self.label_sy.setText(self.second_string_time(left_setText))
             # print(self.flag_printing)
-            '''
+            ###底板和碰头温度异常提示窗口
             if not self.flag_printing:
                 if self.label_temppt_2.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
@@ -703,7 +703,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 wendu = self.lineEdit_extru.text().split("℃")[0]
                 if float(wendu) < 100:
                     self.p.send_now("M107\n")
-                    '''
+
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(
@@ -753,6 +753,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
     def set_time_line(self, a, b):  # 结束打印
+        if a==0 and b==0:
+            logger_a.info("Infor:a==0 and b==0,gcode file no lines!")
+            return
         if int(a) >= int(b):
             self.timer_use_left.stop()
             self.label_sy.setText("0s")
