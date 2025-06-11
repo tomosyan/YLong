@@ -651,7 +651,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
             if not self.flag_printing:
-                if self.label_xyz_line.text() == self.local_position:
+                if self.label_xyz.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
                     # 喷头温度异常弹窗
                     try:
@@ -696,7 +696,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.p.send_now("M190 S0")
                             self.time_tole_3h = 0
                 else:
-                    self.local_position = self.label_xyz_line.text()
+                    self.local_position = self.label_xyz.text()
                     self.time_tole_10min = 0
             self.label_date2.setText(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             if self.p.paused:
@@ -1336,7 +1336,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEdit_rcset.setText(str(d) + '℃')
 
     def set_xyz_line(self, x, y, z):
-        self.label_xyz_line.setText("X:" + x + "    Y:" + y + "    Z:" + z)
+        self.label_xyz.setText("X:" + x + "    Y:" + y + "    Z:" + z)
+        if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
+            #if self.filamentblock.isChecked():
+                if 2 < float(z) < 5:
+                    self.p.send_now("L110 S81")
+                elif float(z) < 2:
+                    #self.p.send_now("L110 S80")
+                    pass
 
     def DrawButton(self,parentWnd,btn,width,height,radius,background):
         # self.pushButton_startprint.('''QPushButton{background: rgba(0,0,0,0.3);
