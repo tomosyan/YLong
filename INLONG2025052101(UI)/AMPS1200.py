@@ -340,8 +340,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 QPushButton {
                     background: white;
                     color:black;
-                    border-radius: 25px;
-                    border: 1px solid rgba(0,0,0,0.05);
+                    border-radius: 30px;
+                    border: 0px solid rgba(0,0,0,0.05);
                 }
                 QPushButton:checked {
                     background: rgba(242,95,13,0.8);
@@ -366,11 +366,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             button.setStyleSheet('''
                 QPushButton {
                     background: rgba(0,0,0,0.2);
-                    border-radius: 21px;
+                    border-radius: 25px;
                     border: 0px solid rgba(0,0,0,0.05);
                     color: #FFFFFF;
                     font-size: 14px;
-                    padding: 5px;
+                    padding: 0px;
                 }
                 QPushButton:hover {
                     background: rgba(255,255,255,0.2);
@@ -1345,6 +1345,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.groupBox_11.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
         self.groupBox_13.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
         self.groupBox_4.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
+        self.groupBox_24.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
+        self.groupBox_23.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
+        self.groupBox_25.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
+        self.groupBox_26.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
+
+
         # self.lineEdit_pid.setStyleSheet('''QLineEdit{background: rgba(255,255,255,0.2);;
         #                                                                 border-radius: 8px;
         #                                                                 border: 1px solid rgba(0,0,0,0.05);color:#FFFFFF}''')
@@ -1361,77 +1367,79 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_39.setAlignment(Qt.AlignLeft)
         self.label_print_targetspeed.setAlignment(Qt.AlignLeft)
         self.label_fan_speed.setAlignment(Qt.AlignLeft)
+        self.comboBox_2.setEditable(True)  # 4
+        self.ledit = self.comboBox_2.lineEdit()  # 5
+        font = QFont()
+        font.setPointSize(14)
+        self.ledit.setFont(font)
+        self.ledit.setAlignment(Qt.AlignCenter)  # 6
+        self.comboBox_2.setLineEdit(self.ledit)
 
         self.comboBox_2.setStyleSheet(
             "QComboBox {"
                 "   border: 0px solid #8f8f91;"
-                "   border-radius: 20px;"
-                "   padding: 5px;"
-                "   min-width: 6em;"
-                "   background: rgba(255, 255, 255, 0.3);"
+                "   border-radius: 25px;"
+                "   padding: 0px;"
+                "   min-width: 0em;"
+                "   background: rgba(255, 255, 255, 0.2);"
                 "   color: white;"
                 "   opacity: 0.3;"
-            
+
             "}"
             "QComboBox:on { /* shift the text when the popup is open */"
-            "   padding-top: 3px;"
-            "   padding-left: 4px;"
+            "   padding-top: 0px;"
+            "   padding-left: 0px;"
             "}"
             "QComboBox::drop-down {"
             "   subcontrol-origin: padding;"
             "   subcontrol-position: top right;"
-            "   width: 20px;"
-            "   border-left-width: 1px;"
+            "   width: 35px;"
+            "   border-left-width: 0px;"
             "   border-left-color: darkgray;"
             "   border-left-style: solid;"
-            "   border-top-right-radius: 10px;"
-            "   border-bottom-right-radius: 10px;"
+            "   border-top-right-radius: 25px;"
+            "   border-bottom-right-radius: 25px;"
             "}"
             "QComboBox::down-arrow {"
             "   image: url(./Image/down-arrow.png);"
+            "   width: 40px;"
+            "   height: 40px;"
             "}"
         )
+
         self.pushButton_dyk.setStyleSheet('''QPushButton{
-                                            width: 120px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.5);
-                                            border-top-left-radius: 20px;
+                                            border-top-left-radius: 25px;
                                             border-top-right-radius: 0px;
-                                            border-bottom-left-radius: 20px;
+                                            border-bottom-left-radius: 25px;
                                             border-bottom-right-radius: 0px;
                                             opacity: 0.5;}''')
 
         self.pushButton_dlg.setStyleSheet('''QPushButton{
-                                            width: 120px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.3);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 25px;
                                             opacity: 0.5;}''')
 
         self.pushButton_pid.setStyleSheet('''QPushButton{
-                                            width: 50px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.6);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 25px;
                                             opacity: 0.3;}''')
         self.pushButton_tp.setStyleSheet('''QPushButton{
-                                            width: 50px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.3);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 25px;
                                             opacity: 0.5;}''')
         # self.groupBox_tp.setStyleSheet('''QGroupBox{
         #                                     color:white;
@@ -1444,9 +1452,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #                                     opacity: 0.3;}''')
         self.groupBox_16.setStyleSheet("QGroupBox {"
                                                     "border: 0px solid gray;"
-                                                    "border-top-left-radius: 20px;"
+                                                    "border-top-left-radius: 30px;"
                                                     "border-top-right-radius: 0px;"
-                                                    "border-bottom-left-radius: 20px;"
+                                                    "border-bottom-left-radius: 30px;"
                                                     "border-bottom-right-radius:0px;"
                                                     "color:white;"
                                                     "background: rgba(0,0,0,0.1);"
@@ -1454,118 +1462,124 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                     "margin-top: 0em;}"
                                                     "QGroupBox:title {"
                                                     "subcontrol-origin: margin;"
-                                                    "left: 1px;"
-                                                    "padding: 0 1px 0 1px;}")
+                                                    "left: 0px;"
+                                                    "padding: 0 0px 0 0px;}")
         self.groupBox_printspeed.setStyleSheet("QGroupBox {"
                                                     "border: 0px solid gray;"
-                                                    "border-top-left-radius: 20px;"
-                                                    "border-top-right-radius: 20px;"
-                                                    "border-bottom-left-radius: 20px;"
-                                                    "border-bottom-right-radius:20px;"
+                                                    "border-top-left-radius: 31px;"
+                                                    "border-top-right-radius: 31px;"
+                                                    "border-bottom-left-radius: 31px;"
+                                                    "border-bottom-right-radius:31px;"
                                                     "color:white;"
                                                     "background: rgba(255,255,255,0.1);"
                                                     "opacity: 0.6;"
                                                     "margin-top: 0em;}"
                                                     "QGroupBox:title {"
                                                     "subcontrol-origin: margin;"
-                                                    "left: 1px;"
-                                                    "padding: 0 1px 0 1px;}")
+                                                    "left: 0px;"
+                                                    "padding: 0 0px 0 0px;}")
         self.groupBox_jcl.setStyleSheet("QGroupBox {"
                                                     "border: 0px solid gray;"
-                                                    "border-top-left-radius: 20px;"
-                                                    "border-top-right-radius: 20px;"
-                                                    "border-bottom-left-radius: 20px;"
-                                                    "border-bottom-right-radius:20px;"
+                                                    "border-top-left-radius: 31px;"
+                                                    "border-top-right-radius: 31px;"
+                                                    "border-bottom-left-radius: 31px;"
+                                                    "border-bottom-right-radius:31px;"
                                                     "color:white;"
                                                     "background: rgba(255,255,255,0.1);"
                                                     "opacity: 0.6;"
                                                     "margin-top: 0em;}"
                                                     "QGroupBox:title {"
                                                     "subcontrol-origin: margin;"
-                                                    "left: 1px;"
-                                                    "padding: 0 1px 0 1px;}")
+                                                    "left: 0px;"
+                                                    "padding: 0 0px 0 0px;}")
         self.groupBox_fanspeed.setStyleSheet("QGroupBox {"
                                                     "border: 0px solid gray;"
-                                                    "border-top-left-radius: 20px;"
-                                                    "border-top-right-radius: 20px;"
-                                                    "border-bottom-left-radius: 20px;"
-                                                    "border-bottom-right-radius:20px;"
+                                                    "border-top-left-radius: 31px;"
+                                                    "border-top-right-radius: 31px;"
+                                                    "border-bottom-left-radius: 31px;"
+                                                    "border-bottom-right-radius:31px;"
                                                     "color:white;"
                                                     "background: rgba(255,255,255,0.1);"
                                                     "opacity: 0.6;"
                                                     "margin-top: 0em;}"
                                                     "QGroupBox:title {"
                                                     "subcontrol-origin: margin;"
-                                                    "left: 1px;"
-                                                    "padding: 0 1px 0 1px;}")
+                                                    "left: 0px;"
+                                                    "padding: 0 0px 0 0px;}")
 
         self.label_max.setStyleSheet('color: red;')  # 设置文字颜色为红色
         self.label_max_2.setStyleSheet('color: green;')  # 设置文字颜色为绿色
 
 
         self.lineEdit_pid.setStyleSheet('''
-            border-top-left-radius: 15px;
+            border-top-left-radius: 25px;
             border-top-right-radius: 0px;
-            border-bottom-left-radius: 15px;
+            border-bottom-left-radius: 25px;
             border-bottom-right-radius: 0px;
             color:white;
             background: rgba(255,255,255,0.1);
             opacity: 0.3''')
         self.lineEdit_send.setStyleSheet('''
-            border-top-left-radius: 15px;
+            border-top-left-radius: 25px;
             border-top-right-radius: 0px;
-            border-bottom-left-radius: 15px;
+            border-bottom-left-radius: 25px;
             border-bottom-right-radius: 0px;
             color:white;
             background: rgba(255,255,255,0.1);
             opacity: 0.5''')
 
         self.pushButton_send.setStyleSheet('''QPushButton{
-                                            width: 50px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.4);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 30px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 30px;
                                             opacity: 0.3;}''')
+        self.comboBox.setEditable(True)  # 4
+        self.ledit = self.comboBox.lineEdit()  # 5
+        font = QFont()
+        font.setPointSize(14)
+        self.ledit.setFont(font)
+        self.ledit.setAlignment(Qt.AlignCenter)  # 6
+        self.comboBox.setLineEdit(self.ledit)
         self.comboBox.setStyleSheet(
             "QComboBox {"
-            "   border: 2px solid #8f8f91;"
-            "   border-radius: 15px;"
-            "   padding: 5px;"
-            "   min-width: 6em;"
-            "   background: rgba(255, 255, 255, 0.1);"
+            "   border: 0px solid #8f8f91;"
+            "   border-radius: 20px;"
+            "   padding: 0px;"
+            "   min-width: 0em;"
+            "   background: rgba(255, 255, 255, 0.3);"
             "   color: white;"
             "}"
             "QComboBox:on { /* shift the text when the popup is open */"
-            "   padding-top: 3px;"
-            "   padding-left: 4px;"
+            "   padding-top: 0px;"
+            "   padding-left: 0px;"
             "}"
             "QComboBox::drop-down {"
             "   subcontrol-origin: padding;"
             "   subcontrol-position: top right;"
-            "   width: 20px;"
-            "   border-left-width: 1px;"
-            "   border-left-color: darkgray;"
+            "   width: 35px;"
+            "   border-left-width: 0px;"
+            "   border-left-color: white;"
             "   border-left-style: solid;"
-            "   border-top-right-radius: 10px;"
-            "   border-bottom-right-radius: 10px;"
+            "   border-top-right-radius: 20px;"
+            "   border-bottom-right-radius: 20px;"
             "}"
+
             "QComboBox::down-arrow {"
             "   image: url(./Image/down-arrow.png);"
+            "   width: 40px;"
+            "   height: 40px;"
             "}"
         )
         self.pushButton_pid.setStyleSheet('''QPushButton{
-                                            width: 50px;
-                                            height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.6);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 25px;
                                             opacity: 0.3;}''')
         #self.groupBox_4.setStyleSheet("background-color: transparent;border: none;border-width: 0px;")
         self.groupBox_5.setStyleSheet("""
@@ -1992,10 +2006,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.textEdit_send.setStyleSheet("""
                             QTextEdit {
                                 border-radius: 8px;
-                                border: 1px solid rgba(255, 255, 255, 0.2);
-                                background-color: rgba(255, 255, 255, 0.1); /* 半透明背景 */
+                                border: 0px solid rgba(255, 255, 255, 0.2);
+                                background-color: rgba(255, 255, 255, 0); /* 半透明背景 */
                                 color: white; /* 文本颜色 */
-                                padding: 5px; /* 让文字不贴边 */
+                                padding: 0px; /* 让文字不贴边 */
                             }
                         """)
             #打开历史文件
@@ -2003,16 +2017,17 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.pushButton_history.clicked.connect(self.open_file)
 
             #labelerr
-            self.label_errx.setStyleSheet("background-color:white;border-radius: 8px;")
-            self.label_erry.setStyleSheet("background-color:white;border-radius: 8px;")
-            self.label_errz.setStyleSheet("background-color:white;border-radius: 8px;")
-            self.label_erre.setStyleSheet("background-color:white;border-radius: 8px;")
+            self.label_errx.setStyleSheet("background-color:white;border-radius: 15px;")
+            self.label_erry.setStyleSheet("background-color:white;border-radius: 15px;")
+            self.label_errz.setStyleSheet("background-color:white;border-radius: 15px;")
+            self.label_erre.setStyleSheet("background-color:white;border-radius: 15px;")
 
             #刷新
             self.pushButton_refreshlocal.setStyleSheet("QPushButton{border-image:url(./Image/refresh.png);}")
             self.pushButton_refreshlocal.clicked.connect(self.get_local)
             self.pushButton_removelocal.setStyleSheet("QPushButton{border-image:url(./Image/deletelocal.png);}")
             self.pushButton_removelocal.clicked.connect(self.remove_local)
+            #self.pushButton_removelocal.hide()
             self.pushButton_refreshu.setStyleSheet("QPushButton{border-image:url(./Image/refresh.png);}")
             self.pushButton_refreshu.clicked.connect(self.get_u)
             self.pushButton_insert.setStyleSheet("QPushButton{border-image:url(./Image/insert.png);}")
@@ -2180,7 +2195,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.pushButton_startprint.setIcon(icon)
             self.pushButton_startprint.setIconSize(QSize(60, 60))  # 设置图标为 48x48 像素
             # 隐藏文本
-            self.pushButton_startprint.setText("开始")
+            self.pushButton_startprint.setText("  开始")
             self.pushButton_startprint.clicked.connect(self.printfile)
 
 
@@ -2390,14 +2405,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.label_errec.setText("E轴故障")
 
                 self.label_29.setText("打印速度")
-                self.label_e255.setText("挤出率")
+                self.label_e255.setText("挤  出  率")
                 self.label_31.setText("风扇速率")
 
-                self.label_36.setText("当前值：")
+                self.label_36.setText("当  前  值：")
                 self.label_37.setText("当前速度：")
                 self.label_39.setText("当前速率：")
                 self.label_print_targetspeed.setText("目标速度：")
-                self.label_jcl.setText("目标值：")
+                self.label_jcl.setText("目  标  值：")
                 self.label_fan_speed.setText("当前速率：")
 
                 self.label_32.setText("断料检测")
@@ -2418,9 +2433,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.label_14.setText("总时间：")
                 self.label_titlesy.setText("剩余时间:")
-                self.label_17.setText("切片")
-                self.pushButton_startprint.setText("开始")
-                self.pushButton_stopprint.setText("停止")
+                self.label_17.setText("切  片")
+                self.pushButton_startprint.setText("  开始")
+                self.pushButton_stopprint.setText("  停止")
                 self.pushButton_closecamera.setText("关闭")
                 self.pushButton_jp.setText("截屏")
                 self.label_18.setText("喷头")
@@ -2888,7 +2903,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exit_log_resume(self):
         try:
             if self.comboBox.currentText() == "中文":
-                self.pushButton_startprint.setText("暂停")
+                self.pushButton_startprint.setText("  暂停")
             elif self.comboBox.currentText() == "English":
                 self.pushButton_startprint.setText("PAUSE")
             elif self.comboBox.currentText() == "日本語.":
@@ -2917,7 +2932,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exit_log_pause(self, a):
         try:
             if self.comboBox.currentText() == "中文":
-                self.pushButton_startprint.setText("恢复")
+                self.pushButton_startprint.setText("  恢复")
             elif self.comboBox.currentText() == "English":
                 self.pushButton_startprint.setText("RESUME")
             elif self.comboBox.currentText() == "日本語.":
@@ -3013,7 +3028,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def exit_log_cancelprint(self):
         try:
             if self.comboBox.currentText() == "中文":
-                self.pushButton_startprint.setText("开始")
+                self.pushButton_startprint.setText("  开始")
             elif self.comboBox.currentText() == "English":
                 self.pushButton_startprint.setText("START")
             elif self.comboBox.currentText() == "日本語.":
@@ -3124,6 +3139,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.filename = filename
             self.Extruder_gcode = float(
                 extrusion_width.replace("; external perimeters extrusion width = ", "").replace("mm", ""))
+
+
+
             for i in range(5):
                 if float(self.comboBox_2.itemText(i)) ==  self.Extruder_gcode:
                     self.comboBox_2.setCurrentIndex(i)
