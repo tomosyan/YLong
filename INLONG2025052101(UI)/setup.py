@@ -2225,6 +2225,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.pushButton_dyk = QtWidgets.QPushButton(self.groupBox_15)
         self.pushButton_dyk.setMinimumSize(QtCore.QSize(120, 50))
+        self.pushButton_dyk.setMaximumSize(QtCore.QSize(120, 50))
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(15)
@@ -2247,7 +2248,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9.addWidget(self.label_34, 2, 1, 1, 1)
         self.pushButton_dlg = QtWidgets.QPushButton(self.groupBox_15)
         self.pushButton_dlg.setMinimumSize(QtCore.QSize(120, 50))
-        self.pushButton_dlg.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.pushButton_dlg.setMaximumSize(QtCore.QSize(120, 50))
         font = QtGui.QFont()
         font.setFamily("微软雅黑 Light")
         font.setPointSize(15)
@@ -2895,7 +2896,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

@@ -390,7 +390,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.frame_processor = FrameProcessor()
         self.frame_processor.setSize(self.label_showcamera_2)
         self.frame_processor.update_signal.connect(self.update_ui)
-
+        # 读取系统配置
+        self.read_settings()
         # 引导弹窗
         if self.comboBox.currentText() == "中文":
             self.ui_log_power = ui_dialog_log("yindao", "CN",
@@ -403,6 +404,33 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_log_power.pushButton_2.clicked.connect(self.exit_log_poweron_2)
         self.ui_log_power.show()
         self.flag_pause = 0
+
+    ##打印剩余时间显示
+    def set_lefttime(self,m_left_time):
+        self.label_sy.setText(m_left_time)
+        logger_a.info(f"left_time:left time show {m_left_time}!")
+
+    def read_settings(self):
+        # 获取当前脚本所在目录的路径
+        dir_path = os.path.dirname(os.path.abspath(__file__))
+        # 构建相对路径
+        file_path = os.path.join(dir_path, 'relative_path_to_file')
+        settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        self.s_systemverID = settings.value("System/systemverID")
+        self.s_softwareID = settings.value("System/softwareID")
+        self.s_controlID = settings.value("System/controlID")
+        self.s_IP = settings.value("System/IP")
+        self.s_authorization = settings.value("System/authorization")
+        self.s_langID = settings.value("System/langID")
+        self.s_devID =settings.value("Device/deviceID")
+
+        self.label_3.setText(self.s_systemverID)
+        self.label_4.setText(self.s_softwareID)
+        self.label_7.setText(self.s_controlID)
+        self.label_8.setText(self.s_IP)
+        self.label_10.setText(self.s_authorization)
+        #self.comboBox.setCurrentText(self.s_langID)
+        self.label_bhtext.setText(self.s_devID)
 
     #报故处理
     def runoutordu(self, a):
@@ -628,6 +656,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                    int(left.split("s")[0].split("  ")[2])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
+                        str(left)
                         return
                     left_setText -= 1
                     self.label_sy.setText(self.second_string_time(left_setText))
@@ -636,18 +665,22 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                    int(left.split("s")[0].split("  ")[1])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
+                        self.set_lefttime(self.second_string_time(left_setText))
                         return
                     left_setText -= 1
                     self.label_sy.setText(self.second_string_time(left_setText))
+                    self.set_lefttime(self.second_string_time(left_setText))
                 if "h" not in left and "m" not in left and "s" in left:
                     left_setText = int(left.split("s")[0])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
+                        self.set_lefttime(self.second_string_time(left_setText))
                         return
                     left_setText -= 1
                     if self.label_sy.text() == "0s":
                         return
                     self.label_sy.setText(self.second_string_time(left_setText))
+                    self.set_lefttime(self.second_string_time(left_setText))
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
             if not self.flag_printing:
@@ -865,10 +898,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                       "self.print_left_time:", self.print_left_time)
                 if self.print_left_time >= self.print_total_time:
                     self.label_sy.setText("0s")
+                    self.set_lefttime(self.second_string_time("0s"))
                     return
                 left = self.second_string_time(int(self.print_left_time))
                 total = self.second_string_time(int(self.print_total_time))
                 self.label_sy.setText(str(left))
+                self.set_lefttime(str(left))
                 self.label_totletime.setText(str(total))
                 self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
 
