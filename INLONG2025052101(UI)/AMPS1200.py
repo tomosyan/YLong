@@ -651,7 +651,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
             if not self.flag_printing:
-                if self.label_temppt_2.text() == self.local_position:
+                if self.label_xyz_line.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
                     # 喷头温度异常弹窗
                     try:
@@ -696,7 +696,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.p.send_now("M190 S0")
                             self.time_tole_3h = 0
                 else:
-                    self.local_position = self.label_temppt_2.text()
+                    self.local_position = self.label_xyz_line.text()
                     self.time_tole_10min = 0
             self.label_date2.setText(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             if self.p.paused:
@@ -1328,14 +1328,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.label_temppt.setText('当前温度：'+str(a)+'℃'+'  设置温度：' +str(b)+'℃')
         self.current_pengtou_temp=a
         self.current_bed_temp=b
-        self.label_temppt.setText('当前温度：'+str(a)+'℃')
+        #self.label_temppt.setText('当前温度：'+str(a)+'℃')
+        self.lineEdit_extru.setText(str(a) + '℃')
         self.lineEdit_ptset.setText(str(b)+'℃')
         #self.label_temprc.setText('当前温度：' + str(c) + '℃' + '  设置温度：' + str(d) + '℃')
-        self.label_temprc.setText('当前温度：'+str(c) + '℃')
+        self.lineEdit_bed.setText(str(c) + '℃')
         self.lineEdit_rcset.setText(str(d) + '℃')
 
     def set_xyz_line(self, x, y, z):
-        self.label_temppt_2.setText("X:" + x + "    Y:" + y + "    Z:" + z)
+        self.label_xyz_line.setText("X:" + x + "    Y:" + y + "    Z:" + z)
 
     def DrawButton(self,parentWnd,btn,width,height,radius,background):
         # self.pushButton_startprint.('''QPushButton{background: rgba(0,0,0,0.3);
@@ -1709,8 +1710,22 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             background: rgba(0,0,0,0.1);
             opacity: 0.3''')
 
-
-
+        self.lineEdit_extru.setStyleSheet('''
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            color:white;
+            background: rgba(0,0,0,0.1);
+            opacity: 0.3''')
+        self.lineEdit_bed.setStyleSheet('''
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            color:white;
+            background: rgba(0,0,0,0.1);
+            opacity: 0.3''')
         # self.groupBox_4.setStyleSheet("""
         #                             QGroupBox {
         #                                 border-radius: 8px;

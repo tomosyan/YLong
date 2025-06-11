@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1917</width>
-    <height>1155</height>
+    <height>1241</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -1109,18 +1109,55 @@
              <string>设定温度</string>
             </property>
            </widget>
-           <widget class="QWidget" name="layoutWidget">
+           <widget class="myImgLabel" name="label_showcamera_2">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>431</y>
-              <width>758</width>
+              <y>10</y>
+              <width>770</width>
+              <height>400</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>770</width>
+              <height>400</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>770</width>
+              <height>400</height>
+             </size>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QWidget" name="">
+            <property name="geometry">
+             <rect>
+              <x>11</x>
+              <y>430</y>
+              <width>770</width>
               <height>42</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <property name="spacing">
               <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>11</number>
              </property>
              <item>
               <widget class="QLabel" name="label_18">
@@ -1168,7 +1205,46 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>320</width>
+                 <width>115</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>115</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑 Light</family>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:white;\nborder-radius: 12px;\nbackground: rgba(0,0,0,0.1);\nopacity: 0.3</string>
+               </property>
+               <property name="text">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当前温度：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_extru">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
                  <height>40</height>
                 </size>
                </property>
@@ -1186,14 +1262,11 @@
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="styleSheet">
-                <string notr="true">color:white;\nborder-radius: 12px;\nbackground: rgba(0,0,0,0.1);\nopacity: 0.3</string>
-               </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当前温度：100℃&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1265,18 +1338,21 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="layoutWidget_2">
+           <widget class="QWidget" name="">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>480</y>
-              <width>758</width>
+              <x>11</x>
+              <y>475</y>
+              <width>770</width>
               <height>42</height>
              </rect>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <property name="spacing">
               <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>11</number>
              </property>
              <item>
               <widget class="QLabel" name="label_23">
@@ -1318,13 +1394,13 @@
               <widget class="QLabel" name="label_temprc">
                <property name="minimumSize">
                 <size>
-                 <width>320</width>
+                 <width>115</width>
                  <height>40</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>16777215</width>
+                 <width>115</width>
                  <height>40</height>
                 </size>
                </property>
@@ -1340,10 +1416,43 @@
                 <string notr="true">color:white;\nborder-radius: 12px;\nbackground: rgba(0,0,0,0.1);\nopacity: 0.3</string>
                </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当前温度：100℃&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当前温度：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit_bed">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>320</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑 Light</family>
+                 <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -1412,40 +1521,6 @@
              </item>
             </layout>
            </widget>
-           <widget class="myImgLabel" name="label_showcamera_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>10</y>
-              <width>770</width>
-              <height>400</height>
-             </rect>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>770</width>
-              <height>400</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>770</width>
-              <height>400</height>
-             </size>
-            </property>
-            <property name="contextMenuPolicy">
-             <enum>Qt::DefaultContextMenu</enum>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
            <zorder>label_showcamera</zorder>
            <zorder>label_showcamera_2</zorder>
            <zorder>layoutWidget_2</zorder>
@@ -1454,6 +1529,8 @@
            <zorder>pushButton_jp</zorder>
            <zorder>label_35</zorder>
            <zorder>label_30</zorder>
+           <zorder>lineEdit_extru</zorder>
+           <zorder>lineEdit_bed</zorder>
           </widget>
           <widget class="QGroupBox" name="groupBox_6">
            <property name="geometry">
@@ -2307,7 +2384,7 @@ border-radius: 50px 50px 50px 50px;</string>
               </property>
              </widget>
             </widget>
-            <widget class="QLabel" name="label_temppt_2">
+            <widget class="QLabel" name="label_xyz_line">
              <property name="geometry">
               <rect>
                <x>244</x>
@@ -2787,7 +2864,7 @@ opacity: 0.3</string>
             <zorder>label_27</zorder>
             <zorder>groupBox_11</zorder>
             <zorder>groupBox_12</zorder>
-            <zorder>label_temppt_2</zorder>
+            <zorder>label_xyz_line</zorder>
            </widget>
           </widget>
          </widget>
