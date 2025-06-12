@@ -25,6 +25,7 @@ from Operational_sqlite import Sqlite
 from gcodefile_main import ui_dialog_file
 from log_main import ui_dialog_log
 from keboard_main import ui_dialog
+from log_main_duandu import ui_dialog_log_duandu as ui_dialog_log_duandu
 
 from HCNetSDK import *
 from PlayCtrl import *
@@ -133,6 +134,7 @@ class FrameProcessor(QObject):
         self.processing_thread.join()
 class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     event_loadGcode_OK = pyqtSignal(str)  # 创建槽信号
+    changeValue_runoutFlag = pyqtSignal(str)  # 创建槽信号
     def __init__(self):
         super(Ui_mainwindow, self).__init__()
         self.setupUi(self)
@@ -407,6 +409,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_log_power.show()
         self.flag_pause = 0
 
+        self.changeValue_runoutFlag.connect(self.runout_ui_log)
+
     ##打印剩余时间显示
     def set_lefttime(self,m_left_time,linenum):
         self.label_sy.setText(m_left_time)
@@ -434,6 +438,168 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.comboBox.setCurrentText(self.s_langID)
         self.label_bhtext.setText(str(self.s_devID))
 
+    def exit_log_pause_3(self, a):
+        try:
+            if self.comboBox.currentText() == "中文":
+                self.pushButton_startprint.setText("恢复")
+            elif self.comboBox.currentText() == "English":
+                self.pushButton_startprint.setText("RESUME")
+            elif self.comboBox.currentText() == "日本語.":
+                self.pushButton_startprint.setText("履歴")
+            self.jichu_flag = 0
+            self.p.pause()
+            self.timer_use_left.stop()
+            if a == "sys":
+                self.p.send_now("G250 S889\n")  # 红灯
+            else:
+                self.p.send_now("G250 S888\n")  # 暂停打印亮蓝灯
+            self.clogging_detection("stop")
+            logger_a.info("PAUSE PRINT SUCCESS!")
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
+    def runout_ui_log(self, a):  # 断堵料
+        try:
+            print("11111111111111111111111111111111111111111:",a)
+            self.Blocked_material_state = 1
+            self.Value = self.lineEdit_extru_target.text().split(".")[0].replace("℃", "")
+
+            if a == "1":
+                self.flag_D = False
+                self.exit_log_pause_3("sys")
+
+                if self.comboBox.currentText() == "中文":
+                    self.ui_log_duandu = ui_dialog_log_duandu("zhuyi", "CN", "\n发生断料，请重新上料和检查温度")
+                else:
+                    self.ui_log_duandu = ui_dialog_log_duandu("zhuyi", "EN",
+                                                              "Material filament runout,\nPlease load filament and check temperture")
+                self.ui_log_duandu.pushButton_ok.clicked.connect(self.blocked_material_recovery)  # 设置完成
+                self.ui_log_duandu.pushButton_no.clicked.connect(self.ui_log_duandu_cancel)  # quxiao
+                self.ui_log_duandu.pushButton_heatup.clicked.connect(self.heat_up)  # 升温
+                self.ui_log_duandu.pushButton_Return.clicked.connect(self.laying_off)  # 退料
+                self.ui_log_duandu.pushButton_Load.clicked.connect(self.Load_material)  # 进料
+                self.ui_log_duandu.pushButton_down.clicked.connect(self.drop_Z)  # 下降Z轴
+                self.ui_log_duandu.show()
+        except Exception as e:
+            print(e)
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+            import traceback
+            traceback.print_exception()
+
+    def drop_Z(self):
+
+        self.p.send_now("G91")
+        self.p.send_now("G1 Z200 F2000")
+        self.p.send_now("G90")
+
+    def Load_material(self):
+        try:
+            if self.Value == "0":
+                sel = Operational_Sqlite.select_date(
+                    "SELECT [Value] FROM ARGUMENT WHERE Name='Extrude'")
+                logger_a.info(sel)
+                if sel[0] == "err":
+                    v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                    Operational_Sqlite.insert_dates(
+                        "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                    self.update_log()
+                else:
+                    self.Value = sel[1][0][0]
+            if float(self.lineEdit_extru.text().split(".")[0]) > float(self.Value) - 50:
+                self.p.send_now("G91")
+                self.p.send_now("G1 E200 F400")
+                self.p.send_now("G90")
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
+    def laying_off(self):
+        try:
+            if self.Value == "0":
+                sel = Operational_Sqlite.select_date(
+                    "SELECT [Value] FROM ARGUMENT WHERE Name='Extrude'")
+                logger_a.info(sel)
+                if sel[0] == "err":
+                    v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                    Operational_Sqlite.insert_dates(
+                        "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                    self.update_log()
+                else:
+                    self.Value = sel[1][0][0]
+            if float(self.lineEdit_extru.text().split(".")[0]) > float(self.Value) - 50:
+                self.p.send_now("G91")
+                self.p.send_now("G1 E-200 F600")
+                self.p.send_now("G90")
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
+    def heat_up(self):
+        try:
+            sel = Operational_Sqlite.select_date(
+                "SELECT [Value] FROM ARGUMENT WHERE Name='Extrude'")
+            logger_a.info(sel)
+            if sel[0] == "err":
+                v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                Operational_Sqlite.insert_dates(
+                    "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                self.update_log()
+            else:
+                self.p.send_now("M104 S" + sel[1][0][0])
+            self.Blocked_material_state = 0
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
+    def blocked_material_recovery(self):  # 该方法用于系统弹窗提醒缺堵料切需要更换后做恢复使用
+        try:
+            sel = Operational_Sqlite.select_date(
+                "SELECT [Value] FROM ARGUMENT WHERE Name='Extrude'")
+            logger_a.info(sel)
+            if sel[0] == "err":
+                v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                Operational_Sqlite.insert_dates(
+                    "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                self.update_log()
+            else:
+                self.p.send_now("M104 S" + sel[1][0][0])
+            sel_2 = Operational_Sqlite.select_date(
+                "SELECT [Order] FROM BROKEN_BLACKED_MATERIAL WHERE Name='duanliao_re'")
+            logger_a.info(sel_2)
+            if sel_2[0] == "err":
+                v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                      time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                Operational_Sqlite.insert_dates(
+                    "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                self.update_log()
+            else:
+                for order in sel_2[1]:
+                    self.p.send_now(order[0])
+            self.Blocked_material_state = 0
+            for i in range(10):
+                self.p.send_now("M259")  # 恢复打印
+            self.ui_log_duandu.deleteLater()
+
+
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
+    def ui_log_duandu_cancel(self):
+        try:
+            self.p.send_now("G250 S110")  # 峰鸣消音
+            self.p.send_now("M259")
+            self.ui_log_duandu.deleteLater()
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+
     #报故处理
     def runoutordu(self, a):
         try:
@@ -454,14 +620,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #if a == "filament exchange fail, broken":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("1")
-            #if a == "filament error, broken":
-            #    print("line:",a)
-            #    print("self.brokening:",self.brokening)
-            #    print("self.label_start:",self.label_start.text())
-            #    if not self.brokening:
-            #        if self.label_start.text() != "START" and self.label_start.text() != "开始":
-            #            self.changeValue_runoutFlag.emit("1")
-            #            self.brokening = True
+            if a == "filament error, broken":
+                print("line:",a)
+                print("self.brokening:",self.brokening)
+                print("self.label_start:",self.label_start.text())
+                if not self.brokening:
+                    if self.pushButton_startprint.text() != "START" and self.pushButton_startprint.text() != "开始":
+                        self.changeValue_runoutFlag.emit("1")
+                        self.brokening = True
             #if a == "filament exchange fail, block":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("2")

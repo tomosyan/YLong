@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog_log</class>
+ <widget class="QDialog" name="Dialog_log">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>775</width>
+    <height>631</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QLabel" name="label_up">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>70</y>
+     <width>51</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-image:none;
+border:none;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_type">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>70</y>
+     <width>281</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>123456789876543567897654567876543567</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_content">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>170</y>
+     <width>621</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>1233455TVYTYR5B</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_ok">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>520</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_no">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>520</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:gray</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_Return">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>410</y>
+     <width>90</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{background-color: rgb(58, 58, 58);
+color: rgb(221, 221, 221);
+border-radius:10px}
+:pressed{background-color: rgb(118, 118, 118);
+padding-top:5px;
+	padding-left:5px;
+color: rgb(50, 50, 50);
+border-radius:10px}
+</string>
+   </property>
+   <property name="text">
+    <string>退料</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_Load">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>410</y>
+     <width>90</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{background-color: rgb(58, 58, 58);
+color: rgb(221, 221, 221);
+border-radius:10px}
+:pressed{background-color: rgb(118, 118, 118);
+padding-top:5px;
+	padding-left:5px;
+color: rgb(50, 50, 50);
+border-radius:10px}
+</string>
+   </property>
+   <property name="text">
+    <string>上料</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_heatup">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>410</y>
+     <width>90</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{background-color: rgb(58, 58, 58);
+color: rgb(221, 221, 221);
+border-radius:10px}
+:pressed{background-color: rgb(118, 118, 118);
+padding-top:5px;
+	padding-left:5px;
+color: rgb(50, 50, 50);
+border-radius:10px}
+</string>
+   </property>
+   <property name="text">
+    <string>升温</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>775</width>
+     <height>631</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-radius: 30px;
+background-color: qlineargradient(spread:pad, x1:0.01, y1:0.01, x2:0, y2:0.01, stop:0 rgba(198, 198, 198, 255), stop:1 rgba(0, 0, 0, 255));
+</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_type_2">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>60</y>
+     <width>411</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(99, 99, 99);
+border-radius:30px</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_content_2">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>160</y>
+     <width>650</width>
+     <height>230</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(99, 99, 99);
+border-radius:30px</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_down">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>410</y>
+     <width>90</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{background-color: rgb(58, 58, 58);
+color: rgb(221, 221, 221);
+border-radius:10px}
+:pressed{background-color: rgb(118, 118, 118);
+padding-top:5px;
+	padding-left:5px;
+color: rgb(50, 50, 50);
+border-radius:10px}
+</string>
+   </property>
+   <property name="text">
+    <string>下降</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="open_un">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>410</y>
+     <width>90</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{background-color: rgb(58, 58, 58);
+color: rgb(221, 221, 221);
+border-radius:10px}
+:pressed{background-color: rgb(118, 118, 118);
+padding-top:5px;
+	padding-left:5px;
+color: rgb(50, 50, 50);
+border-radius:10px}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <zorder>lineEdit</zorder>
+  <zorder>label_content_2</zorder>
+  <zorder>label_type_2</zorder>
+  <zorder>label_up</zorder>
+  <zorder>label_type</zorder>
+  <zorder>label_content</zorder>
+  <zorder>pushButton_ok</zorder>
+  <zorder>pushButton_no</zorder>
+  <zorder>pushButton_Return</zorder>
+  <zorder>pushButton_Load</zorder>
+  <zorder>pushButton_heatup</zorder>
+  <zorder>pushButton_down</zorder>
+  <zorder>open_un</zorder>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

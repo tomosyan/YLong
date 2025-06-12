@@ -1,0 +1,67 @@
+2025-06-12T09:13:06.027161+0800 INFO INLONG CONNECT FAILED!
+2025-06-12T09:13:07.144314+0800 INFO 获取播放库句柄成功
+2025-06-12T09:13:10.658555+0800 INFO Login device fail, error code is: 7
+2025-06-12T09:13:10.706476+0800 INFO Login device succesed
+2025-06-12T09:13:11.855171+0800 INFO Open preview fail, error code is: 3
+2025-06-12T09:13:11.855171+0800 INFO Open preview successed
+2025-06-12T09:13:12.035171+0800 ERROR 'Ui_mainwindow' object has no attribute 'label_date2'
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:900
+2025-06-12T09:13:12.591698+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:13.585351+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:14.582121+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:15.588497+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:16.587458+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:17.593561+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:18.585857+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:19.582891+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:20.591248+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:21.586699+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:22.583964+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:23.592203+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:24.590728+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:25.594616+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:26.587444+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:27.597909+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:28.592141+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:29.585783+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:30.595599+0800 ERROR could not convert string to float: ''
+error file:D:\yl20250610\YLong\INLONG2025052101(UI)\AMPS1200.py
+error line:879
+2025-06-12T09:13:31.182436+0800 INFO shutdown
