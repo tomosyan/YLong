@@ -30,144 +30,7 @@
        <property name="leftMargin">
         <number>2</number>
        </property>
-       <item row="1" column="8" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="label_message">
-         <property name="font">
-          <font>
-           <family>微软雅黑 Light</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>信息</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <spacer name="horizontalSpacer_14">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>195</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="0" rowspan="2">
-        <widget class="QGroupBox" name="groupBox_26">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>250</width>
-           <height>110</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>250</width>
-           <height>110</height>
-          </size>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-         <widget class="QLabel" name="label_logo">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>10</y>
-            <width>214</width>
-            <height>57</height>
-           </rect>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>214</width>
-            <height>57</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>214</width>
-            <height>57</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="0" column="6">
-        <widget class="QPushButton" name="pushButton_change">
-         <property name="minimumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="11">
-        <spacer name="horizontalSpacer_18">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>195</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="2" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="labelvector">
-         <property name="font">
-          <font>
-           <family>微软雅黑 Light</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>主页</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="12" rowspan="2">
+       <item row="0" column="13" rowspan="2">
         <widget class="QGroupBox" name="groupBox_21">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -261,45 +124,21 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="8">
-        <widget class="QPushButton" name="pushButton_message">
-         <property name="minimumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
+       <item row="1" column="7" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_change">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
+          <string>调校</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="5">
-        <spacer name="horizontalSpacer_15">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>196</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <widget class="QPushButton" name="pushButton_vector">
          <property name="minimumSize">
           <size>
@@ -324,131 +163,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="6" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="label_change">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>调校</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="9">
-        <spacer name="horizontalSpacer_17">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>196</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="4">
-        <widget class="QPushButton" name="pushButton_task">
-         <property name="minimumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>60</width>
-           <height>60</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="4" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="label_task">
-         <property name="font">
-          <font>
-           <family>微软雅黑 Light</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>任务</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="7">
-        <spacer name="horizontalSpacer_16">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>195</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="10" alignment="Qt::AlignHCenter">
-        <widget class="QLabel" name="label_system">
-         <property name="font">
-          <font>
-           <family>微软雅黑 Light</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>系统</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="13">
-        <spacer name="horizontalSpacer_36">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="0">
-        <spacer name="verticalSpacer_27">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="10">
+       <item row="0" column="11">
         <widget class="QPushButton" name="pushButton_system">
          <property name="minimumSize">
           <size>
@@ -473,7 +188,276 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="9">
+        <widget class="QPushButton" name="pushButton_message">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_14">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>195</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="3" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="labelvector">
+         <property name="font">
+          <font>
+           <family>微软雅黑 Light</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>主页</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="pushButton_task">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="12">
+        <spacer name="horizontalSpacer_18">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>195</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="10">
+        <spacer name="horizontalSpacer_17">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>196</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="7">
+        <widget class="QPushButton" name="pushButton_change">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>60</width>
+           <height>60</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_task">
+         <property name="font">
+          <font>
+           <family>微软雅黑 Light</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>任务</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6">
+        <spacer name="horizontalSpacer_15">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>196</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="11" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_system">
+         <property name="font">
+          <font>
+           <family>微软雅黑 Light</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>系统</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer_27">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="8">
+        <spacer name="horizontalSpacer_16">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>195</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1" rowspan="2">
+        <widget class="QGroupBox" name="groupBox_26">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>240</width>
+           <height>110</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>250</width>
+           <height>110</height>
+          </size>
+         </property>
+         <property name="title">
+          <string/>
+         </property>
+         <widget class="QLabel" name="label_logo">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>10</y>
+            <width>214</width>
+            <height>57</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>214</width>
+            <height>57</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>214</width>
+            <height>57</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="9" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="label_message">
+         <property name="font">
+          <font>
+           <family>微软雅黑 Light</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>信息</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
         <spacer name="horizontalSpacer_13">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -486,13 +470,45 @@
          </property>
         </spacer>
        </item>
+       <item row="0" column="14">
+        <spacer name="horizontalSpacer_36">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <spacer name="horizontalSpacer_55">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>10</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -1143,7 +1159,7 @@
              <string/>
             </property>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>11</x>
@@ -1338,7 +1354,7 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>11</x>
@@ -1521,16 +1537,14 @@
              </item>
             </layout>
            </widget>
+           <zorder>layoutWidget</zorder>
            <zorder>label_showcamera</zorder>
            <zorder>label_showcamera_2</zorder>
-           <zorder>layoutWidget_2</zorder>
            <zorder>layoutWidget</zorder>
            <zorder>pushButton_closecamera</zorder>
            <zorder>pushButton_jp</zorder>
            <zorder>label_35</zorder>
            <zorder>label_30</zorder>
-           <zorder>lineEdit_extru</zorder>
-           <zorder>lineEdit_bed</zorder>
           </widget>
           <widget class="QGroupBox" name="groupBox_6">
            <property name="geometry">
@@ -6259,6 +6273,12 @@ opacity: 0.3</string>
         </item>
         <item row="6" column="2" alignment="Qt::AlignRight">
          <widget class="QLabel" name="label_errx">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>30</width>
@@ -6408,6 +6428,12 @@ opacity: 0.3</string>
         </item>
         <item row="6" column="9" alignment="Qt::AlignRight">
          <widget class="QLabel" name="label_errz">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>30</width>
@@ -6477,6 +6503,12 @@ opacity: 0.3</string>
         </item>
         <item row="6" column="5">
          <widget class="QLabel" name="label_erry">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>30</width>

@@ -1,4 +1,5 @@
 import ctypes
+import inspect
 import queue
 import re
 import subprocess
@@ -136,6 +137,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(Ui_mainwindow, self).__init__()
         self.setupUi(self)
         self.is_fullscreen = False
+        self.ui_log =None
         # 初始化全屏标签
         self.fullscreen_label = None
         #当前碰头和热床的温度
@@ -406,9 +408,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.flag_pause = 0
 
     ##打印剩余时间显示
-    def set_lefttime(self,m_left_time):
+    def set_lefttime(self,m_left_time,linenum):
         self.label_sy.setText(m_left_time)
-        logger_a.info(f"left_time:left time show {m_left_time}!")
+        logger_a.info(f"left_time:left time show {m_left_time} line num：{linenum}!")
 
     def read_settings(self):
         # 获取当前脚本所在目录的路径
@@ -424,13 +426,13 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.s_langID = settings.value("System/langID")
         self.s_devID =settings.value("Device/deviceID")
 
-        self.label_3.setText(self.s_systemverID)
-        self.label_4.setText(self.s_softwareID)
-        self.label_7.setText(self.s_controlID)
-        self.label_8.setText(self.s_IP)
-        self.label_10.setText(self.s_authorization)
+        self.label_3.setText(str(self.s_systemverID))
+        self.label_4.setText(str(self.s_softwareID))
+        self.label_7.setText(str(self.s_controlID))
+        self.label_8.setText(str(self.s_IP))
+        self.label_10.setText(str(self.s_authorization))
         #self.comboBox.setCurrentText(self.s_langID)
-        self.label_bhtext.setText(self.s_devID)
+        self.label_bhtext.setText(str(self.s_devID))
 
     #报故处理
     def runoutordu(self, a):
@@ -479,7 +481,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #        self.blocking = True
 
             if a == "LOBOTICS MOTOR POWER OFF":
-                if self.pushButton_startprint.text() == "PAUSE" or self.pushButton_startprint.text() == "暂停":
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n电机驱动电源已断开")
@@ -497,7 +499,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
             if "LOBOTICS X" in a:
-                if self.pushButton_startprint.text() == "PAUSE" or self.pushButton_startprint.text() == "暂停":
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "X电机驱动错误!")
@@ -515,7 +517,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
             if "LOBOTICS Y" in a:
-                if self.pushButton_startprint.text() == "PAUSE" or self.pushButton_startprint.text() == "暂停":
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Y电机驱动错误!")
@@ -534,7 +536,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_log_motorpoweroff.show()
             if "LOBOTICS Z" in a:#LOBOTICS Z
                     print("  9898989819999999999:",a)
-                    if self.pushButton_startprint.text() == "PAUSE" or self.pushButton_startprint.text() == "暂停":
+                    if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                         self.exit_log_cancelprint()  # 先关闭  然后弹窗
                         if self.comboBox.currentText() == "中文":
                             self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
@@ -584,21 +586,21 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     pass
                 if state[-5] == "1":  # X轴故障
-                    self.label_errx.setStyleSheet('border-image:None;background-color: rgb(0, 255, 0);')
+                    self.label_errx.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(0, 255, 0);')
                 else:
-                    self.label_errx.setStyleSheet('border-image:None;background-color: rgb(255, 0, 0);')
+                    self.label_errx.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(255, 0, 0);')
                 if state[-6] == "1":  # Y轴故障
-                    self.label_erry.setStyleSheet('border-image:None;background-color: rgb(0, 255, 0);')
+                    self.label_erry.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(0, 255, 0);')
                 else:
-                    self.label_erry.setStyleSheet('border-image:None;background-color: rgb(255, 0, 0);')
+                    self.label_erry.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(255, 0, 0);')
                 if state[-7] == "1":  # Z轴故障
-                    self.label_errz.setStyleSheet('border-image:None;background-color: rgb(0, 255, 0);')
+                    self.label_errz.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(0, 255, 0);')
                 else:
-                    self.label_errz.setStyleSheet('border-image:None;background-color: rgb(255, 0, 0);')
+                    self.label_errz.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(255, 0, 0);')
                 if state[-9] == "1":  # E轴故障
-                    self.label_erre.setStyleSheet('border-image:None;background-color: rgb(255, 0, 0);')
+                    self.label_erre.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(255, 0, 0);')
                 else:
-                    self.label_erre.setStyleSheet('border-image:None;background-color: rgb(0, 255, 0);')
+                    self.label_erre.setStyleSheet('border-radius: 15px;border-image:None;background-color: rgb(0, 255, 0);')
 
                 if state[-11] == "1":  # 断料检测
                     #print("*/********************line:",aaaa)
@@ -660,27 +662,33 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         return
                     left_setText -= 1
                     self.label_sy.setText(self.second_string_time(left_setText))
+                    current_line = inspect.currentframe().f_lineno
+                    self.set_lefttime(self.second_string_time(left_setText),current_line)
                 if "h" not in left and "m" in left and "s" in left:
                     left_setText = int(left.split("m")[0]) * 60 + \
                                    int(left.split("s")[0].split("  ")[1])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
-                        self.set_lefttime(self.second_string_time(left_setText))
+                        current_line = inspect.currentframe().f_lineno
+                        self.set_lefttime(self.second_string_time(left_setText), current_line)
                         return
                     left_setText -= 1
                     self.label_sy.setText(self.second_string_time(left_setText))
-                    self.set_lefttime(self.second_string_time(left_setText))
+                    current_line = inspect.currentframe().f_lineno
+                    self.set_lefttime(self.second_string_time(left_setText),current_line)
                 if "h" not in left and "m" not in left and "s" in left:
                     left_setText = int(left.split("s")[0])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
-                        self.set_lefttime(self.second_string_time(left_setText))
+                        current_line = inspect.currentframe().f_lineno
+                        self.set_lefttime(self.second_string_time(left_setText), current_line)
                         return
                     left_setText -= 1
                     if self.label_sy.text() == "0s":
                         return
                     self.label_sy.setText(self.second_string_time(left_setText))
-                    self.set_lefttime(self.second_string_time(left_setText))
+                    current_line = inspect.currentframe().f_lineno
+                    self.set_lefttime(self.second_string_time(left_setText),current_line)
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
             if not self.flag_printing:
@@ -697,7 +705,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         else:
                             if self.ui_log != None:
                                 self.ui_log.close()  # 关闭弹窗
-                            self.ui_log = None  # 清除弹窗引用
+                                self.ui_log = None  # 清除弹窗引用
                     except Exception as e:
                         print(e)
                     if wendu != "":
@@ -731,7 +739,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     self.local_position = self.label_xyz.text()
                     self.time_tole_10min = 0
-            self.label_date2.setText(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+            #self.label_date2.setText(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
             if self.p.paused:
                 wendu = self.lineEdit_extru.text().split("℃")[0]
                 if float(wendu) < 100:
@@ -786,9 +794,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
     def set_time_line(self, a, b):  # 结束打印
-        if a==0 and b==0:
+        if a==0 and b==0:#测试用
             logger_a.info("Infor:a==0 and b==0,gcode file no lines!")
-            return
         if int(a) >= int(b):
             self.timer_use_left.stop()
             self.label_sy.setText("0s")
@@ -839,7 +846,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 # 暂停不计入
                 if self.p.paused:
                     return
-                logger_a.error(str(a))
+                #logger_a.error(str(a))
+                logger_a.info("jisuan_print_time cmd string:"+str(a))
                 if "E-" not in a:
                     if "F" in a:
                         # 使用正则表达式提取 E 后面的数值
@@ -898,12 +906,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                       "self.print_left_time:", self.print_left_time)
                 if self.print_left_time >= self.print_total_time:
                     self.label_sy.setText("0s")
-                    self.set_lefttime(self.second_string_time("0s"))
+                    self.set_lefttime(self.second_string_time("0s"),907)
                     return
                 left = self.second_string_time(int(self.print_left_time))
                 total = self.second_string_time(int(self.print_total_time))
+                if int(self.print_left_time)<0:
+                    logger_a.info(f"print_total_time：{self.print_total_time}print_left_time：{self.print_left_time} total_E: {self.total_E}  E_jichu：{self.current_E_jichu} print_time：{self.print_time}!\n")
+
                 self.label_sy.setText(str(left))
-                self.set_lefttime(str(left))
+                self.set_lefttime(str(left),912)
                 self.label_totletime.setText(str(total))
                 self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
 
@@ -1369,7 +1380,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.label_temprc.setText('当前温度：' + str(c) + '℃' + '  设置温度：' + str(d) + '℃')
         self.lineEdit_bed.setText(str(c) + '℃')
         self.lineEdit_rcset.setText(str(d) + '℃')
-
+    #显示X,Y,Z当前坐标 同时处理Z轴在不同位置的事件处理
     def set_xyz_line(self, x, y, z):
         self.label_xyz.setText("X:" + x + "    Y:" + y + "    Z:" + z)
         if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
@@ -3032,7 +3043,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                     self.runtime_left = 0
                     if self.comboBox.currentText() == "中文":
-                        self.pushButton_startprint.setText("暂停")
+                        self.pushButton_startprint.setText("  暂停")
                     elif self.comboBox.currentText() == "English":
                         self.pushButton_startprint.setText("PAUSE")
                     elif self.comboBox.currentText() == "日本語.":
@@ -3839,6 +3850,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.distance_use = distance_map.get(button_num)
 
 if __name__ == "__main__":
+
+    import subprocess
+    # # 执行批处理文件 防止重复执行实例
+    # try:
+    #     bat_path = r'.\File\killer.bat'
+    #     ret=os.system(bat_path)
+    #     print(f"Return code: {ret}")
+    # except Exception as e:
+    #     print(f"Error: {e}")
     try:
         import sys
         app = QtWidgets.QApplication(sys.argv)
