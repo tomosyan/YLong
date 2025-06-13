@@ -438,6 +438,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.comboBox.setCurrentText(self.s_langID)
         self.label_bhtext.setText(str(self.s_devID))
 
+    def write_settings(self,comptimes):
+        settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        self.s_systemverID = settings.setValue("System/compiletime",comptimes)
+
     def exit_log_pause_3(self, a):
         try:
             if self.comboBox.currentText() == "中文":
@@ -620,12 +624,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #if a == "filament exchange fail, broken":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("1")
-            if a == "filament error, broken":
+            if  "filament error, broken" in a:
                 print("line:",a)
                 print("self.brokening:",self.brokening)
-                print("self.label_start:",self.label_start.text())
+                #print("self.label_start:",self.label_start.text())
+                logger_a.info(f"brokening：line:{a}  broken: {self.brokening}")
                 if not self.brokening:
-                    if self.pushButton_startprint.text() != "START" and self.pushButton_startprint.text() != "开始":
+                    #断料提示判断条件
+                    if self.pushButton_startprint.text().strip() != "START" and self.pushButton_startprint.text().strip() != "开始":
                         self.changeValue_runoutFlag.emit("1")
                         self.brokening = True
             #if a == "filament exchange fail, block":
@@ -3344,7 +3350,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             for i in range(len(readlines)):
                 add_num = ""
                 if not readlines[i].startswith(";"):
-                    if "G1" in readlines[i]:
+                    if "G1" in readlines[i] or "G2" in readlines[i] or "G3" in readlines[i]:
                         if ";" in readlines[i]:
                             readlines[i] = readlines[i].split(";")[0]
                         if "E" in readlines[i]:
@@ -4025,10 +4031,26 @@ if __name__ == "__main__":
     #     print(f"Return code: {ret}")
     # except Exception as e:
     #     print(f"Error: {e}")
+    from datetime import datetime
+
+    def get_compile_time(file_path):
+        # 获取文件的修改时间
+        modify_time = os.path.getmtime(file_path)
+        # 将修改时间转换为日期时间对象
+        compile_time = datetime.datetime.fromtimestamp(modify_time)
+        return compile_time
+
     try:
         import sys
+
+        # # 获取当前脚本文件的路径
+        # script_path = os.path.abspath(__file__)
+        # # 获取编译时间
+        # compile_time = get_compile_time(script_path)
+        # print(f"Compile Time: {compile_time}")
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
+        # first.write_settings(compile_time)
         first.show()
         first.showFullScreen()
         sys.exit(app.exec_())
