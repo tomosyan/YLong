@@ -2762,8 +2762,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.label_temppt_3.setText("Unit:mm")
                 self.label_pengtou_targ_temp.setText("Stemp：")
                 self.label_bed_targ_temp.setText("Stemp：")
-                self.label_temppt.setText("CTemp："+str(self.current_pengtou_temp)+"℃")
-                self.label_temprc.setText("CTemp："+str(self.current_bed_temp)+"℃")
+                self.label_temppt.setText("CTemp：")
+                self.label_temprc.setText("CTemp：")
 
 
 
