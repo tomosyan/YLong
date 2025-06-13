@@ -2,8 +2,8 @@
 
 
 a = Analysis(
-    ['D:\\git\\YLong\\INLONG2025052101(UI)\\AMPS1200.py'],
-    pathex=['D:\\INLONG2025050801\\.venv\\Lib\\site-packages'],
+    ['D:\\git\\YLong\\INLONG2025052101(UI)\\SC12060.py'],
+    pathex=['D:\\git\\YLong\\INLONG2025052101(UI)\\.venv\\Lib\\site-packages'],
     binaries=[],
     datas=[],
     hiddenimports=['PyQt5.sip'],
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='AMPS1200',
+    name='SC12060',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
