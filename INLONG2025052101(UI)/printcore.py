@@ -501,6 +501,7 @@ class printcore(QThread):
     def return_tem(self):
         return [self.wendu_ext_now, self.wendu_ext_target, self.wendu_bed_now, self.wendu_bed_target]
 
+    #从串口获取底层信息，主要解析坐标和状态等信息
     def _listen(self):
         """This function acts on messages from the firmware
         """
