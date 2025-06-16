@@ -1,0 +1,55 @@
+2025-06-16T08:34:54.209122+0800 INFO INLONG CONNECT FAILED!
+2025-06-16T08:34:56.608004+0800 INFO 获取播放库句柄成功
+2025-06-16T08:35:00.116699+0800 INFO Login device fail, error code is: 7
+2025-06-16T08:35:00.160678+0800 INFO Login device succesed
+2025-06-16T08:35:01.237734+0800 INFO Open preview fail, error code is: 3
+2025-06-16T08:35:01.237734+0800 INFO Open preview successed
+2025-06-16T08:35:02.275441+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:03.276390+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:04.273355+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:05.276217+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:06.272417+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:07.271175+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:08.271789+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:09.258513+0800 INFO ('ok', [('300',)])
+2025-06-16T08:35:09.275483+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:09.707076+0800 ERROR 'Ui_mainwindow' object has no attribute 'Value'
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:537
+2025-06-16T08:35:10.057875+0800 ERROR 'Ui_mainwindow' object has no attribute 'Value'
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:515
+2025-06-16T08:35:10.277610+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:10.710276+0800 INFO ('ok', [('300',)])
+2025-06-16T08:35:10.711275+0800 INFO ('ok', [('G250 S110',)])
+2025-06-16T08:35:11.281285+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:12.255855+0800 INFO INLONG CONNECT FAILED!
+2025-06-16T08:35:12.282067+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:13.282229+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-16T08:35:14.272573+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907

@@ -410,6 +410,18 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.flag_pause = 0
 
         self.changeValue_runoutFlag.connect(self.runout_ui_log)
+    def set_duanduliao_ui(self,uiobject):
+        # 头部背景
+        uiobject.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
+        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 窗体背景透明
+
+        uiobject.setStyleSheet("""
+                    QDialog {
+                        background: rgba(255,255,255,0.1);
+                        border-radius: 8px;
+                    }
+                """)
+
 
     ##打印剩余时间显示
     def set_lefttime(self,m_left_time,linenum):
@@ -465,19 +477,20 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def runout_ui_log(self, a):  # 断堵料
         try:
-            print("11111111111111111111111111111111111111111:",a)
+            print("11111111111111111111111111111111111111111:"+a)
             self.Blocked_material_state = 1
-            self.Value = self.lineEdit_extru_target.text().split(".")[0].replace("℃", "")
-
+            self.Value = self.lineEdit_ptset.text().split(".")[0].replace("℃", "")
+            logger_a.info("runout_ui_log a:"+a +'\n')
             if a == "1":
                 self.flag_D = False
                 self.exit_log_pause_3("sys")
-
+                logger_a.info("runout_ui_log a:" + self.comboBox.currentText() + '\n')
                 if self.comboBox.currentText() == "中文":
                     self.ui_log_duandu = ui_dialog_log_duandu("zhuyi", "CN", "\n发生断料，请重新上料和检查温度")
                 else:
                     self.ui_log_duandu = ui_dialog_log_duandu("zhuyi", "EN",
                                                               "Material filament runout,\nPlease load filament and check temperture")
+                self.set_duanduliao_ui(self.ui_log_duandu)
                 self.ui_log_duandu.pushButton_ok.clicked.connect(self.blocked_material_recovery)  # 设置完成
                 self.ui_log_duandu.pushButton_no.clicked.connect(self.ui_log_duandu_cancel)  # quxiao
                 self.ui_log_duandu.pushButton_heatup.clicked.connect(self.heat_up)  # 升温
@@ -624,6 +637,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #if a == "filament exchange fail, broken":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("1")
+            logger_a.info("if  filament error, broken in a:\n")
             if  "filament error, broken" in a:
                 print("line:",a)
                 print("self.brokening:",self.brokening)
@@ -634,6 +648,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if self.pushButton_startprint.text().strip() != "START" and self.pushButton_startprint.text().strip() != "开始":
                         self.changeValue_runoutFlag.emit("1")
                         self.brokening = True
+                        logger_a.info("self.changeValue_runoutFlag.emit(1)\n")
             #if a == "filament exchange fail, block":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("2")
@@ -778,11 +793,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     #print("*/********************line:",aaaa)
                     #print("454545445545454:",state[-11])
                     self.label_38.setStyleSheet('background-color: red;border-radius: 8px;')
-
+                    self.dyk_use()
                 else:
                     #print("*/********************2line:", a)
                     #print("454545445545454-2:", state[-11])
                     self.label_38.setStyleSheet('background-color: green;border-radius: 8px;')
+                    self.dyg_use()
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
@@ -868,7 +884,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     wendu = self.lineEdit_extru.text().split("℃")[0]
                     # 喷头温度异常弹窗
                     try:
-                        if float(wendu) > 400:
+                        if float(wendu) > 450:
                             self.p.send_now("G250 S889\n")  # 亮红灯
                             if self.checkBox_language.currentText() == "中文":
                                 self.ui_log = ui_dialog_log("zhuyi", "CN", "喷头温度异常")
@@ -4050,7 +4066,8 @@ if __name__ == "__main__":
         # print(f"Compile Time: {compile_time}")
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
-        # first.write_settings(compile_time)
+        compile_verion="V2.0.0.1"
+        first.write_settings(compile_verion)
         first.show()
         first.showFullScreen()
         sys.exit(app.exec_())

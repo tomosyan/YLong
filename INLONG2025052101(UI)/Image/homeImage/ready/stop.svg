@@ -1,0 +1,95 @@
+<svg id="工具栏" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="71" height="71.5" viewBox="0 0 142 143">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #424549;
+        stroke-linejoin: round;
+        stroke-width: 1px;
+        stroke: url(#linear-gradient);
+        filter: url(#filter);
+      }
+
+      .cls-2 {
+        fill: #fff;
+        fill-opacity: 0.6;
+        fill-rule: evenodd;
+        filter: url(#filter-2);
+      }
+
+      .cls-3 {
+        fill: none;
+        stroke: #10d0ed;
+        stroke-linecap: round;
+        stroke-width: 2.083px;
+        filter: url(#filter-3);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="71.047" y1="141.875" x2="71.047" y2="0.469" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1a1b1e"/>
+      <stop offset="1" stop-color="#1b1c1f"/>
+    </linearGradient>
+    <filter id="filter" x="-3" y="-3" width="148" height="148" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-1.827" dy="0.813" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="1"/>
+      <feFlood result="flood" flood-opacity="0.17"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feImage preserveAspectRatio="none" x="0.34375" y="0.46875" width="141.406" height="141.406" result="image" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTQxLjQwNiIgaGVpZ2h0PSIxNDEuNDA2IiB2aWV3Qm94PSIwIDAgMTQxLjQwNiAxNDEuNDA2Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBvcGFjaXR5OiAwLjI7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQpOwogICAgICB9CiAgICA8L3N0eWxlPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSI3MC43MDMiIHkxPSIxNDEuNDA2IiB4Mj0iNzAuNzAzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IGNsYXNzPSJjbHMtMSIgd2lkdGg9IjE0MS40MDYiIGhlaWdodD0iMTQxLjQwNiIvPgo8L3N2Zz4K"/>
+      <feComposite result="composite-2" operator="in" in2="SourceGraphic"/>
+      <feBlend result="blend-2" mode="overlay" in2="blend"/>
+      <feFlood result="flood-2"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feOffset result="offset-2" dx="1"/>
+      <feOffset result="offset-3" dx="-1" in="composite-3"/>
+      <feComposite result="composite-4" operator="xor" in="offset-2"/>
+      <feComposite result="composite-5" operator="in" in2="SourceAlpha"/>
+      <feGaussianBlur result="blur-2" stdDeviation="3.162"/>
+      <feComponentTransfer result="comp">
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="multiply" in2="blend-2"/>
+      <feGaussianBlur result="blur-3" stdDeviation="0.333" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#fff" flood-opacity="0.15"/>
+      <feComposite result="composite-8" operator="out" in2="blur-3"/>
+      <feComposite result="composite-7" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-4" mode="overlay" in2="blend-3"/>
+      <feGaussianBlur result="blur-4" in="SourceAlpha"/>
+      <feFlood result="flood-4" flood-color="#fff" flood-opacity="0.1"/>
+      <feComposite result="composite-9" operator="out" in2="blur-4"/>
+      <feOffset result="offset-4" dx="-0.914" dy="0.407"/>
+      <feComposite result="composite-10" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-5" mode="overlay" in2="blend-4"/>
+    </filter>
+    <filter id="filter-2" x="50" y="52" width="43" height="42" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.914" dy="0.407" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="1"/>
+      <feFlood result="flood" flood-opacity="0.35"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+    <filter id="filter-3" x="1" y="1.344" width="140.375" height="140.406" filterUnits="userSpaceOnUse">
+      <feImage preserveAspectRatio="none" x="1" y="1.34375" width="140.375" height="140.406" result="image" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTQwLjM3NSIgaGVpZ2h0PSIxNDAuNDA2IiB2aWV3Qm94PSIwIDAgMTQwLjM3NSAxNDAuNDA2Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBvcGFjaXR5OiAwLjQ7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQpOwogICAgICB9CiAgICA8L3N0eWxlPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSI3MC4xODgiIHkxPSIxNDAuNDA2IiB4Mj0iNzAuMTg4IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IGNsYXNzPSJjbHMtMSIgd2lkdGg9IjE0MC4zNzUiIGhlaWdodD0iMTQwLjQwNiIvPgo8L3N2Zz4K"/>
+      <feComposite result="composite" operator="in" in2="SourceGraphic"/>
+      <feBlend result="blend" mode="darken" in2="SourceGraphic"/>
+      <feGaussianBlur result="blur" stdDeviation="1.667" in="SourceAlpha"/>
+      <feFlood result="flood" flood-color="#0091d1"/>
+      <feComposite result="composite-3" operator="out" in2="blur"/>
+      <feComposite result="composite-2" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+  </defs>
+  <g id="第一组">
+    <g id="Stop">
+      <g style="fill: #424549; filter: url(#filter)">
+        <circle id="BASE" class="cls-1" cx="71.047" cy="71.172" r="70.703" style="stroke: inherit; filter: none; fill: inherit"/>
+      </g>
+      <use xlink:href="#BASE" style="stroke: url(#linear-gradient); filter: none; fill: none"/>
+      <path id="STOP-2" data-name="STOP" class="cls-2" d="M52.975,53.068H91.437V91.53H52.975V53.068Z"/>
+      <g style="fill: none; filter: url(#filter-3)">
+        <circle id="椭圆_6_副本_拷贝" data-name="椭圆 6 副本 拷贝" class="cls-3" cx="71.188" cy="71.547" r="70.188" style="stroke: inherit; filter: none; fill: inherit"/>
+      </g>
+      <use xlink:href="#椭圆_6_副本_拷贝" style="stroke: #10d0ed; filter: none; fill: none"/>
+    </g>
+  </g>
+</svg>

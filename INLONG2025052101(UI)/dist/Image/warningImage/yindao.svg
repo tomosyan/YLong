@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="75.684" height="75.208" viewBox="0 0 159 158">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fbd008;
+        stroke: #798493;
+        stroke-width: 1px;
+        fill-rule: evenodd;
+        filter: url(#filter);
+      }
+    </style>
+    <filter id="filter" x="-0.5" y="-0.5" width="160" height="159" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dy="20" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="4.472"/>
+      <feFlood result="flood" flood-color="#7e7e7e" flood-opacity="0"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g style="fill: #fbd008; filter: url(#filter)">
+    <path id="引导" class="cls-1" d="M79.5,0C123.407,0,159,35.37,159,79s-35.593,79-79.5,79S0,122.63,0,79,35.593,0,79.5,0Zm24.157,135.675s23.894-7.444,36.77-28.038c5.536-8.856,5.15-52.132-1.279-61.325-12.046-17.223-35.3-28.7-59.939-28.7-25.791,0-48.249,12.584-59.906,31.169-5.419,8.64-4.583,52.179,2.183,61.535,8.31,11.491,22.256,17.114,37.159,21.553v9.518h11.67l30.008-24.747L70.315,84.276H58.645V95.7s-19.851-4.32-25.007-19.037A76.572,76.572,0,0,1,78.65,61.432c30.021,0,45.012,17.133,45.012,17.133L103.657,93.794v41.881ZM28.637,53.817S51.19,30.973,78.65,30.973,131.437,51.448,132,55.721V69.046S106.716,50.01,78.65,50.01,28.637,69.046,28.637,69.046V53.817Zm0,32.362s12.116,18.236,40.011,20.941V97.6l18.338,17.133L68.648,131.867v-7.614S40.073,117.084,30.3,103.312C28.078,100.174,28.349,89.771,28.637,86.179ZM113.66,97.6v20.941s12.768-5.455,16.671-15.23C133.137,96.283,132,86.179,132,86.179Z" style="stroke: inherit; filter: none; fill: inherit"/>
+  </g>
+  <use xlink:href="#引导" style="stroke: #798493; filter: none; fill: none"/>
+</svg>

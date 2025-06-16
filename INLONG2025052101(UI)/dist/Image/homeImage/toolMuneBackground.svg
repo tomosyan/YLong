@@ -1,0 +1,44 @@
+<svg id="工具条2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1129" height="86.5" viewBox="0 0 2258 173">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #313236;
+        filter: url(#filter);
+      }
+
+      .cls-2 {
+        fill: #292a2e;
+        fill-rule: evenodd;
+        filter: url(#filter-2);
+      }
+    </style>
+    <filter id="filter" x="-9" y="-2" width="2267" height="182" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-4.568" dy="2.034" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2.236"/>
+      <feFlood result="flood" flood-opacity="0.75"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" stdDeviation="2.236" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.08"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-4.568" dy="2.034"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-2" x="233" y="16" width="1647" height="148" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.914" dy="0.407" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="1.414"/>
+      <feFlood result="flood" flood-color="#fff" flood-opacity="0.09"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.414" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-opacity="0.57"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.914" dy="0.407"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" mode="multiply" in2="blend"/>
+    </filter>
+  </defs>
+  <rect id="body_拷贝" data-name="body 拷贝" class="cls-1" width="2258" height="173" rx="35.466" ry="35.466"/>
+  <path id="field_拷贝" data-name="field 拷贝" class="cls-2" d="M271.277,17.68H1842.61c19.68,0,35.64,10.154,35.64,22.68v98.28c0,12.526-15.96,22.68-35.64,22.68H271.277c-19.683,0-35.639-10.154-35.639-22.68V40.36C235.638,27.834,251.594,17.68,271.277,17.68Z"/>
+</svg>

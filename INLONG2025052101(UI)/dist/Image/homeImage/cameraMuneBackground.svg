@@ -1,0 +1,44 @@
+<svg id="工具条_拷贝" data-name="工具条 拷贝" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="814" height="94.5" viewBox="0 0 1628 189">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #313236;
+        filter: url(#filter);
+      }
+
+      .cls-2 {
+        fill: #292a2e;
+        fill-rule: evenodd;
+        filter: url(#filter-2);
+      }
+    </style>
+    <filter id="filter" x="-9" y="-2" width="1637" height="198" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-4.568" dy="2.034" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2.236"/>
+      <feFlood result="flood" flood-opacity="0.75"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" stdDeviation="2.236" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.08"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-4.568" dy="2.034"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-2" x="364" y="24" width="292" height="147" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.914" dy="0.407" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="1.414"/>
+      <feFlood result="flood" flood-color="#fff" flood-opacity="0.09"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.414" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-opacity="0.57"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.914" dy="0.407"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" mode="multiply" in2="blend"/>
+    </filter>
+  </defs>
+  <rect id="body" class="cls-1" width="1628" height="189" rx="35.466" ry="35.466"/>
+  <path id="field" class="cls-2" d="M395.033,24.992H627.972c7.2,0,27.028,10.181,27.028,22.739v98.536c0,12.559-19.833,22.739-27.028,22.739H395.033c-7.2,0-29.028-10.18-29.028-22.739V47.732C366.005,35.173,387.837,24.992,395.033,24.992Z"/>
+</svg>

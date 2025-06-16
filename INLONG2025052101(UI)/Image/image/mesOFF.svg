@@ -1,0 +1,447 @@
+<svg id="主菜单" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="118.048" height="67.116" viewBox="0 0 248 141">
+  <defs>
+    <style>
+      .cls-1, .cls-10, .cls-13, .cls-3, .cls-7 {
+        fill: #00c6ff;
+      }
+
+      .cls-1, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19, .cls-2, .cls-20, .cls-21, .cls-3, .cls-4, .cls-5, .cls-7, .cls-8, .cls-9 {
+        fill-rule: evenodd;
+      }
+
+      .cls-1 {
+        filter: url(#filter);
+      }
+
+      .cls-12, .cls-15, .cls-17, .cls-2, .cls-20, .cls-5, .cls-9 {
+        fill: #313236;
+      }
+
+      .cls-2 {
+        filter: url(#filter-2);
+      }
+
+      .cls-3 {
+        filter: url(#filter-3);
+      }
+
+      .cls-11, .cls-14, .cls-19, .cls-4, .cls-8 {
+        fill: #1c1d1e;
+      }
+
+      .cls-4 {
+        filter: url(#filter-4);
+      }
+
+      .cls-5 {
+        filter: url(#filter-5);
+      }
+
+      .cls-6 {
+        font-size: 10px;
+        text-anchor: middle;
+        font-family: "GoudySans Blk BT";
+        font-weight: 800;
+      }
+
+      .cls-18, .cls-6 {
+        fill: #fff;
+      }
+
+      .cls-7 {
+        filter: url(#filter-6);
+      }
+
+      .cls-8 {
+        filter: url(#filter-7);
+      }
+
+      .cls-9 {
+        filter: url(#filter-8);
+      }
+
+      .cls-10 {
+        filter: url(#filter-9);
+      }
+
+      .cls-11 {
+        filter: url(#filter-10);
+      }
+
+      .cls-12 {
+        filter: url(#filter-11);
+      }
+
+      .cls-13 {
+        filter: url(#filter-12);
+      }
+
+      .cls-14 {
+        filter: url(#filter-13);
+      }
+
+      .cls-15 {
+        filter: url(#filter-14);
+      }
+
+      .cls-16 {
+        fill: red;
+        filter: url(#filter-15);
+      }
+
+      .cls-17 {
+        filter: url(#filter-16);
+      }
+
+      .cls-18 {
+        stroke: #000;
+        stroke-width: 1px;
+        filter: url(#filter-17);
+      }
+
+      .cls-19 {
+        filter: url(#filter-18);
+      }
+
+      .cls-20 {
+        filter: url(#filter-19);
+      }
+
+      .cls-21 {
+        fill: #868788;
+        filter: url(#filter-20);
+      }
+    </style>
+    <filter id="filter" x="-1888" y="8" width="253" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.3"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="#b5edff" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="8.333" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#00eaff" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+      <feGaussianBlur result="blur-4" in="SourceAlpha"/>
+      <feFlood result="flood-4" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-8" operator="out" in2="blur-4"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-9" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-4" in2="blend-3"/>
+    </filter>
+    <filter id="filter-2" x="-1886" y="0.031" width="249" height="129.969" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-3" x="-1528" y="8" width="253" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="#00c6ff" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="5" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#00c6ff" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+    </filter>
+    <filter id="filter-4" x="-1531" y="11" width="255" height="137" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-5" x="-1526" y="0.031" width="249" height="129.969" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-6" x="-1162" y="8" width="253" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="#00c6ff" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="5" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#00c6ff" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+    </filter>
+    <filter id="filter-7" x="-1165" y="11" width="255" height="137" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-8" x="-1160" y="0.031" width="249" height="129.969" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-9" x="-804" y="8" width="253" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="#00c6ff" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="5" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#00c6ff" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+    </filter>
+    <filter id="filter-10" x="-807" y="11" width="255" height="137" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-11" x="-802" y="0.031" width="249" height="129.969" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-12" x="-440" y="8" width="253" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="#00c6ff" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="5" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#00c6ff" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+    </filter>
+    <filter id="filter-13" x="-443" y="11" width="255" height="137" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-14" x="-438" y="0.031" width="249" height="129.969" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-15" x="431" y="8" width="253" height="139" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-color="#001143" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feGaussianBlur result="blur-2" stdDeviation="1.667" in="SourceAlpha"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feComposite result="composite-4"/>
+      <feFlood result="flood-2" flood-color="red" flood-opacity="0.8"/>
+      <feComposite result="composite-5" operator="in" in2="composite-4"/>
+      <feBlend result="blend" mode="screen" in2="composite"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-3" stdDeviation="5" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="red" flood-opacity="0.5"/>
+      <feComposite result="composite-7" operator="out" in2="blur-3"/>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="screen" in2="blend-2"/>
+    </filter>
+    <filter id="filter-16" x="433" y="-0.031" width="249" height="130.031" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-17" x="487.594" y="30.25" width="136.375" height="66.25" filterUnits="userSpaceOnUse">
+      <feImage preserveAspectRatio="none" x="488.594" y="30.75" width="134.344" height="65.25" result="image" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTM0LjM0NCIgaGVpZ2h0PSI2NS4yNSIgdmlld0JveD0iMCAwIDEzNC4zNDQgNjUuMjUiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50KTsKICAgICAgfQogICAgPC9zdHlsZT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iNjcuMTcyIiB5MT0iNjUuMjUiIHgyPSI2Ny4xNzIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYjUwMDAwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMC4wMDEiIHN0b3AtY29sb3I9IiNiNTAwMDAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmYwMDE4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCBjbGFzcz0iY2xzLTEiIHdpZHRoPSIxMzQuMzQ0IiBoZWlnaHQ9IjY1LjI1Ii8+Cjwvc3ZnPgo="/>
+      <feComposite result="composite" operator="in" in2="SourceGraphic"/>
+      <feBlend result="blend" in2="SourceGraphic"/>
+    </filter>
+    <filter id="filter-18" x="748" y="11" width="255" height="136" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-2.598" dy="1.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="2"/>
+      <feFlood result="flood" flood-opacity="0.29"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-19" x="753" y="-0.031" width="249" height="130.031" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-0.866" dy="0.5" in="SourceAlpha"/>
+      <feGaussianBlur result="blur"/>
+      <feFlood result="flood" flood-opacity="0.01"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feGaussianBlur result="blur-2" in="SourceAlpha"/>
+      <feFlood result="flood-2" flood-color="#fff" flood-opacity="0.13"/>
+      <feComposite result="composite-2" operator="out" in2="blur-2"/>
+      <feOffset result="offset-2" dx="-0.866" dy="0.5"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-2" in2="blend"/>
+    </filter>
+    <filter id="filter-20" x="846.312" y="18.469" width="63.626" height="85.531" filterUnits="userSpaceOnUse">
+      <feImage preserveAspectRatio="none" x="846.312" y="18.4688" width="63.626" height="85.531" result="image" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iNjMuNjI2IiBoZWlnaHQ9Ijg1LjUzMSIgdmlld0JveD0iMCAwIDYzLjYyNiA4NS41MzEiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6IHVybCgjbGluZWFyLWdyYWRpZW50KTsKICAgICAgfQogICAgPC9zdHlsZT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB4MT0iMzEuODEzIiB5MT0iODUuNTMxIiB4Mj0iMzEuODEzIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzQ2YWVmNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxZGMzZTYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IGNsYXNzPSJjbHMtMSIgd2lkdGg9IjYzLjYyNiIgaGVpZ2h0PSI4NS41MzEiLz4KPC9zdmc+Cg=="/>
+      <feComposite result="composite" operator="in" in2="SourceGraphic"/>
+      <feBlend result="blend" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Button">
+    <path id="开启状态" class="cls-1" d="M-1874,12.878h225.99c4.42,0,8,5.758,8,12.862v102.9c0,7.1-3.58,12.862-8,12.862H-1874c-4.42,0-8-5.758-8-12.862V25.74C-1882,18.636-1878.42,12.878-1874,12.878Z"/>
+    <path id="body" class="cls-2" d="M-1877,.016h231.99c4.42,0,8,5.758,8,12.862v102.9c0,7.1-3.58,12.862-8,12.862H-1877c-4.42,0-8-5.758-8-12.862V12.878C-1885,5.774-1881.42.016-1877,.016Z"/>
+  </g>
+  <g id="Button_拷贝_2" data-name="Button 拷贝 2">
+    <path id="开启状态_拷贝" data-name="开启状态 拷贝" class="cls-3" d="M-1514,12.878h225.99c4.42,0,8,5.758,8,12.862v102.9c0,7.1-3.58,12.862-8,12.862H-1514c-4.42,0-8-5.758-8-12.862V25.74C-1522,18.636-1518.42,12.878-1514,12.878Z"/>
+    <path id="body-2" data-name="body" class="cls-4" d="M-1517,12.878h231.99c4.42,0,8,5.758,8,12.862v102.9c0,7.1-3.58,12.862-8,12.862H-1517c-4.42,0-8-5.758-8-12.862V25.74C-1525,18.636-1521.42,12.878-1517,12.878Z"/>
+    <path id="body-3" data-name="body" class="cls-5" d="M-1517,.016h231.99c4.42,0,8,5.758,8,12.862v102.9c0,7.1-3.58,12.862-8,12.862H-1517c-4.42,0-8-5.758-8-12.862V12.878C-1525,5.774-1521.42.016-1517,.016Z"/>
+    <g id="jobs">
+      <text id="gcode" class="cls-6" transform="translate(-1399.9 76.634) scale(2.369 2.424)"><tspan x="0">gcode</tspan></text>
+    </g>
+  </g>
+  <g id="Button_拷贝_3" data-name="Button 拷贝 3">
+    <path id="开启状态_拷贝_2" data-name="开启状态 拷贝 2" class="cls-7" d="M-1148,12.878h225.994c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-1148c-4.42,0-8-5.758-8-12.862V25.74C-1156,18.636-1152.42,12.878-1148,12.878Z"/>
+    <path id="body-4" data-name="body" class="cls-8" d="M-1151,12.878h231.994c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-1151c-4.42,0-8-5.758-8-12.862V25.74C-1159,18.636-1155.42,12.878-1151,12.878Z"/>
+    <path id="body-5" data-name="body" class="cls-9" d="M-1151,.016h231.994c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-1151c-4.42,0-8-5.758-8-12.862V12.878C-1159,5.774-1155.42.016-1151,.016Z"/>
+  </g>
+  <g id="Button_拷贝_4" data-name="Button 拷贝 4">
+    <path id="开启状态_拷贝_3" data-name="开启状态 拷贝 3" class="cls-10" d="M-790,12.878h225.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-790c-4.419,0-8-5.758-8-12.862V25.74C-798,18.636-794.416,12.878-790,12.878Z"/>
+    <path id="body-6" data-name="body" class="cls-11" d="M-793,12.878h231.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-793c-4.418,0-8-5.758-8-12.862V25.74C-801,18.636-797.415,12.878-793,12.878Z"/>
+    <path id="body-7" data-name="body" class="cls-12" d="M-793,.016h231.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-793c-4.418,0-8-5.758-8-12.862V12.878C-801,5.774-797.415.016-793,.016Z"/>
+  </g>
+  <g id="Button_拷贝_5" data-name="Button 拷贝 5">
+    <path id="开启状态_拷贝_4" data-name="开启状态 拷贝 4" class="cls-13" d="M-426,12.878h225.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-426c-4.419,0-8-5.758-8-12.862V25.74C-434,18.636-430.416,12.878-426,12.878Z"/>
+    <path id="body-8" data-name="body" class="cls-14" d="M-429,12.878h231.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-429c-4.419,0-8-5.758-8-12.862V25.74C-437,18.636-433.416,12.878-429,12.878Z"/>
+    <path id="body-9" data-name="body" class="cls-15" d="M-429,.016h231.991c4.418,0,8,5.758,8,12.862v102.9c0,7.1-3.582,12.862-8,12.862H-429c-4.419,0-8-5.758-8-12.862V12.878C-437,5.774-433.416.016-429,.016Z"/>
+  </g>
+  <g id="玻璃门开关">
+    <g id="Button_拷贝_6" data-name="Button 拷贝 6">
+      <path id="开启状态_拷贝_4-2" data-name="开启状态 拷贝 4" class="cls-16" d="M445,12.8H670.994c4.418,0,8,5.739,8,12.819V128.179c0,7.08-3.582,12.819-8,12.819H445c-4.418,0-8-5.739-8-12.819V25.623C437,18.543,440.584,12.8,445,12.8Z"/>
+      <path id="body-10" data-name="body" class="cls-17" d="M442-.016H673.994c4.418,0,8,5.739,8,12.819V115.359c0,7.081-3.582,12.82-8,12.82H442c-4.419,0-8-5.739-8-12.82V12.8C434,5.724,437.584-.016,442-0.016Z"/>
+    </g>
+    <g style="fill: #fff; filter: url(#filter-17)">
+      <path id="开门_拷贝" data-name="开门 拷贝" class="cls-18" d="M488.6,63.764l56.039-32.242V94.471Zm134.34,0L566.9,31.523V94.471ZM551.562,30.75H560V96h-8.438V30.75Z" style="stroke: inherit; filter: none; fill: inherit"/>
+    </g>
+    <use xlink:href="#开门_拷贝" style="stroke: #000; filter: none; fill: none"/>
+  </g>
+  <g id="玻璃门开关锁">
+    <g id="Button_拷贝_6-2" data-name="Button 拷贝 6">
+      <path id="body-11" data-name="body" class="cls-19" d="M762,12.8H993.994c4.418,0,8,5.739,8,12.819V128.179c0,7.08-3.578,12.819-8,12.819H762c-4.418,0-8-5.739-8-12.819V25.623C754,18.543,757.584,12.8,762,12.8Z"/>
+      <path id="body-12" data-name="body" class="cls-20" d="M762-.016H993.994c4.418,0,8,5.739,8,12.819V115.359c0,7.081-3.578,12.82-8,12.82H762c-4.418,0-8-5.739-8-12.82V12.8C754,5.724,757.584-.016,762-0.016Z"/>
+    </g>
+    <path id="闭锁" class="cls-21" d="M856.221,104c-9.273,0-9.92-8.682-9.92-12.657V61.583c0-6.979,9.578-8.552,9.578-8.552s0.342-7.337.342-18.472,12.2-16.077,15.051-16.077h13.683c2.849,0,15.051,4.943,15.051,16.077s0.342,18.472.342,18.472,9.578,1.573,9.578,8.552v29.76c0,3.975-.647,12.657-9.92,12.657H856.221Zm7.194-50.429s0.228-10.036.228-17.48,8.158-10.748,10.063-10.748h9.147c1.9,0,10.062,3.3,10.062,10.748s0.229,17.48.229,17.48H863.415Z"/>
+  </g>
+  <image id="MES按钮" x="-6" width="254" height="146" xlink:href="data:img/png;base64,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"/>
+</svg>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>775</width>
-    <height>631</height>
+    <width>761</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="QLabel" name="label_up">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>310</x>
      <y>70</y>
-     <width>51</width>
+     <width>61</width>
      <height>51</height>
     </rect>
    </property>
@@ -36,9 +36,9 @@ border:none;</string>
   <widget class="QLabel" name="label_type">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>390</x>
      <y>70</y>
-     <width>281</width>
+     <width>141</width>
      <height>50</height>
     </rect>
    </property>
@@ -50,7 +50,7 @@ border:none;</string>
     </font>
    </property>
    <property name="text">
-    <string>123456789876543567897654567876543567</string>
+    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="label_content">
@@ -59,7 +59,7 @@ border:none;</string>
      <x>80</x>
      <y>170</y>
      <width>621</width>
-     <height>191</height>
+     <height>131</height>
     </rect>
    </property>
    <property name="font">
@@ -79,8 +79,8 @@ border:none;</string>
   <widget class="QPushButton" name="pushButton_ok">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>520</y>
+     <x>170</x>
+     <y>450</y>
      <width>91</width>
      <height>81</height>
     </rect>
@@ -102,8 +102,8 @@ border:none;</string>
   <widget class="QPushButton" name="pushButton_no">
    <property name="geometry">
     <rect>
-     <x>470</x>
-     <y>520</y>
+     <x>460</x>
+     <y>450</y>
      <width>91</width>
      <height>81</height>
     </rect>
@@ -125,8 +125,8 @@ border:none;</string>
   <widget class="QPushButton" name="pushButton_Return">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>410</y>
+     <x>400</x>
+     <y>350</y>
      <width>90</width>
      <height>80</height>
     </rect>
@@ -156,8 +156,8 @@ border-radius:10px}
   <widget class="QPushButton" name="pushButton_Load">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>410</y>
+     <x>550</x>
+     <y>350</y>
      <width>90</width>
      <height>80</height>
     </rect>
@@ -187,8 +187,8 @@ border-radius:10px}
   <widget class="QPushButton" name="pushButton_heatup">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>410</y>
+     <x>250</x>
+     <y>350</y>
      <width>90</width>
      <height>80</height>
     </rect>
@@ -213,21 +213,6 @@ border-radius:10px}
    </property>
    <property name="text">
     <string>升温</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="lineEdit">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>775</width>
-     <height>631</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">border-radius: 30px;
-background-color: qlineargradient(spread:pad, x1:0.01, y1:0.01, x2:0, y2:0.01, stop:0 rgba(198, 198, 198, 255), stop:1 rgba(0, 0, 0, 255));
-</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_type_2">
@@ -260,7 +245,7 @@ border-radius:30px</string>
      <x>60</x>
      <y>160</y>
      <width>650</width>
-     <height>230</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="font">
@@ -284,8 +269,8 @@ border-radius:30px</string>
   <widget class="QPushButton" name="pushButton_down">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>410</y>
+     <x>100</x>
+     <y>350</y>
      <width>90</width>
      <height>80</height>
     </rect>
@@ -315,10 +300,10 @@ border-radius:10px}
   <widget class="QPushButton" name="open_un">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>410</y>
+     <x>30</x>
+     <y>559</y>
      <width>90</width>
-     <height>80</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
@@ -343,7 +328,6 @@ border-radius:10px}
     <string/>
    </property>
   </widget>
-  <zorder>lineEdit</zorder>
   <zorder>label_content_2</zorder>
   <zorder>label_type_2</zorder>
   <zorder>label_up</zorder>

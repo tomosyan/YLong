@@ -1,0 +1,62 @@
+<svg id="工具栏" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="73.5" height="68" viewBox="0 0 147 136">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #424549;
+        stroke-linejoin: round;
+        stroke-width: 3px;
+        fill-rule: evenodd;
+        stroke: url(#linear-gradient);
+        filter: url(#filter);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="73.5" y1="133" x2="73.5" y2="3" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1a1b1e"/>
+      <stop offset="1" stop-color="#1b1c1f"/>
+    </linearGradient>
+    <filter id="filter" x="-2" y="-2" width="151" height="140" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-1.827" dy="0.813" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="1.732"/>
+      <feFlood result="flood" flood-opacity="0.17"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+      <feImage preserveAspectRatio="none" x="3" y="3" width="141" height="130" result="image" xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTQxIiBoZWlnaHQ9IjEzMCIgdmlld0JveD0iMCAwIDE0MSAxMzAiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIG9wYWNpdHk6IDAuMTU7CiAgICAgICAgZmlsbDogdXJsKCNsaW5lYXItZ3JhZGllbnQpOwogICAgICB9CiAgICA8L3N0eWxlPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJsaW5lYXItZ3JhZGllbnQiIHgxPSI3MC41IiB5MT0iMTMwIiB4Mj0iNzAuNSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCBjbGFzcz0iY2xzLTEiIHdpZHRoPSIxNDEiIGhlaWdodD0iMTMwIi8+Cjwvc3ZnPgo="/>
+      <feComposite result="composite-2" operator="in" in2="SourceGraphic"/>
+      <feBlend result="blend-2" mode="overlay" in2="blend"/>
+      <feFlood result="flood-2"/>
+      <feComposite result="composite-3" operator="in" in2="SourceAlpha"/>
+      <feOffset result="offset-2" dx="3"/>
+      <feOffset result="offset-3" dx="-3" in="composite-3"/>
+      <feComposite result="composite-4" operator="xor" in="offset-2"/>
+      <feComposite result="composite-5" operator="in" in2="SourceAlpha"/>
+      <feGaussianBlur result="blur-2" stdDeviation="3.162"/>
+      <feComponentTransfer result="comp">
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feComposite result="composite-6" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-3" mode="multiply" in2="blend-2"/>
+      <feGaussianBlur result="blur-3" stdDeviation="1" in="SourceAlpha"/>
+      <feFlood result="flood-3" flood-color="#fff" flood-opacity="0.15"/>
+      <feComposite result="composite-8" operator="out" in2="blur-3"/>
+      <feComposite result="composite-7" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-4" mode="overlay" in2="blend-3"/>
+      <feGaussianBlur result="blur-4" in="SourceAlpha"/>
+      <feFlood result="flood-4" flood-color="#fff" flood-opacity="0.5"/>
+      <feComposite result="composite-9" operator="out" in2="blur-4"/>
+      <feOffset result="offset-4" dx="-2.741" dy="1.22"/>
+      <feComposite result="composite-10" operator="in" in2="SourceAlpha"/>
+      <feBlend result="blend-5" mode="overlay" in2="blend-4"/>
+    </filter>
+  </defs>
+  <g id="第三组">
+    <g id="关闭_转换_填满" data-name="关闭、转换、填满">
+      <g id="fill">
+        <g style="fill: #424549; filter: url(#filter)">
+          <path id="Avrundad_rektangel_4_拷贝_6" data-name="Avrundad rektangel 4 拷贝 6" class="cls-1" d="M12.335,3.005H134.668c5.156,0,9.335,4.477,9.335,10V123c0,5.523-4.179,10-9.335,10H12.335C7.179,133,3,128.524,3,123v-110C3,7.482,7.179,3.005,12.335,3.005Z" style="stroke: inherit; filter: none; fill: inherit"/>
+        </g>
+        <use xlink:href="#Avrundad_rektangel_4_拷贝_6" style="stroke: url(#linear-gradient); filter: none; fill: none"/>
+        <image id="图层_506" data-name="图层 506" x="47" y="42" width="50" height="54" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAEb0lEQVRIiYVWS8gcRRCurq7u2dnZR8T8hyQmoBADPg5GAkL05EEwRETwEAk+EDQYxaAIkgjiC0GQHwUF/0S8xkcOIj5ugogg3kJyEjQGMQkB/yT/7vzT04+Snt3ZbHZnY0MPTM/XVfV9VdU94tjRT6EeQggI7CGEEN/AWQcoEaWU9zLzPUS0zTvXYuBCa32eGX4zpvzZez9EFNX+JFGQJC3oZNnYDgBBw2Dm+OwpTYeUUvuJaLsQGNcAEh2fIMY4KfGcMeXn1tplAD7bZA+jvdHkaiGEysQjrVbrVJZlb2itt8cImUOF4fGGGk9Em7KsfSjrZKellC9w4HknQkSZABCx2kgk32q30xNKqa2Rbpy1QRhLOj1qjCLqtNvtDxng2CyO0nZr5A0RSmPeRimPVLkZ6zmJZhxEZFrrP2JdKxCqNaX109576b1/auIkbhwb3YuIRwDgmsjrqMrS/uW9+8w6/zdJeQNJuU8S7ZwmVuUIEZz3T66trZ1MW63lSvxjK0fj91Ql+hwi9meNx42lKb8ujNlPJAcx+GjXlhbaWfp+kuiXeD4NFTNEvBmYz2DWySLFFwGgD2IeqIjOaK0ellIOBF4FJC0N3U7nZUT5U4OPKkDn3ZtKqVhdLCXh81FzaECX1q7E8m2nKYjYO85VBpY2boRO1gYp8APvfaMTRbQPQNxIxpS7SNGWqO0s7eh4sDY4VRgT+6GSTikdyxYuXb5Sl/Q5pVUDl8oeDYbDR8l59wApmnMwkSXRm3SiJ/mJjlut1qT6gg/dwGHUBw1DEe2NR8bO2dq/GgkDSvl4t9OBfq8HvW63aiwOAUjKaAAEiseaw4P4DXzwO0gptTRbsjOS7R4OBnt8CN9KKSsmxpg6iDsl0RN1D81HGQkioXVudRETqDsXxSso5YTd6CCtPj5Xy9i4N8rJwZNgOMkcHoTZ+p1yEgLcxSHcmiS6ZOZEANjAIQgU913PSYiZl/IPKkz5Q0e1X10EjgkmJXvO8rIpy5NCQAoMBoTYRqhuXyhBnVOB31Ov2/3Fe3cREJYWgUkSrOfrF1cvXTktJabeh3zDhr5O07Tqm4VDQCz944QorLXhKAo8vCg3FRtSm7fetJlbWisfAqwXxQZr7dypPC2zKcwJy+IfLIoiVsx7AGCuR11rtS3Pc3f+woXfV1cvDQHgtuqUWOAg+ADe+ddNaQCTRIPWdFkRPcPAjT01bsIdwfMt1vp+ae0WEOLuJhb1NSGEeLfX653u9/sgvvryi8ndMBgOPyKi/ylLAdx0yE05CIG/y9rpntGVDYBXAQDGlAfX8/VP4kujFGI0GxmgiD8dkA/zb8x6sScWS31rXmMpbrbOHSiK4qC1Lo+Opo/3SGByz4/x8ZaM0zsfK/CdEMJDFWaK7Vy40bD3/uPhcHhHnucrzrrL1fqYXeV4woTBWu/K0h0fDvJdxpSvRTazTBt/iSJICPFnWdpngw+HJdH9DLwbQCxxCClzMErpf8vS/BoC/6i1OhtlHEk8ky8A+A9q/E/tQj4y/wAAAABJRU5ErkJggg=="/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,66 @@
+2025-06-13T17:32:56.599901+0800 INFO INLONG CONNECT FAILED!
+2025-06-13T17:32:59.018575+0800 INFO 获取播放库句柄成功
+2025-06-13T17:33:02.532060+0800 INFO Login device fail, error code is: 7
+2025-06-13T17:33:02.579643+0800 INFO Login device succesed
+2025-06-13T17:33:03.672595+0800 INFO Open preview fail, error code is: 3
+2025-06-13T17:33:03.673604+0800 INFO Open preview successed
+2025-06-13T17:33:04.350349+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:05.349778+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:06.349246+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:07.351106+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:08.359395+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:09.350323+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:10.350098+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:11.352515+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:12.391029+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:13.350839+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:14.349488+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:15.489447+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:16.349195+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:17.350271+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:18.360771+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:19.379257+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:20.360190+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:21.350846+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:22.374859+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
+2025-06-13T17:33:23.362880+0800 ERROR could not convert string to float: ''
+error file:D:\git\YLong\INLONG2025052101(UI)\SC12060.py
+error line:907
