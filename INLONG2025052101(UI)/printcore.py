@@ -650,7 +650,7 @@ class printcore(QThread):
         the next line will be set to 0 and the firmware notified. Printing
         will then start in a parallel thread.
         """
-        self._send("G250 S31")
+        self._send("G250 S31") #case 31: greenLedSetting(HIGH); break;  // 开绿灯
         if self.printing or not self.online or not self.printer:
             return False
         self.queueindex = startindex

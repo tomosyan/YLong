@@ -128,6 +128,7 @@
         <widget class="QLabel" name="label_change">
          <property name="font">
           <font>
+           <family>微软雅黑 Light</family>
            <pointsize>12</pointsize>
            <weight>75</weight>
            <bold>true</bold>
@@ -508,7 +509,7 @@
     <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>

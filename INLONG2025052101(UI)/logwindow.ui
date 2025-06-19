@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>415</height>
+    <width>657</width>
+    <height>410</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>微软雅黑 Light</family>
+    <pointsize>10</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -18,19 +24,20 @@
     <rect>
      <x>130</x>
      <y>310</y>
-     <width>91</width>
+     <width>100</width>
      <height>41</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <pointsize>14</pointsize>
+     <family>微软雅黑 Light</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white</string>
+    <string notr="true">color:black</string>
    </property>
    <property name="text">
     <string>取消</string>
@@ -47,6 +54,7 @@
    </property>
    <property name="font">
     <font>
+     <family>微软雅黑 Light</family>
      <pointsize>14</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -70,6 +78,7 @@
    </property>
    <property name="font">
     <font>
+     <family>微软雅黑 Light</family>
      <pointsize>16</pointsize>
      <weight>75</weight>
      <bold>true</bold>
@@ -84,7 +93,7 @@
     <rect>
      <x>420</x>
      <y>310</y>
-     <width>91</width>
+     <width>100</width>
      <height>41</height>
     </rect>
    </property>
@@ -96,7 +105,8 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color:white</string>
+    <string notr="true">color:black
+</string>
    </property>
    <property name="text">
     <string>确认</string>
@@ -117,6 +127,28 @@ border:none;</string>
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="progressBar_wait">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>280</y>
+     <width>135</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color:green</string>
+   </property>
+   <property name="value">
+    <number>0</number>
    </property>
   </widget>
  </widget>

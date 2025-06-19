@@ -31,6 +31,8 @@ from HCNetSDK import *
 from PlayCtrl import *
 import re
 
+from gcode_getprinttime import GCodeParser
+
 # 查找内存泄漏
 # leaking_objects = objgraph.show_backrefs(objgraph.by_type('str'), max_depth=5)
 # print(leaking_objects)
@@ -40,6 +42,7 @@ logger.add("./Log/AMS_Log/file_{time}.log", format="{time} {level} {message}", l
 logger_a = logger.bind(name="a")
 logger_d = logger.bind(name="d")
 Operational_Sqlite = Sqlite()
+parser = GCodeParser()
 ##调试开关
 DEBUG =0
 class FrameProcessor(QObject):
@@ -145,6 +148,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #当前碰头和热床的温度
         self.current_pengtou_temp=0
         self.current_bed_temp=0
+        #当前设置的碰头和热床的温度
+        self.current_set_pengtou_temp="0"
+        self.current_set_bed_temp="0"
+
+        self.dl_state=0 #断料关 1：断料开
+        self.m_current_runstate=1 #1:running 2: resume 3:pause
+
+
+
 
         #界面美化函数
         self.css_ui()
@@ -394,6 +406,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.frame_processor = FrameProcessor()
         self.frame_processor.setSize(self.label_showcamera_2)
         self.frame_processor.update_signal.connect(self.update_ui)
+        soft_verion="V2.0.0.3"
+        self.write_settings(soft_verion)
         # 读取系统配置
         self.read_settings()
         # 引导弹窗
@@ -452,12 +466,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def write_settings(self,comptimes):
         settings = QSettings("./File/config.ini", QSettings.IniFormat)
-        self.s_systemverID = settings.setValue("System/compiletime",comptimes)
+        settings.setValue("System/softwareID",comptimes)
 
     def exit_log_pause_3(self, a):
         try:
             if self.comboBox.currentText() == "中文":
-                self.pushButton_startprint.setText("恢复")
+                self.pushButton_startprint.setText("  恢复")
             elif self.comboBox.currentText() == "English":
                 self.pushButton_startprint.setText("RESUME")
             elif self.comboBox.currentText() == "日本語.":
@@ -657,7 +671,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #        if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #            self.changeValue_runoutFlag.emit("2")
             #        self.blocking = True
-#
+
             #if a == "filament exchange fail, block":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("3")
@@ -793,12 +807,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     #print("*/********************line:",aaaa)
                     #print("454545445545454:",state[-11])
                     self.label_38.setStyleSheet('background-color: red;border-radius: 8px;')
-                    self.dyk_use()
+                    if self.dl_state ==1: #断料检测开
+                        self.dyk_use()
                 else:
                     #print("*/********************2line:", a)
                     #print("454545445545454-2:", state[-11])
                     self.label_38.setStyleSheet('background-color: green;border-radius: 8px;')
-                    self.dyg_use()
+                    if self.dl_state == 0:  # 断料检测关
+                        self.dyg_use()
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
@@ -1456,8 +1472,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             """该部分为小车蓝牙连接部分，暂时不上"""
             try:
-                self.p.connect(port="COM8", baud=115200, dtr=1)
-
+                if DEBUG==1:
+                    self.p.connect(port="COM4", baud=115200, dtr=1)
+                else :
+                    self.p.connect(port="COM8", baud=115200, dtr=1)
                 #pass
             except SerialException as e:
                 # 串口错误弹窗
@@ -1574,7 +1592,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
             #if self.filamentblock.isChecked():
                 if 2 < float(z) < 5:
-                    self.p.send_now("L110 S81")
+                    self.p.send_now("L110 S81") #底板调平关
                 elif float(z) < 2:
                     #self.p.send_now("L110 S80")
                     pass
@@ -1649,6 +1667,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             "}"
         )
 
+
         self.pushButton_dyk.setStyleSheet('''QPushButton{
                                             color:white;
                                             background: rgba(0,0,0,0.5);
@@ -1667,6 +1686,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             border-bottom-right-radius: 25px;
                                             opacity: 0.5;}''')
 
+        self.dl_state =1 #断料开
         self.pushButton_pid.setStyleSheet('''QPushButton{
                                             color:white;
                                             background: rgba(0,0,0,0.6);
@@ -2579,9 +2599,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                height: 40px;
                                                color:white;
                                                background: rgba(0,0,0,0.3);
-                                               border-top-left-radius: 20px;
+                                               border-top-left-radius: 25px;
                                                border-top-right-radius: 0px;
-                                               border-bottom-left-radius: 20px;
+                                               border-bottom-left-radius: 25px;
                                                border-bottom-right-radius: 0px;
                                                opacity: 0.3;}''')
 
@@ -2591,13 +2611,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                color:white;
                                                background: rgba(0,0,0,0.5);
                                                border-top-left-radius: 0px;
-                                               border-top-right-radius: 20px;
+                                               border-top-right-radius: 25px;
                                                border-bottom-left-radius: 0px;
-                                               border-bottom-right-radius: 20px;
+                                               border-bottom-right-radius: 25px;
                                                opacity: 0.3;}''')
         self.p.send_now("L110 S61")
         self.p.send_now("L110 S61")
         self.p.send_now("L110 S61")
+        self.dl_state=0
     def dyk_use(self):
         # self.pushButton_dyk.setStyleSheet('''QPushButton{background: rgba(255,255,255,0.5);;
         #                                         border-radius: 15px;
@@ -2610,9 +2631,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             height: 40px;
                                             color:white;
                                             background: rgba(0,0,0,0.5);
-                                            border-top-left-radius: 20px;
+                                            border-top-left-radius: 25px;
                                             border-top-right-radius: 0px;
-                                            border-bottom-left-radius: 20px;
+                                            border-bottom-left-radius: 25px;
                                             border-bottom-right-radius: 0px;
                                             opacity: 0.5;}''')
 
@@ -2622,13 +2643,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             color:white;
                                             background: rgba(0,0,0,0.3);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 20px;
+                                            border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 20px;
+                                            border-bottom-right-radius: 25px;
                                             opacity: 0.5;}''')
         self.p.send_now("L110 S60")
         self.p.send_now("L110 S60")
         self.p.send_now("L110 S60")
+        self.dl_state=1
 
     def changeLanguage(self):
             if self.comboBox.currentText() == "中文":
@@ -2811,6 +2833,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def ext_sure(self):
         if self.set_ext_flag:
             wendu = self.keyboard.lineEdit.text()
+            self.current_set_pengtou_temp = wendu
             self.lineEdit_ptset.setText(wendu+"℃")
             self.set_extru_target()
             self.keyboard.lineEdit.setText("")
@@ -2820,10 +2843,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
             logger_a.info("SET EXTRU TEMP:" + str(wendu) + " success!")
-
     def set_extru_target(self):
         try:
-            self.p.send_now("M104 S" + self.lineEdit_ptset.text())
+            self.p.send_now("M104 S" + str(self.current_set_pengtou_temp))
         except Exception as e:
             logger_a.error(str(e), 'error file:{}'.format(e.__traceback__.tb_frame.f_globals["__file__"]),
                            'error line:{}'.format(e.__traceback__.tb_lineno))
@@ -2920,6 +2942,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def bed_sure(self):
         if self.set_bed_flag:
             wendu = self.keyboard.lineEdit.text()
+            self.current_set_bed_temp=wendu
             if int(wendu)>=90:
                 wendu = '90'
             self.lineEdit_rcset.setText(wendu+"℃")
@@ -2932,8 +2955,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.info("SET BED TEMP:" + str(wendu) + " success!")
 
     def set_bed_target(self):
-        send_massage = self.lineEdit_rcset.text()
-        self.p.send_now("M140 S" + send_massage)
+        send_massage = self.current_set_bed_temp
+        self.p.send_now("M140 S" + str(send_massage))
 
     def lineEdit_pid_use_set(self):
         try:
@@ -3031,11 +3054,32 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(e)
     #根据当前按钮状态，改变按钮图标和文字
     from enum import Enum
-
     class BT_STATE(Enum):
         START = 1
         PAUSE = 2
         RESUME = 3
+    def current_runstate(self,uiobject,state):
+        uiobject.progressBar_wait.show()
+        uiobject.progressBar_wait.setValue(0)
+        self.m_current_runstate = state  # 1:running 2: resume 3:pause
+        if self.m_current_runstate==1:
+            if self.comboBox.currentText() == "中文":
+                uiobject.pushButton_2.setText("运行中")
+            else :
+                uiobject.pushButton_2.setText("Running")
+        if self.m_current_runstate==2:
+            if self.comboBox.currentText() == "中文":
+                uiobject.pushButton_2.setText("恢复中")
+            else :
+                uiobject.pushButton_2.setText("Resuming")
+        if self.m_current_runstate == 3:
+            if self.comboBox.currentText() == "中文":
+                uiobject.pushButton_2.setText("暂停中")
+            else:
+                uiobject.pushButton_2.setText("Pausing")
+        for i in range(100):
+            uiobject.progressBar_wait.setValue(i)
+            QThread.msleep(int(5000/100))
     def changeStartprintCaption(self,istation):
         if self.BT_STATE.START==istation:#start
             self.pushButton_startprint.setStyleSheet('''QPushButton{
@@ -3087,11 +3131,13 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.pushButton_startprint.setIconSize(QSize(60, 60))  # 设置图标为 48x48 像素
 
             #pass
-
+    #打印开始按钮事件
     def printfile(self):
         try:
+
             if (self.pushButton_startprint.text().strip() == "START") or self.pushButton_startprint.text().strip() == "开始":
                 logger_a.info("打印开始")
+                QThread.msleep(500)
                 if not self.fgcode:
                     logger_a.info("No file loaded. Please use load first.")
                     if DEBUG==0:
@@ -3104,15 +3150,17 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.ui_log_startprint = ui_dialog_log("zhuyi", "CN", "确认开始打印？")
                 else:
                     self.ui_log_startprint = ui_dialog_log("zhuyi", "EN", "Please confirm that Start Print?")
+
                 #self.flag_closedoor___ = 0
                 self.p.send_now("L109 time:" + time.strftime("%Y/%m/%d %H:%M:%S", time.localtime()) + "#" + str(
                     self.filename) + "#")
-                self.ui_log_startprint.pushButton.clicked.connect(self.exit_startprintno)
-                self.ui_log_startprint.pushButton_2.clicked.connect(self.exit_starprint_ok)
+                self.ui_log_startprint.pushButton.clicked.connect(self.exit_startprintno) #取消
+                self.ui_log_startprint.pushButton_2.clicked.connect(self.exit_starprint_ok) #确认
                 self.ui_log_startprint.show()
 
             elif (self.pushButton_startprint.text().strip() == "PAUSE") or (self.pushButton_startprint.text().strip() == "暂停"):
                 logger_a.info("打印暂停")
+                QThread.msleep(500)
                 if self.comboBox.currentText() == "中文":
                     self.ui_log_pauseprint = ui_dialog_log("zhuyi", "CN", "是否暂停打印？")
                 else:
@@ -3123,7 +3171,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 #############
             elif (self.pushButton_startprint.text().strip() == "RESUME") or (self.pushButton_startprint.text().strip() == "恢复"):
                 logger_a.info("打印恢复")
-
+                QThread.msleep(500)
                 if self.comboBox.currentText() == "中文":
                     self.ui_log_resume = ui_dialog_log("zhuyi", "CN", "是否恢复打印？")
                 else:
@@ -3155,7 +3203,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
-
+    #恢复
     def exit_log_resume(self):
         try:
             if self.comboBox.currentText() == "中文":
@@ -3172,9 +3220,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.p.resume()
             self.clogging_detection("start")
             logger_a.info("RESUME PRINT SUCCESS!")
-            self.ui_log_resume.deleteLater()
+
             self.brokening = False
             self.changeStartprintCaption(self.BT_STATE.PAUSE)
+            self.m_current_runstate = 2#resume
+            self.current_runstate(self.ui_log_resume,self.m_current_runstate)
+            self.ui_log_resume.deleteLater()
         except Exception as e:
             print(e)
 
@@ -3184,7 +3235,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-
+    #暂停
     def exit_log_pause(self, a):
         try:
             if self.comboBox.currentText() == "中文":
@@ -3209,12 +3260,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             self.clogging_detection("stop")
             logger_a.info("PAUSE PRINT SUCCESS!")
-            self.ui_log_pauseprint.deleteLater()
+
             self.changeStartprintCaption(self.BT_STATE.RESUME)
+            self.m_current_runstate = 3 #pause
+            self.current_runstate(self.ui_log_pauseprint,self.m_current_runstate)
+            self.ui_log_pauseprint.deleteLater()
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-
+    #start print function ok
     def exit_starprint_ok(self):
         try:
             if True:
@@ -3245,7 +3299,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                     self.sdprinting = False
                     self.p.startprint(self.fgcode)
-                    # self.p.send_now("G250 S901")
+                    # self.p.send_now("G250 S901") #OUT_WRITE(FILTER_PIN, HIGH); break;//右门
                     self.flag_printing = 1
                     self.time_tole_10min = 0
                     self.brokening = False
@@ -3262,8 +3316,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.m209_save_num = float(nnn[0].split(":")[1].replace("\\n", ""))
                     num = round(round(self.m209_save_num, 1) / 0.1, 0)
                     self.clogging_detection("start")
+                    self.p.send_now("L110 S81") #case 81: feature.bedlevelingEn = 0; break; //底板调平关
+                    self.m_current_runstate =1 #start
+                    self.current_runstate(self.ui_log_startprint,self.m_current_runstate)
                     self.ui_log_startprint.deleteLater()
-                    self.p.send_now("L110 S81")
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3289,7 +3345,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.pushButton_startprint.setText("START")
             elif self.comboBox.currentText() == "日本語.":
                 self.pushButton_startprint.setText("スタート")
-
+            self.p.send_now("M104 S0")
+            QThread.msleep(50)
+            self.p.send_now("M140 S0")
+            QThread.msleep(50)
             self.timer_use_left.stop()
             self.rece_E_flag = 0
             self.current_E_jichu = 0.0
@@ -3315,7 +3374,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.flag_ble = 0,
             self.jichu_flag = 0
             self.p.send_now("L110 S81")
-
+            QThread.msleep(50)
+            self.p.send_now("M104 S0")
+            QThread.msleep(50)
+            self.p.send_now("M140 S0")
+            QThread.msleep(50)
             # 剩余时间初始化0s
             self.label_totletime.setText("")
             # gcode初始化
@@ -3395,8 +3458,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.filename = filename
             self.Extruder_gcode = float(
                 extrusion_width.replace("; external perimeters extrusion width = ", "").replace("mm", ""))
-
-
 
             for i in range(5):
                 if float(self.comboBox_2.itemText(i)) ==  self.Extruder_gcode:
@@ -3628,9 +3689,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if up[0] == 'ok':
                     self.listWidget_now_history.item(self.choose_err_int).setBackground(QColor(53, 116, 1, 0))
                     self.unread_quantity -= 1
-                    self.label_5.setText(str(self.unread_quantity))
-                    if self.unread_quantity == 0:
-                        self.label_5.hide()
+                    #self.label_5.setText(str(self.unread_quantity))
+                    #if self.unread_quantity == 0:
+                    #   self.label_5.hide()
 
     def sys_exit(self):
         logger_a.info("exit app")
@@ -4066,8 +4127,6 @@ if __name__ == "__main__":
         # print(f"Compile Time: {compile_time}")
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
-        compile_verion="V2.0.0.1"
-        first.write_settings(compile_verion)
         first.show()
         first.showFullScreen()
         sys.exit(app.exec_())

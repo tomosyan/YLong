@@ -73,6 +73,7 @@ class Ui_MainWindow(object):
         self.gridLayout_20.addWidget(self.groupBox_21, 0, 13, 2, 1)
         self.label_change = QtWidgets.QLabel(self.groupBox_25)
         font = QtGui.QFont()
+        font.setFamily("微软雅黑 Light")
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
@@ -2913,7 +2914,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

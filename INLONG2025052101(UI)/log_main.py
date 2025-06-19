@@ -9,9 +9,13 @@ class ui_dialog_log(QDialog, Ui_Dialog_log):
         super(ui_dialog_log, self).__init__()
         self.setupUi(self)
         # 头部背景
+        self.progressBar_wait.setValue(0)
+        self.progressBar_wait.hide()
+        self.setWindowModality(QtCore.Qt.ApplicationModal)  # 设置为应用模态
         self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
-        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 窗体背景透明
 
+        # self.setAttribute(QtCore.Qt.WA_TranslucentBackground)  # 窗体背景透明
+        # 设置窗口标志，使其始终保持在最前面
         self.setStyleSheet("""
                     QDialog {
                         background: rgba(255,255,255,0.1);
