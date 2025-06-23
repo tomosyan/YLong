@@ -8,6 +8,7 @@ class ui_dialog_file(QDialog,Ui_Dialog_file):
         super(ui_dialog_file, self).__init__()
         self.setupUi(self)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.listView_file.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.setStyleSheet("""
             QDialog {
@@ -49,9 +50,9 @@ class ui_dialog_file(QDialog,Ui_Dialog_file):
                 background: rgba(242,95,13,0.7);
             }
         """)
-        self.pushButton.clicked.connect(self.cencel)
+        #self.pushButton.clicked.connect(self.cencel)
         self.listView_file.setStyleSheet('border-image:none;border:none;background-color:transparent;color:gray')
         self.open_gcodefile = ""
-
-    def cencel(self):
-        self.hide()
+    #
+    # def cencel(self):
+    #     self.hide()

@@ -10,7 +10,9 @@ class GCodeParser:
         self.current_y = 0.0
         self.current_z = 0.0
         self.current_feedrate = 0.0
+        self.current_E=0.0
         self.total_time = 0.0
+        self.perLinetime=0.0
         self.line = 0
     def parse_line(self, line):
         parts = line.split()
@@ -22,6 +24,7 @@ class GCodeParser:
             if cmd.startswith('G2') or cmd.startswith('G3'):
                 # 圆弧移动
                 self._parse_arc_move(line)
+        return self.total_time
 
     def extract_arc_parameters(self,gcode):
         pattern = r"(G2|G3) X([\d.-]+) Y([\d.-]+) I([\d.-]+) J([\d.-]+) F([\d.-]+)"
@@ -88,20 +91,24 @@ class GCodeParser:
         y = self._get_value(parts, 'Y', self.current_y)
         z = self._get_value(parts, 'Z', self.current_z)
         f = self._get_value(parts, 'F', self.current_feedrate)
-
+        E = self._get_value(parts, 'E', self.current_E)
         # 计算距离
         distance = math.sqrt((x - self.current_x) ** 2 +
                              (y - self.current_y) ** 2 +
                              (z - self.current_z) ** 2)
-
+        if E<0:
+            tmp_time1 = abs(E) / (f/60.0)
+        else:
+            tmp_time1 = abs(E-self.current_E) / (f/60.0)
         # 计算时间 (分钟转秒)
-        time = distance / (f / 60.0) #if f > 0 else 0
-
+        tmp_time2 = distance / (f / 60.0) if f > 0 else 0
+        time = max(abs(tmp_time1), abs(tmp_time2))
+        self.perLinetime=time
         # 更新状态
-        self.current_x, self.current_y, self.current_z = x, y, z
+        self.current_x, self.current_y, self.current_z, self.current_E = x, y, z, E
         self.current_feedrate = f
         self.total_time += time
-        #print(f"总打印时间: {self.total_time:.2f} 秒  linetime:{time:.2f} 秒 \n")
+        #print(f"每行打印时间: { self.perLinetime:.2f} 秒  linetime:{time:.2f} 秒 \n")
 
     def _parse_arc_move(self, line):
         parts = line.split()
@@ -115,21 +122,29 @@ class GCodeParser:
         i = self._get_value(parts, 'I', 0)
         j = self._get_value(parts, 'J', 0)
         f = self._get_value(parts, 'F', self.current_feedrate)
+        E = self._get_value(parts, 'E', self.current_E)
 
+        # 计算距离
+        distance = math.sqrt((x - self.current_x) ** 2 +
+                             (y - self.current_y) ** 2 )
+        tmp_time1=0.0
+        tmp_time2 = 0.0
+
+        tmp_time1 = abs(E-self.current_E) / (f/60.0)
         x1,y1 = self.current_x,self.current_y
         x2,y2 = x, y
         xc = x1 + i
         yc = y1 + j
         # 计算圆弧时间
-        time = self.calculate_arc_time(
+        tmp_time2 = self.calculate_arc_time(
             x1, y1,
             x, y, xc, yc, f,cmdname
         )
-
+        time=max(abs(tmp_time1),abs(tmp_time2))
         # 更新状态
         self.current_x, self.current_y = x, y
         self.current_feedrate = f
-        self.total_time += time
+        self.total_time += abs(time)
         self.line +=1
 
 
@@ -235,13 +250,16 @@ class GCodeParser:
 
             for line in file:
                 line = line.strip()
+
                 if not line or line.startswith(';'):
                     continue  # 跳过注释和空行
+                if line=='G1 E-1 F300':
+                    self.parse_line(line)
+                else :
+                    self.parse_line(line)
 
-                self.parse_line(line)
-
-                print(f"计算出总打印时间: {self.total_time:.2f} 秒  \n")
-        return 0
+                #print(f"计算出总打印时间: {self.total_time:.2f} 秒  \n")
+        return self.total_time
 
         import re
         # 从gcode文件读取总时间
@@ -276,18 +294,16 @@ class GCodeParser:
 
         return self.calculate_total_print_time(gcode_file_path)  # 未找到时间信息，直接计算
 
-
-
-
 if __name__ == '__main__':
-    gcode_file_path = 'e:\X2_11.gcode'
-
+    #gcode_file_path = 'D:\git\YLong\INLONG2025052101(UI)\GCODE\LC-GR3005通用-16分钟.gcode'
+    gcode_file_path = 'e:\CFFFP_尾部3-wb-7小时290g.gcode'
     parser = GCodeParser()
-    #total_time = calculate_total_print_time(gcode_file_path)
+    total_time = parser.calculate_total_print_time(gcode_file_path)
     # 示例使用
-    time_seconds = parser.get_print_time(gcode_file_path)
+    time_seconds =total_time #parser.get_print_time(gcode_file_path)
     if time_seconds:
-        print(f"打印总时间: {time_seconds // 3600}小时 {(time_seconds % 3600) // 60}分钟 {time_seconds % 60}秒")
+        #print(f"打印总时间: {time_seconds // 3600}小时 {(time_seconds % 3600) // 60}分钟 {time_seconds % 60}秒")
+        print(f"打印总时间: {time_seconds}秒")
     else:
-        print("未找到打印时间信息")
+         print("未找到打印时间信息")
 

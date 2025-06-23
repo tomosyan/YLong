@@ -43,8 +43,7 @@ logger_a = logger.bind(name="a")
 logger_d = logger.bind(name="d")
 Operational_Sqlite = Sqlite()
 parser = GCodeParser()
-##调试开关
-DEBUG =0
+
 class FrameProcessor(QObject):
     update_signal = pyqtSignal(QPixmap)  # 用于跨线程更新UI的信号
 
@@ -143,6 +142,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.is_fullscreen = False
         self.ui_log =None
+        self.ui_log0 = None
+        self.ui_log1 = None
         # 初始化全屏标签
         self.fullscreen_label = None
         #当前碰头和热床的温度
@@ -194,7 +195,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.temp_see.timeout.connect(self.temp_see_control)
         self.temp_see.start(1000)
         self.flag_printing = 0  # 是否在打印过程
-        self.time_tole_3h = 0
+        self.time_tole_1h = 0
         self.time_tole_10min = 0
 
         self.keyboard = ui_dialog()
@@ -208,7 +209,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.flag_openclose_camera = 0
 
         self.temp_time = 0
-
+        self.pengtou_abnormal_wendu_ui_show=0 #0:no show 1:show
+        self.bed_abnormal_wendu_ui_show = 0  # 0:no show 1:show
 
         #剩余时间初始化0s
         self.label_totletime.setText("")
@@ -228,13 +230,16 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # 初始化核心串口
         self.p = printcore.printcore()
-        self.p.changeValue.connect(self.setvalue_lineedit)
+        self.p.changeValue.connect(self.setvalue_lineedit) #显示当前温度，碰头和底板
         self.p.changeValue_xyz.connect(self.set_xyz_line)
-        self.p.changeValue_time.connect(self.set_time_line)
+        self.p.changeValue_time.connect(self.set_time_line) #打印结束
         #self.p.printer_offline.connect(self.sys_rest)
-
         self.p.Evevt_jichuliang.connect(self.jisuan_print_time)
 
+        ############################################
+        self.p.changeValue_printtime.connect(self.set_printtime) #打印时间处理
+        self.p.Evevt_printtime.connect(self.get_print_time_funtion)
+        #############################################
         self.p.zdiff.connect(self.zdiff_level)
 
         self.p.dibanlevel.connect(self.level_value)
@@ -254,8 +259,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # print time
         self.timer_use_left = QtCore.QTimer()
-        self.timer_use_left.timeout.connect(self.set_timer_line)
-        self.timer_use_left.setInterval(60000)
+        if ISBY_CALGODE==0:
+            self.timer_use_left.timeout.connect(self.set_timer_line)
+        else :
+            self.timer_use_left.timeout.connect(self.set_timer_line_cal)
+        self.timer_use_left.setInterval(6000)
 
         try:
             # pass
@@ -406,8 +414,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.frame_processor = FrameProcessor()
         self.frame_processor.setSize(self.label_showcamera_2)
         self.frame_processor.update_signal.connect(self.update_ui)
-        soft_verion="V2.0.0.3"
-        self.write_settings(soft_verion)
+        self.soft_verion=SOFTWARE_VERSION
+        self.write_settings(self.soft_verion)
         # 读取系统配置
         self.read_settings()
         # 引导弹窗
@@ -464,10 +472,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #self.comboBox.setCurrentText(self.s_langID)
         self.label_bhtext.setText(str(self.s_devID))
 
-    def write_settings(self,comptimes):
+    def write_settings(self,softversion):
         settings = QSettings("./File/config.ini", QSettings.IniFormat)
-        settings.setValue("System/softwareID",comptimes)
-
+        settings.setValue("System/softwareID",softversion)
+    def write_cmpiletimesettings(self,cmpiletime):
+        settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        settings.setVa1lue("System/compiletime",cmpiletime)
     def exit_log_pause_3(self, a):
         try:
             if self.comboBox.currentText() == "中文":
@@ -631,6 +641,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    #把异常信息写入数据库，后期显示
+    def writeExceptiontoDB(self,a):
+        b = a.replace("\n", "")
+        v = [[b, 'None', 'True', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+        Operational_Sqlite.insert_dates(
+            "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+        self.update_log()
+        pass
     #报故处理
     def runoutordu(self, a):
         try:
@@ -838,6 +856,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.info(f'重启失败dwm.exe: {e}')
 
     # 超过10分钟加热未打印降温   打印时间
+    #
+
     def temp_see_control(self):
         try:
             self.temp_time += 1
@@ -901,15 +921,22 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     # 喷头温度异常弹窗
                     try:
                         if float(wendu) > 450:
-                            self.p.send_now("G250 S889\n")  # 亮红灯
-                            if self.checkBox_language.currentText() == "中文":
-                                self.ui_log = ui_dialog_log("zhuyi", "CN", "喷头温度异常")
+                            self.p.send_now("G250 S889\n")  # 关安全门
+                            self.p.send_now("M104 S" + "0")
+                            if self.comboBox.currentText() == "中文":
+                                self.ui_log0 = ui_dialog_log("zhuyi", "CN", "喷头温度异常")
                             else:
-                                self.ui_log = ui_dialog_log("zhuyi", "EN", "Abnormal temperature of sprinkler head")
+                                self.ui_log0 = ui_dialog_log("zhuyi", "EN", "Abnormal temperature of sprinkler head")
+                            if self.pengtou_abnormal_wendu_ui_show==0:
+                                self.ui_log0.show()
+                                self.pengtou_abnormal_wendu_ui_show = 1
+                            # 功能
+                            self.writeExceptiontoDB("Abnormal temperature of sprinkler head")
                         else:
-                            if self.ui_log != None:
-                                self.ui_log.close()  # 关闭弹窗
-                                self.ui_log = None  # 清除弹窗引用
+                            if self.ui_log0 != None:
+                                self.ui_log0.close()  # 关闭弹窗
+                                self.ui_log0 = None  # 清除弹窗引用
+                                self.pengtou_abnormal_wendu_ui_show = 0
                     except Exception as e:
                         print(e)
                     if wendu != "":
@@ -918,28 +945,34 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         else:
                             self.time_tole_10min = 0
                         # print("计时温度是：", self.time_tole_10min)
-                        if self.time_tole_10min > 600:
+                        if self.time_tole_10min > 600: #600秒 =10分钟 温度大于100度，不打印喷头情况下 降温到0
                             self.p.send_now("M104 S0")
                             self.time_tole_10min = 0
                     wendudiban = self.lineEdit_bed.text().split("℃")[0]
                     if float(wendudiban) > 150:
-                        self.p.send_now("G250 S889\n")  # 亮红灯
-                        if self.checkBox_language.currentText() == "中文":
-                            self.ui_log = ui_dialog_log("zhuyi", "CN", "底板温度异常")
+                        self.p.send_now("G250 S889\n")  # 关安全门
+                        self.p.send_now("M190 S0")
+                        if self.comboBox.currentText() == "中文":
+                            self.ui_log1 = ui_dialog_log("zhuyi", "CN", "底板温度异常")
                         else:
-                            self.ui_log = ui_dialog_log("zhuyi", "EN", "Abnormal bottom plate temperature")
+                            self.ui_log1= ui_dialog_log("zhuyi", "EN", "Abnormal bottom plate temperature")
+                        if self.bed_abnormal_wendu_ui_show == 0:
+                            self.ui_log1.show()
+                            self.bed_abnormal_wendu_ui_show = 1
+                            self.writeExceptiontoDB("Abnormal temperature of the heating bed")
                     else:
-                        if self.ui_log != None:
-                            self.ui_log.close()  # 关闭弹窗
-                        self.ui_log = None  # 清除弹窗引用
+                        if self.ui_log1 != None:
+                            self.ui_log1.close()  # 关闭弹窗
+                            self.ui_log1 = None  # 清除弹窗引用
+                            self.bed_abnormal_wendu_ui_show = 0
                     if wendudiban != "":
                         if float(wendudiban) > 50:
-                            self.time_tole_3h += 1
+                            self.time_tole_1h += 1 #底板温度大于50度
                         else:
-                            self.time_tole_3h = 0
-                        if self.time_tole_3h > 600 * 6:
+                            self.time_tole_1h = 0
+                        if self.time_tole_1h > 600 * 6: #不打印，超过1个小时，降温
                             self.p.send_now("M190 S0")
-                            self.time_tole_3h = 0
+                            self.time_tole_h = 0
                 else:
                     self.local_position = self.label_xyz.text()
                     self.time_tole_10min = 0
@@ -997,6 +1030,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    def set_printtime(self, a):  # 结束打印
+        pass
     def set_time_line(self, a, b):  # 结束打印
         if a==0 and b==0:#测试用
             logger_a.info("Infor:a==0 and b==0,gcode file no lines!")
@@ -1008,7 +1043,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.total_E = 0.0
             self.print_time = 0  # 已打印时间
             self.print_left_time = 0  # 剩余打印时间
-            self.print_total_time = 0  # 总打印时间
+            #self.print_total_time = 0  # 总打印时间
             if self.comboBox.currentText() == "中文":
                 self.pushButton_startprint.setText("  开始")
             elif self.comboBox.currentText() == "English":
@@ -1040,7 +1075,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def exit_log_overprint(self):
         self.ui_log_overprint.deleteLater()
-
+    #通过挤出量
     def jisuan_print_time(self, a):
         try:
             if self.p.printing:
@@ -1081,29 +1116,32 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+    #通过命令行计算打印时间
+    def get_print_time_funtion(self, a):
+        try:
+            if self.p.printing:
+                self.rece_E_flag += 1
+                if self.rece_E_flag == 1:
+                    self.timer_use_left.start()
+                # 暂停不计入
+                if self.p.paused:
+                    return
+                self.print_time =parser.parse_line(a)
+                #print(f"计算出当前打印时间: {self.print_time:.2f} 秒  \n")
+                #logger_a.info("get_print_time_funtion cmd string:"+str(a))
 
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+    #通过挤出量
     def set_timer_line(self):
         try:
-            # self.runtime_left += 1
-            # self.runtime_left_shiji += 1
-            '''
-            b = self.second_string_time(int(self.time_totleuse))
-            if int(self.time_totleuse-self.runtime_left) >0:
-                a = self.second_string_time(int(self.time_totleuse-self.runtime_left))
-            else:
-                a = self.second_string_time(0)
-            if int(self.runtime_left) >= int(self.time_totleuse):
-                self.runtime_left = int(self.time_totleuse)
-            #当前挤出量 总挤出量已获取
-            #self.lineEdit_left.setText(a)
-            #self.lineEdit_total.setText(b)
-            '''
             print("self.p.online:",self.p.online,"self.p.printing:",self.p.printing)
             if DEBUG==1:
                 self.p.online =True
                 self.p.printing =True
             if self.p.online and self.p.printing:
-                self.print_time += 60  # 已打印时间+60
+                self.print_time += 6  # 已打印时间+60
                 self.print_total_time = (float(self.total_E) / float(self.current_E_jichu)) * float(self.print_time)
                 self.print_left_time = self.print_total_time - self.print_time
                 print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
@@ -1121,11 +1159,37 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.set_lefttime(str(left),912)
                 self.label_totletime.setText(str(total))
                 self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+    #通过计算获取lefttime
+    def set_timer_line_cal(self):
+        try:
+            if DEBUG==1:
+                self.p.online =True
+                self.p.printing =True
+            if self.p.online and self.p.printing:
+                self.print_left_time = self.print_total_time - self.print_time
+                print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
+                      "self.print_left_time:", self.print_left_time)
+                # if self.print_left_time >0:
+                #     self.label_sy.setText("10s")
+                #     self.set_lefttime(self.second_string_time("10s"),907)
+                #     return
+                if int(self.print_left_time)<=0:
+                    logger_a.info(f"print_total_time：{self.print_total_time}print_left_time：{self.print_left_time} total_E: {self.total_E}  E_jichu：{self.current_E_jichu} print_time：{self.print_time}!\n")
+                    self.print_left_time=0
+                left = self.second_string_time(int(self.print_left_time))
+                total = self.second_string_time(int(self.print_total_time))
+
+                self.label_sy.setText(str(left))
+                self.set_lefttime(str(left),912)
+                self.label_totletime.setText(str(total))
+                self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-
     def second_string_time(self, seconds):
         if seconds < 60:
             return str(seconds) + 's'
@@ -1472,10 +1536,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             """该部分为小车蓝牙连接部分，暂时不上"""
             try:
-                if DEBUG==1:
-                    self.p.connect(port="COM4", baud=115200, dtr=1)
-                else :
-                    self.p.connect(port="COM8", baud=115200, dtr=1)
+                self.p.connect(port="COM8", baud=115200, dtr=1)
                 #pass
             except SerialException as e:
                 # 串口错误弹窗
@@ -1496,7 +1557,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             except OSError as e:
                 # 无串口弹窗
 
-                if self.checkBox_language.currentText() == "中文":
+                if self.comboBox.currentText() == "中文":
                     self.ui_log = ui_dialog_log("cuowu", "CN", "串口连接错误，请确认COM8是否存在并重启连接")
                 else:
                     self.ui_log = ui_dialog_log("zhuyi", "EN",
@@ -2123,8 +2184,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.openFile.listView_file.setStyleSheet(
                 'border-image:none;border:none;background-color:transparent;color:white')
             self.openFile.pushButton_2.clicked.connect(self.confim_choose_gcodefile)
+            self.openFile.pushButton.clicked.connect(self.cancel)
             self.openFile.hide()
-
             self.label_38.setStyleSheet('background-color: green;border-radius: 8px;')
 
             # LOGO
@@ -3047,7 +3108,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(e)
 
-    def exit_startprintno(self):
+    def exit_startprint_cancel(self):
         try:
             self.ui_log_startprint.deleteLater()
         except Exception as e:
@@ -3079,7 +3140,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 uiobject.pushButton_2.setText("Pausing")
         for i in range(100):
             uiobject.progressBar_wait.setValue(i)
-            QThread.msleep(int(5000/100))
+            QThread.msleep(int(8000/100))
     def changeStartprintCaption(self,istation):
         if self.BT_STATE.START==istation:#start
             self.pushButton_startprint.setStyleSheet('''QPushButton{
@@ -3154,8 +3215,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 #self.flag_closedoor___ = 0
                 self.p.send_now("L109 time:" + time.strftime("%Y/%m/%d %H:%M:%S", time.localtime()) + "#" + str(
                     self.filename) + "#")
-                self.ui_log_startprint.pushButton.clicked.connect(self.exit_startprintno) #取消
                 self.ui_log_startprint.pushButton_2.clicked.connect(self.exit_starprint_ok) #确认
+                self.ui_log_startprint.pushButton.clicked.connect(self.exit_startprint_cancel) #取消
                 self.ui_log_startprint.show()
 
             elif (self.pushButton_startprint.text().strip() == "PAUSE") or (self.pushButton_startprint.text().strip() == "暂停"):
@@ -3166,7 +3227,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     self.ui_log_pauseprint = ui_dialog_log("zhuyi", "EN", "PAUSE PRINTING?")
                 self.ui_log_pauseprint.pushButton_2.clicked.connect(lambda: self.exit_log_pause("normal"))
-                self.ui_log_pauseprint.pushButton.clicked.connect(self.exit_log_pause_2)
+                self.ui_log_pauseprint.pushButton.clicked.connect(self.exit_log_pause_cancel)
                 self.ui_log_pauseprint.show()
                 #############
             elif (self.pushButton_startprint.text().strip() == "RESUME") or (self.pushButton_startprint.text().strip() == "恢复"):
@@ -3177,11 +3238,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 else:
                     self.ui_log_resume = ui_dialog_log("zhuyi", "EN", "RESUME PRINTING?")
                 self.ui_log_resume.pushButton_2.clicked.connect(self.exit_log_resume)
-                self.ui_log_resume.pushButton.clicked.connect(self.exit_log_resume_2)
+                self.ui_log_resume.pushButton.clicked.connect(self.exit_log_resume_cancel)
                 self.ui_log_resume.show()
 
                 # else:
-                #    if self.checkBox_language.currentText() == "中文":
+                #    if self.comboBox.currentText() == "中文":
                 #        self.ui_log = ui_dialog_log("zhuyi", "CN", "安全继电器状态错误\n恢复打印失败\n确定后请关门并确定状态")
                 #    else:
                 #        self.ui_log = ui_dialog_log("zhuyi", "EN",
@@ -3196,7 +3257,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
-    def exit_log_resume_2(self):
+    def exit_log_resume_cancel(self):
         try:
             self.ui_log_resume.deleteLater()
         except Exception as e:
@@ -3216,20 +3277,23 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.timer_use_left.start()
             self.p.send_now("L109")
             self.p.send_now("M109 S" + self.p.extru_temp_history)  # 恢复喷头温度
-
-            self.p.resume()
-            self.clogging_detection("start")
-            logger_a.info("RESUME PRINT SUCCESS!")
-
             self.brokening = False
             self.changeStartprintCaption(self.BT_STATE.PAUSE)
             self.m_current_runstate = 2#resume
             self.current_runstate(self.ui_log_resume,self.m_current_runstate)
+            self.p.resume()
+            self.clogging_detection("start")
+            logger_a.info("RESUME PRINT SUCCESS!")
+
+            # self.brokening = False
+            # self.changeStartprintCaption(self.BT_STATE.PAUSE)
+            # self.m_current_runstate = 2#resume
+            # self.current_runstate(self.ui_log_resume,self.m_current_runstate)
             self.ui_log_resume.deleteLater()
         except Exception as e:
             print(e)
 
-    def exit_log_pause_2(self):
+    def exit_log_pause_cancel(self):
         try:
             self.ui_log_pauseprint.deleteLater()
         except Exception as e:
@@ -3274,7 +3338,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if True:
                 if True:
                     # 剩余时间初始化0s
-                    self.label_totletime.setText("")
+                    #self.label_totletime.setText("") #修改
                     # 进度条置0隐藏
                     self.progressBar.setValue(0)
                     self.progressBar.show()
@@ -3282,7 +3346,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.label_titlesy.show()
                     self.label_sy.show()
                     self.label_sy.setText("")
-
+                    self.print_time = 0  # 已打印时间
+                    self.print_left_time = 0  # 剩余打印时间
+                    parser.total_time=0
                     self.runtime_left = 0
                     if self.comboBox.currentText() == "中文":
                         self.pushButton_startprint.setText("  暂停")
@@ -3354,7 +3420,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.current_E_jichu = 0.0
             self.print_time = 0  # 已打印时间
             self.print_left_time = 0  # 剩余打印时间
-            self.print_total_time = 0  # 总打印时间
+            #self.print_total_time = 0  # 总打印时间
 
             self.p.cancelprint()
             self.clogging_detection("stop")
@@ -3380,9 +3446,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.p.send_now("M140 S0")
             QThread.msleep(50)
             # 剩余时间初始化0s
-            self.label_totletime.setText("")
+            #self.label_totletime.setText("")
             # gcode初始化
-            self.label_16.setText("")
+            #self.label_16.setText("")
             # 进度条置0隐藏
             self.progressBar.setMaximum(100)
             self.progressBar.setMinimum(0)
@@ -3396,6 +3462,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    def cancel(self):
+        self.openFile.hide()
     def confim_choose_gcodefile(self):
         try:
             self.openFile.hide()
@@ -3403,18 +3471,26 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.gcodename == "./GCODE/":
                 return
 
-            #if self.checkBox_language.currentText() == "中文":
-            #    #self.ui_log_tanchuang = ui_dialog_log("zhuyi", "CN", "Gcode正在加载，请稍等")
-            #    self.lineEdit_gcode.setText("Gcode 加载中.....")
-            #else:
-            #    #self.ui_log_tanchuang = ui_dialog_log("zhuyi", "EN", "Gcode is loading， \n please wait for a moment")
-            #    self.lineEdit_gcode.setText("Gcode loading.....")
-            ## self.lineEdit_gcode.setText("Gcode loading.....")
-            self.ui_log_loaggcode = ui_dialog_log("zhuyi", "CN","Gcode is loading， \n please wait for a moment")#20221020
+            if self.comboBox.currentText() == "中文":
+                self.ui_log_loaggcode = ui_dialog_log("zhuyi", "CN", "Gcode正在加载中，请稍等")
+            else:
+                self.ui_log_loaggcode = ui_dialog_log("zhuyi", "CN",
+                                                      "Gcode is loading， \n please wait for a moment")  # 20221020
             self.ui_log_loaggcode.pushButton.hide()  # 20221020
             self.ui_log_loaggcode.pushButton_2.hide()  # 20221020
             self.ui_log_loaggcode.show()  # 20221020
+            #Add print time code
+            if ISBY_CALGODE==1:
+                time_seconds = parser.get_print_time(self.gcodename)
+                if time_seconds:
+                    #print(f"打印总时间: {time_seconds // 3600}小时 {(time_seconds % 3600) // 60}分钟 {time_seconds % 60}秒")
+                    self.print_total_time=time_seconds
+                else:
+                    #print("未找到打印时间信息")
+                    self.print_total_time=0
+                self.label_totletime.setText(' '  +self.second_string_time(time_seconds)) #总时间
             self.load_gcode_async(self.gcodename)
+
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3560,6 +3636,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.label_totletime.setText("")
             self.label_sy.setText("")
             self.current_E_jichu = 0.0  # clear total E when change gcode file, otherwise or not
+            self.print_left_time = 0  # 剩余打印时间
+            self.print_total_time = 0  # 总打印时间
+            parser.total_time=0
             self.update_gcodefile()
             self.openFile.show()
         except Exception as e:
@@ -4097,34 +4176,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         }
         #self.distance_use为选择的距离
         self.distance_use = distance_map.get(button_num)
-
+#调试开关
+DEBUG =0
+#1：打印时间通过计算GCODE获取 0：通过挤出量算
+ISBY_CALGODE=0
+SOFTWARE_VERSION='V2.0.0.3'
 if __name__ == "__main__":
-
-    import subprocess
-    # # 执行批处理文件 防止重复执行实例
-    # try:
-    #     bat_path = r'.\File\killer.bat'
-    #     ret=os.system(bat_path)
-    #     print(f"Return code: {ret}")
-    # except Exception as e:
-    #     print(f"Error: {e}")
-    from datetime import datetime
-
-    def get_compile_time(file_path):
-        # 获取文件的修改时间
-        modify_time = os.path.getmtime(file_path)
-        # 将修改时间转换为日期时间对象
-        compile_time = datetime.datetime.fromtimestamp(modify_time)
-        return compile_time
-
     try:
         import sys
-
-        # # 获取当前脚本文件的路径
-        # script_path = os.path.abspath(__file__)
-        # # 获取编译时间
-        # compile_time = get_compile_time(script_path)
-        # print(f"Compile Time: {compile_time}")
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
         first.show()
@@ -4132,3 +4191,4 @@ if __name__ == "__main__":
         sys.exit(app.exec_())
     except Exception as e:
         print(e)
+        logger_a.error(f"if __name__ ==__main__:   {str(e)}")
