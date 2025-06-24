@@ -153,11 +153,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_set_pengtou_temp="0"
         self.current_set_bed_temp="0"
 
-        self.dl_state=0 #断料关 1：断料开
+        self.dl_state=0 # 0：初始值 3：断料关 4：断料开
         self.m_current_runstate=1 #1:running 2: resume 3:pause
-
-
-
 
         #界面美化函数
         self.css_ui()
@@ -432,6 +429,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.flag_pause = 0
 
         self.changeValue_runoutFlag.connect(self.runout_ui_log)
+        self.dyk_use()
     def set_duanduliao_ui(self,uiobject):
         # 头部背景
         uiobject.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
@@ -825,14 +823,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     #print("*/********************line:",aaaa)
                     #print("454545445545454:",state[-11])
                     self.label_38.setStyleSheet('background-color: red;border-radius: 8px;')
-                    if self.dl_state ==1: #断料检测开
-                        self.dyk_use()
+                    self.dl_state=3
                 else:
                     #print("*/********************2line:", a)
                     #print("454545445545454-2:", state[-11])
                     self.label_38.setStyleSheet('background-color: green;border-radius: 8px;')
-                    if self.dl_state == 0:  # 断料检测关
-                        self.dyg_use()
+                    self.dl_state=4
 
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
@@ -888,7 +884,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.label_sy.setText(self.second_string_time(left_setText))
                     current_line = inspect.currentframe().f_lineno
                     self.set_lefttime(self.second_string_time(left_setText),current_line)
-                if "h" not in left and "m" in left and "s" in left:
+                elif "h" not in left and "m" in left and "s" in left:
                     left_setText = int(left.split("m")[0]) * 60 + \
                                    int(left.split("s")[0].split("  ")[1])
                     if left_setText == 0:
@@ -900,7 +896,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.label_sy.setText(self.second_string_time(left_setText))
                     current_line = inspect.currentframe().f_lineno
                     self.set_lefttime(self.second_string_time(left_setText),current_line)
-                if "h" not in left and "m" not in left and "s" in left:
+                elif "h" not in left and "m" not in left and "s" in left:
                     left_setText = int(left.split("s")[0])
                     if left_setText == 0:
                         self.label_sy.setText("0s")
@@ -915,12 +911,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.set_lefttime(self.second_string_time(left_setText),current_line)
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
-            if not self.flag_printing:
+            if not self.flag_printing or self.flag_printing or self.flag_pause :
                 if self.label_xyz.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
                     # 喷头温度异常弹窗
                     try:
-                        if float(wendu) > 450:
+                        if float(wendu) >= 450:
                             self.p.send_now("G250 S889\n")  # 关安全门
                             self.p.send_now("M104 S" + "0")
                             if self.comboBox.currentText() == "中文":
@@ -1695,7 +1691,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ledit.setFont(font)
         self.ledit.setAlignment(Qt.AlignCenter)  # 6
         self.comboBox_2.setLineEdit(self.ledit)
-
+        self.label_38.setStyleSheet('background-color: red;border-radius: 8px;')
         self.comboBox_2.setStyleSheet(
             "QComboBox {"
                 "   border: 0px solid #8f8f91;"
@@ -1728,26 +1724,30 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             "}"
         )
 
-
         self.pushButton_dyk.setStyleSheet('''QPushButton{
-                                            color:white;
-                                            background: rgba(0,0,0,0.5);
-                                            border-top-left-radius: 25px;
-                                            border-top-right-radius: 0px;
-                                            border-bottom-left-radius: 25px;
-                                            border-bottom-right-radius: 0px;
-                                            opacity: 0.5;}''')
+                                                   width: 120px;
+                                                   height: 40px;
+                                                   color:white;
+                                                   background: rgba(0,0,0,0.1);
+                                                   border-top-left-radius: 25px;
+                                                   border-top-right-radius: 0px;
+                                                   border-bottom-left-radius: 25px;
+                                                   border-bottom-right-radius: 0px;
+                                                   opacity: 0.3;}''')
 
         self.pushButton_dlg.setStyleSheet('''QPushButton{
-                                            color:white;
-                                            background: rgba(0,0,0,0.3);
-                                            border-top-left-radius: 0px;
-                                            border-top-right-radius: 25px;
-                                            border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 25px;
-                                            opacity: 0.5;}''')
+                                                   width: 120px;
+                                                   height: 40px;
+                                                   color:white;
+                                                   background: rgba(0,0,0,0.5);
+                                                   border-top-left-radius: 0px;
+                                                   border-top-right-radius: 25px;
+                                                   border-bottom-left-radius: 0px;
+                                                   border-bottom-right-radius: 25px;
+                                                   opacity: 0.3;}''')
 
-        self.dl_state =1 #断料开
+        #self.dl_state =0 #断料开
+        #self.dyg_use()
         self.pushButton_pid.setStyleSheet('''QPushButton{
                                             color:white;
                                             background: rgba(0,0,0,0.6);
@@ -2659,7 +2659,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                width: 120px;
                                                height: 40px;
                                                color:white;
-                                               background: rgba(0,0,0,0.3);
+                                               background: rgba(0,0,0,0.1);
                                                border-top-left-radius: 25px;
                                                border-top-right-radius: 0px;
                                                border-bottom-left-radius: 25px;
@@ -2679,7 +2679,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.p.send_now("L110 S61")
         self.p.send_now("L110 S61")
         self.p.send_now("L110 S61")
-        self.dl_state=0
     def dyk_use(self):
         # self.pushButton_dyk.setStyleSheet('''QPushButton{background: rgba(255,255,255,0.5);;
         #                                         border-radius: 15px;
@@ -2702,7 +2701,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             width: 120px;
                                             height: 40px;
                                             color:white;
-                                            background: rgba(0,0,0,0.3);
+                                            background: rgba(0,0,0,0.1);
                                             border-top-left-radius: 0px;
                                             border-top-right-radius: 25px;
                                             border-bottom-left-radius: 0px;
@@ -2711,7 +2710,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.p.send_now("L110 S60")
         self.p.send_now("L110 S60")
         self.p.send_now("L110 S60")
-        self.dl_state=1
 
     def changeLanguage(self):
             if self.comboBox.currentText() == "中文":
@@ -2894,6 +2892,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def ext_sure(self):
         if self.set_ext_flag:
             wendu = self.keyboard.lineEdit.text()
+            if int(wendu)>450:
+                wendu = '450'
             self.current_set_pengtou_temp = wendu
             self.lineEdit_ptset.setText(wendu+"℃")
             self.set_extru_target()
@@ -3003,9 +3003,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def bed_sure(self):
         if self.set_bed_flag:
             wendu = self.keyboard.lineEdit.text()
-            self.current_set_bed_temp=wendu
             if int(wendu)>=90:
                 wendu = '90'
+            self.current_set_bed_temp = wendu
             self.lineEdit_rcset.setText(wendu+"℃")
             self.set_bed_target()
             self.keyboard.lineEdit.setText("")
@@ -3616,8 +3616,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def update_gcodefile(self):
         self.open_gcodefile = os.listdir("./GCODE")
         slm = QStringListModel()  # 创建mode
-        self.open_gcodefile = sorted(self.open_gcodefile,
-                                     key=lambda file: os.path.getmtime(os.path.join("./GCODE", file)))
+        # self.open_gcodefile = sorted(self.open_gcodefile,
+        #                              key=lambda file: os.path.getmtime(os.path.join("./GCODE", file)))
+        self.open_gcodefile = sorted(
+            [file for file in self.open_gcodefile if file.endswith('.gcode')],
+            key=lambda file: os.path.getmtime(os.path.join("./GCODE", file))
+        )
         self.open_gcodefile.reverse()
         slm.setStringList(self.open_gcodefile)  # 将数据设置到model
         self.openFile.listView_file.setModel(slm)  # 绑定 listView 和 model
