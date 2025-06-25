@@ -260,7 +260,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.timer_use_left.timeout.connect(self.set_timer_line)
         else :
             self.timer_use_left.timeout.connect(self.set_timer_line_cal)
-        self.timer_use_left.setInterval(6000)
+        self.timer_use_left.setInterval(60000)
 
         try:
             # pass
@@ -911,7 +911,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.set_lefttime(self.second_string_time(left_setText),current_line)
             # print(self.flag_printing)
             ###底板和碰头温度异常提示窗口
-            if not self.flag_printing or self.flag_printing or self.flag_pause :
+            if not self.flag_printing :
                 if self.label_xyz.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
                     # 喷头温度异常弹窗
@@ -1137,7 +1137,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.p.online =True
                 self.p.printing =True
             if self.p.online and self.p.printing:
-                self.print_time += 6  # 已打印时间+60
+                self.print_time += 60  # 已打印时间+60
                 self.print_total_time = (float(self.total_E) / float(self.current_E_jichu)) * float(self.print_time)
                 self.print_left_time = self.print_total_time - self.print_time
                 print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
@@ -2892,6 +2892,13 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def ext_sure(self):
         if self.set_ext_flag:
             wendu = self.keyboard.lineEdit.text()
+            if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                num = float(wendu)
+            else:
+                self.current_set_pengtou_temp=""
+                self.keyboard.lineEdit.setText("")
+                self.keyboard.content_line=""
+                return
             if int(wendu)>450:
                 wendu = '450'
             self.current_set_pengtou_temp = wendu
@@ -2901,7 +2908,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.keyboard.content_line = ""
             self.keyboard.hide()
             self.set_ext_flag = 0
-
 
             logger_a.info("SET EXTRU TEMP:" + str(wendu) + " success!")
     def set_extru_target(self):
@@ -2925,6 +2931,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def sss_sure(self):
         if self.sss_flag:
             wendu = self.keyboard.lineEdit.text()
+            if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                num = float(wendu)
+            else:
+                self.keyboard.lineEdit.setText("")
+                self.keyboard.content_line=""
+                return
             self.lineEdit_printspeed.setText(wendu+"%")
             self.set_printspeed()
             self.keyboard.lineEdit.setText("")
@@ -2952,6 +2964,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def fff_sure(self):
         if self.fff_flag:
             wendu = self.keyboard.lineEdit.text()
+            if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                num = float(wendu)
+            else:
+                self.keyboard.lineEdit.setText("")
+                self.keyboard.content_line=""
+                return
             self.lineEdit_jcl.setText(wendu+"%")
             self.set_meflu()
             self.keyboard.lineEdit.setText("")
@@ -2977,6 +2995,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def fsfs_sure(self):
         if self.fsfs_flag:
             wendu = self.keyboard.lineEdit.text()
+            if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                num = float(wendu)
+            else:
+                self.keyboard.lineEdit.setText("")
+                self.keyboard.content_line=""
+                return
             self.lineEdit_fanspeed.setText(wendu+"%")
             self.set_fanspeed()
             self.keyboard.lineEdit.setText("")
@@ -3003,6 +3027,13 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def bed_sure(self):
         if self.set_bed_flag:
             wendu = self.keyboard.lineEdit.text()
+            if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                num = float(wendu)
+            else:
+                self.current_set_bed_temp=""
+                self.keyboard.lineEdit.setText("")
+                self.keyboard.content_line=""
+                return
             if int(wendu)>=90:
                 wendu = '90'
             self.current_set_bed_temp = wendu
@@ -3034,6 +3065,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             if self.sendpid_flag:
                 wendu = self.keyboard.lineEdit.text()
+                if re.match(r'^[-+]?\d+\.?\d*$', wendu):  # 匹配整数或小数
+                    num = float(wendu)
+                else:
+                    self.keyboard.lineEdit.setText("")
+                    self.keyboard.content_line = ""
+                    return
                 self.lineEdit_pid.setText(wendu)
                 self.keyboard.lineEdit.setText("")
                 self.keyboard.content_line = ""
@@ -4184,7 +4221,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 DEBUG =0
 #1：打印时间通过计算GCODE获取 0：通过挤出量算
 ISBY_CALGODE=0
-SOFTWARE_VERSION='V2.0.0.3'
+SOFTWARE_VERSION='V2.0.0.4'
 if __name__ == "__main__":
     try:
         import sys
