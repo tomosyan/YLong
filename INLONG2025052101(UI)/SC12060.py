@@ -504,6 +504,19 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.Value = self.lineEdit_ptset.text().split(".")[0].replace("℃", "")
             logger_a.info("runout_ui_log a:"+a +'\n')
             if a == "1":
+                # 将断堵料期间需要下发的指令提前写入数据库，查询数据库，并轮循下发
+                sel = Operational_Sqlite.select_date(
+                    "SELECT [Order] FROM BROKEN_BLACKED_MATERIAL WHERE Name='duanliao'")
+                logger_a.info(sel)
+                if sel[0] == "err":
+                    v = [['database warning', 'Unable to connect to the local database' + sel[1], 'True',
+                          time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                    Operational_Sqlite.insert_dates(
+                        "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
+                    self.update_log()
+                else:
+                    for order in sel[1]:
+                        self.p.send_now(order[0])
                 self.flag_D = False
                 self.exit_log_pause_3("sys")
                 logger_a.info("runout_ui_log a:" + self.comboBox.currentText() + '\n')
