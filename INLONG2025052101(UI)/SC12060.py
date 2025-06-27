@@ -152,6 +152,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #当前设置的碰头和热床的温度
         self.current_set_pengtou_temp="0"
         self.current_set_bed_temp="0"
+        self.duanliao_state=False #TRUE：断料中 FALSE：打印中
 
         self.dl_state=0 # 0：初始值 3：断料关 4：断料开
         self.m_current_runstate=1 #1:running 2: resume 3:pause
@@ -506,6 +507,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if a == "1":
                 self.flag_D = False
                 self.exit_log_pause_3("sys")
+                self.duanliao_state=True
                 logger_a.info("runout_ui_log a:" + self.comboBox.currentText() + '\n')
                 if self.comboBox.currentText() == "中文":
                     self.ui_log_duandu = ui_dialog_log_duandu("zhuyi", "CN", "\n发生断料，请重新上料和检查温度")
@@ -942,12 +944,14 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.time_tole_10min = 0
                         # print("计时温度是：", self.time_tole_10min)
                         if self.time_tole_10min > 600: #600秒 =10分钟 温度大于100度，不打印喷头情况下 降温到0
+                            self.writeExceptiontoDB("self.p.send_now(M104 S0)  "+str(self.time_tole_10min))
                             self.p.send_now("M104 S0")
                             self.time_tole_10min = 0
                     wendudiban = self.lineEdit_bed.text().split("℃")[0]
                     if float(wendudiban) > 150:
                         self.p.send_now("G250 S889\n")  # 关安全门
-                        self.p.send_now("M190 S0")
+                        if not self.duanliao_state:
+                            self.p.send_now("M190 S0")
                         if self.comboBox.currentText() == "中文":
                             self.ui_log1 = ui_dialog_log("zhuyi", "CN", "底板温度异常")
                         else:
@@ -967,8 +971,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         else:
                             self.time_tole_1h = 0
                         if self.time_tole_1h > 600 * 6: #不打印，超过1个小时，降温
-                            self.p.send_now("M190 S0")
-                            self.time_tole_h = 0
+                            if not self.duanliao_state:
+                                self.p.send_now("M190 S0")
+                            self.time_tole_1h = 0
                 else:
                     self.local_position = self.label_xyz.text()
                     self.time_tole_10min = 0
@@ -982,7 +987,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(
                 e.__traceback__.tb_lineno))
-
+    #调平信息显示
     def level_value(self, a):  # 开启底板调平qwqew
         try:
             if "POS" in a:
@@ -3321,7 +3326,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.p.resume()
             self.clogging_detection("start")
             logger_a.info("RESUME PRINT SUCCESS!")
-
+            self.duanliao_state = False
             # self.brokening = False
             # self.changeStartprintCaption(self.BT_STATE.PAUSE)
             # self.m_current_runstate = 2#resume
@@ -3408,7 +3413,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.brokening = False
                     self.blocking = False
                     logger_a.info("START PRINT SUCCESS!")
-
+                    self.duanliao_state = False
                     self.data___ = str(time.strftime("%Y-%m-%d-%H-%M", time.localtime()))
                     self.flag_ble = 1
 
@@ -3458,7 +3463,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.print_time = 0  # 已打印时间
             self.print_left_time = 0  # 剩余打印时间
             #self.print_total_time = 0  # 总打印时间
-
+            self.duanliao_state=False
             self.p.cancelprint()
             self.clogging_detection("stop")
             self.p.send_now("G250 S891")  # 结束打印亮蓝灯
@@ -4030,7 +4035,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             file = open("./File/m209_save.txt", "w")
             file.write("m209_save:" + str(self.m209_save_num + 0.1) + "\n")
             file.close()
-    
+    #11*5按钮调平
     def on_tp_button_clicked(self, button):
         # 获取按钮编号
         button_name = button.objectName()
@@ -4221,7 +4226,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 DEBUG =0
 #1：打印时间通过计算GCODE获取 0：通过挤出量算
 ISBY_CALGODE=0
-SOFTWARE_VERSION='V2.0.0.4'
+SOFTWARE_VERSION='V2.0.0.5'
 if __name__ == "__main__":
     try:
         import sys
