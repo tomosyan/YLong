@@ -963,8 +963,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     wendudiban = self.lineEdit_bed.text().split("℃")[0]
                     if float(wendudiban) > 150:
                         self.p.send_now("G250 S889\n")  # 关安全门
-                        if not self.duanliao_state:
-                            self.p.send_now("M190 S0")
+                        self.p.send_now("M190 S0")
                         if self.comboBox.currentText() == "中文":
                             self.ui_log1 = ui_dialog_log("zhuyi", "CN", "底板温度异常")
                         else:
@@ -984,8 +983,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         else:
                             self.time_tole_1h = 0
                         if self.time_tole_1h > 600 * 6: #不打印，超过1个小时，降温
-                            if not self.duanliao_state:
-                                self.p.send_now("M190 S0")
+                            self.p.send_now("M190 S0")
                             self.time_tole_1h = 0
                 else:
                     self.local_position = self.label_xyz.text()
