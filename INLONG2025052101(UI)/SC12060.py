@@ -1145,35 +1145,68 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-    #通过挤出量
     def set_timer_line(self):
         try:
+            # self.runtime_left += 1
+            # self.runtime_left_shiji += 1
+            '''
+            b = self.second_string_time(int(self.time_totleuse))
+            if int(self.time_totleuse-self.runtime_left) >0:
+                a = self.second_string_time(int(self.time_totleuse-self.runtime_left))
+            else:
+                a = self.second_string_time(0)
+            if int(self.runtime_left) >= int(self.time_totleuse):
+                self.runtime_left = int(self.time_totleuse)
+            #当前挤出量 总挤出量已获取
+            #self.lineEdit_left.setText(a)
+            #self.lineEdit_total.setText(b)
+            '''
             print("self.p.online:",self.p.online,"self.p.printing:",self.p.printing)
-            if DEBUG==1:
-                self.p.online =True
-                self.p.printing =True
             if self.p.online and self.p.printing:
                 self.print_time += 60  # 已打印时间+60
                 self.print_total_time = (float(self.total_E) / float(self.current_E_jichu)) * float(self.print_time)
                 self.print_left_time = self.print_total_time - self.print_time
-                print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
-                      "self.print_left_time:", self.print_left_time)
+                print("self.print_total_time:",self.print_total_time,"self.print_time:",self.print_time,"self.print_left_time:",self.print_left_time)
                 if self.print_left_time >= self.print_total_time:
                     self.label_sy.setText("0s")
-                    self.set_lefttime(self.second_string_time("0s"),907)
                     return
                 left = self.second_string_time(int(self.print_left_time))
                 total = self.second_string_time(int(self.print_total_time))
-                if int(self.print_left_time)<0:
-                    logger_a.info(f"print_total_time：{self.print_total_time}print_left_time：{self.print_left_time} total_E: {self.total_E}  E_jichu：{self.current_E_jichu} print_time：{self.print_time}!\n")
-
                 self.label_sy.setText(str(left))
-                self.set_lefttime(str(left),912)
                 self.label_totletime.setText(str(total))
-                self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
+                self.progressBar.setValue(int(self.print_left_time*100/self.print_total_time))
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+    # #通过挤出量
+    # def set_timer_line(self):
+    #     try:
+    #         print("self.p.online:",self.p.online,"self.p.printing:",self.p.printing)
+    #         if DEBUG==1:
+    #             self.p.online =True
+    #             self.p.printing =True
+    #         if self.p.online and self.p.printing:
+    #             self.print_time += 60  # 已打印时间+60
+    #             self.print_total_time = (float(self.total_E) / float(self.current_E_jichu)) * float(self.print_time)
+    #             self.print_left_time = self.print_total_time - self.print_time
+    #             print("self.print_total_time:", self.print_total_time, "self.print_time:", self.print_time,
+    #                   "self.print_left_time:", self.print_left_time)
+    #             if self.print_left_time >= self.print_total_time:
+    #                 self.label_sy.setText("0s")
+    #                 self.set_lefttime(self.second_string_time("0s"),907)
+    #                 return
+    #             left = self.second_string_time(int(self.print_left_time))
+    #             total = self.second_string_time(int(self.print_total_time))
+    #             if int(self.print_left_time)<0:
+    #                 logger_a.info(f"print_total_time：{self.print_total_time}print_left_time：{self.print_left_time} total_E: {self.total_E}  E_jichu：{self.current_E_jichu} print_time：{self.print_time}!\n")
+    #
+    #             self.label_sy.setText(str(left))
+    #             self.set_lefttime(str(left),912)
+    #             self.label_totletime.setText(str(total))
+    #             self.progressBar.setValue(100-int(self.print_left_time * 100 / self.print_total_time))
+    #     except Exception as e:
+    #         logger_a.error(str(e) + '\nerror file:{}'.format(
+    #             e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
     #通过计算获取lefttime
     def set_timer_line_cal(self):
         try:
