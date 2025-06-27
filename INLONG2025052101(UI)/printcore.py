@@ -80,8 +80,8 @@ class printcore(QThread):
     changeValue_motoroff = pyqtSignal(str)  # 创建槽信号(断料堵料检测）
     changeValue_jichu = pyqtSignal(str)  # 开始挤出信号
     #################
-    changeValue_printtime = pyqtSignal(str)  # 计算打印时间
-    Evevt_printtime = pyqtSignal(str)
+    #changeValue_printtime = pyqtSignal(str)  # 计算打印时间
+    #Evevt_printtime = pyqtSignal(str)
     #################
 
     Evevt_jichuliang = pyqtSignal(str)
@@ -950,12 +950,12 @@ class printcore(QThread):
                 self.printer.write((command_temp + "\n").encode('gbk'))
                 #logger_c.error("second command %s" % command_temp)
                 ################################################################
-                parts = command.split()
-                cmd = parts[0].strip()
-                if(len(cmd)==2):
-                    if "G0"==cmd or "G1"==cmd or "G2"==cmd or "G3" ==cmd:#获取G行命令 比如：G0 X1 Y1 F16000
-                        self.changeValue_printtime.emit("printtime")#暂时未用
-                        self.Evevt_printtime.emit(command)
+                #parts = command.split()
+                #cmd = parts[0].strip()
+                #if(len(cmd)==2):
+                #    if "G0"==cmd or "G1"==cmd or "G2"==cmd or "G3" ==cmd:#获取G行命令 比如：G0 X1 Y1 F16000
+                #        self.changeValue_printtime.emit("printtime")#暂时未用
+                #        self.Evevt_printtime.emit(command)
                 ##################################################################
                 #通过G代码计算时间，屏蔽通过挤出量计算功能代码
                 if "E" in command_temp:

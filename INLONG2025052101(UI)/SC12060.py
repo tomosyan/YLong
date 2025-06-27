@@ -235,8 +235,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.p.Evevt_jichuliang.connect(self.jisuan_print_time)
 
         ############################################
-        self.p.changeValue_printtime.connect(self.set_printtime) #打印时间处理
-        self.p.Evevt_printtime.connect(self.get_print_time_funtion)
+        #self.p.changeValue_printtime.connect(self.set_printtime) #打印时间处理
+        #self.p.Evevt_printtime.connect(self.get_print_time_funtion)
         #############################################
         self.p.zdiff.connect(self.zdiff_level)
 
