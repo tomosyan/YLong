@@ -729,8 +729,10 @@ class printcore(QThread):
             return False
         self.send_now("G90")  # go to absolute coordinates
 
-        xyFeed = " F3000"  # '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
-        zFeed = " F1800"  # '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
+        # xyFeed = " F3000"  # '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
+        # zFeed = " F1800"  # '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
+        xyFeed = '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
+        zFeed = '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
 
         self.send_now("G1 X%s Y%s%s" % (self.pauseX, self.pauseY, xyFeed))
         self.send_now("G1 Z" + str(self.pauseZ) + zFeed)
@@ -958,9 +960,10 @@ class printcore(QThread):
                 #        self.Evevt_printtime.emit(command)
                 ##################################################################
                 #通过G代码计算时间，屏蔽通过挤出量计算功能代码
-                if "E" in command_temp:
+                #if "E" in command_temp:
+                if "G92" in command_temp or "E" in command_temp: #update 20250701
                     self.changeValue_jichu.emit("jichu")#暂时未用
-                    self.Evevt_jichuliang.emit(command_temp)
+                    self.Evevt_jichuliang.emit(command)
                 if "M109" in command_temp or "M104" in command_temp:
                     tempStr = command_temp.split("S")[1].split("*")[0]
                     if tempStr and tempStr.strip() and int(tempStr) > 200:

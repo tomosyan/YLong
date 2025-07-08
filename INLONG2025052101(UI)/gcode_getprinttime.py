@@ -1,8 +1,8 @@
 import math
+import os
 
 from PyQt5.QtWidgets import QWidget
 import re
-
 
 class GCodeParser:
     def __init__(self):
@@ -14,6 +14,9 @@ class GCodeParser:
         self.total_time = 0.0
         self.perLinetime=0.0
         self.line = 0
+        self.m_total_extrusion = 0.0
+        self.m_prev_e = None  # 用于记录前一个E值
+        self.m_is_reset = False  # 标记是否遇到重置指令
     def parse_line(self, line):
         parts = line.split()
         if len(parts[0])==2:
@@ -261,8 +264,96 @@ class GCodeParser:
                 #print(f"计算出总打印时间: {self.total_time:.2f} 秒  \n")
         return self.total_time
 
-        import re
-        # 从gcode文件读取总时间
+    def init_extrusion(self):
+        self.m_total_extrusion = 0.0
+        self.m_prev_e = None  # 用于记录前一个E值
+        self.m_is_reset = False  # 标记是否遇到重置指令
+
+    def calculate_current_extrusion(self,gcode_line):
+        """
+        计算G-code中的总挤出量，正确处理G92 E0重置指令
+        :param gcode_line: 包含G-code指令的列表
+        :return: 总挤出量（单位：mm）
+        """
+        line = gcode_line.strip()
+        # 处理G92重置指令
+        if line.startswith('G92 '):
+            if ' E' in line:
+                # 提取重置后的E值
+                e_pos = line.find(' E')
+                self.m_prev_e = float(line[e_pos + 2:].split()[0])
+                self.m_is_reset = True
+            return self.m_total_extrusion
+        # 只处理G1指令
+        if not line.startswith('G1 ') and not line.startswith('G2 ') and not line.startswith('G3 '):
+            return self.m_total_extrusion
+        # 查找E参数
+        e_pos = line.find(' E')
+        if e_pos == -1:  # 如果没有E参数则跳过
+            return self.m_total_extrusion
+
+        # 提取E值
+        current_e = float(line[e_pos + 2:].split()[0])
+
+        # 计算增量
+        if self.m_prev_e is not None:
+            if self.m_is_reset:
+                # 重置后的第一次挤出，直接取当前E值
+                self.m_total_extrusion += current_e
+                self.m_is_reset = False
+            else:
+                self.m_total_extrusion += current_e - self.m_prev_e
+
+        self.m_prev_e = current_e
+
+        return self.m_total_extrusion
+    def calculate_total_extrusion(self,gcode_file_path):
+        """
+        计算G-code中的总挤出量，正确处理G92 E0重置指令
+        :param gcode_lines: 包含G-code指令的列表
+        :return: 总挤出量（单位：mm）
+        """
+        total_extrusion = 0.0
+        prev_e = None  # 用于记录前一个E值
+        is_reset = False  # 标记是否遇到重置指令
+        with open(gcode_file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                # 处理G92重置指令
+                if line.startswith('G92 '):
+                    if ' E' in line:
+                        # 提取重置后的E值
+                        e_pos = line.find(' E')
+                        prev_e = float(line[e_pos + 2:].split()[0])
+                        is_reset = True
+                    continue
+
+                # 只处理G1指令
+                if not line.startswith('G1 ') and not line.startswith('G2 ') and not line.startswith('G3 '):
+                    continue
+
+                # 查找E参数
+                e_pos = line.find(' E')
+                if e_pos == -1:  # 如果没有E参数则跳过
+                    continue
+
+                # 提取E值
+                current_e = float(line[e_pos + 2:].split()[0])
+
+                # 计算增量
+                if prev_e is not None:
+                    if is_reset:
+                        # 重置后的第一次挤出，直接取当前E值
+                        total_extrusion += current_e
+                        is_reset = False
+                    else:
+                        total_extrusion += current_e - prev_e
+
+                prev_e = current_e
+
+        return total_extrusion
+
+    # 从gcode文件读取总时间
     def get_print_time(self,gcode_file_path):
         cura_pattern = r";TIME:(\d+\.?\d*)"  # 匹配Cura格式
         prusa_pattern = r"; estimated printing time \(.*\) = (?:(\d+)h ?)?(?:(\d+)m ?)?(?:(\d+)s)?"  # 匹配Prusa格式
@@ -296,14 +387,31 @@ class GCodeParser:
 
 if __name__ == '__main__':
     #gcode_file_path = 'D:\git\YLong\INLONG2025052101(UI)\GCODE\LC-GR3005通用-16分钟.gcode'
-    gcode_file_path = 'e:\CFFFP_尾部3-wb-7小时290g.gcode'
-    parser = GCodeParser()
-    total_time = parser.calculate_total_print_time(gcode_file_path)
-    # 示例使用
-    time_seconds =total_time #parser.get_print_time(gcode_file_path)
-    if time_seconds:
-        #print(f"打印总时间: {time_seconds // 3600}小时 {(time_seconds % 3600) // 60}分钟 {time_seconds % 60}秒")
-        print(f"打印总时间: {time_seconds}秒")
+    gcode_file_path = 'e:\pacf双座车尾2-1d19h-1949g.gcode'
+    if os.path.exists(gcode_file_path):
+        print(f"文件 {gcode_file_path} 存在。")
     else:
-         print("未找到打印时间信息")
+        print(f"文件 {gcode_file_path} 不存在。")
+
+    parser = GCodeParser()
+    #time_seconds = parser.calculate_total_print_time(gcode_file_path)
+
+    total_ext = parser.calculate_total_extrusion(gcode_file_path)
+    print(f"挤出量: {total_ext}mm")
+
+    parser.init_extrusion()
+    total_ext1=0
+    with open(gcode_file_path, 'r') as file:
+        for line1 in file:
+            line = line1.strip()
+            total_ext1 = parser.calculate_current_extrusion(line)
+        print(f"total_ext1挤出量: {total_ext1}mm")
+
+    # 示例使用
+
+    # if time_seconds:
+    #     print(f"打印总时间: {time_seconds // 3600}小时 {(time_seconds % 3600) // 60}分钟 {time_seconds % 60}秒")
+    #     #print(f"打印总时间: {time_seconds}秒")
+    # else:
+    #      print("未找到打印时间信息")
 
