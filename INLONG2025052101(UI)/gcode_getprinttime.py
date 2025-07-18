@@ -17,6 +17,11 @@ class GCodeParser:
         self.m_total_extrusion = 0.0
         self.m_prev_e = None  # 用于记录前一个E值
         self.m_is_reset = False  # 标记是否遇到重置指令
+        self.extru_targettemp=0.0
+        self.bed_targettemp=0.0
+        #M83 E 相对 M82:E绝对
+        self.is_Relative =True #相对
+        self.tmpline=None
     def parse_line(self, line):
         parts = line.split()
         if len(parts[0])==2:
@@ -276,6 +281,20 @@ class GCodeParser:
         :return: 总挤出量（单位：mm）
         """
         line = gcode_line.strip()
+        if line.startswith(';'):
+            return self.m_total_extrusion
+        parts = line.split(';')
+        if len(parts) <= 0:
+            return self.m_total_extrusion
+        line = parts[0]
+        if line.strip() == '':
+            return self.m_total_extrusion
+        if line.startswith('M82 '):
+            self.is_Relative = False
+            return self.m_total_extrusion
+        if line.startswith('M83 '):
+            self.is_Relative = True
+            return self.m_total_extrusion
         # 处理G92重置指令
         if line.startswith('G92 '):
             if ' E' in line:
@@ -302,8 +321,10 @@ class GCodeParser:
                 self.m_total_extrusion += current_e
                 self.m_is_reset = False
             else:
-                self.m_total_extrusion += current_e - self.m_prev_e
-
+                if self.is_Relative == False:
+                    self.m_total_extrusion += current_e - self.m_prev_e
+                else:
+                    self.m_total_extrusion += current_e
         self.m_prev_e = current_e
 
         return self.m_total_extrusion
@@ -316,9 +337,37 @@ class GCodeParser:
         total_extrusion = 0.0
         prev_e = None  # 用于记录前一个E值
         is_reset = False  # 标记是否遇到重置指令
-        with open(gcode_file_path, 'r') as file:
-            for line in file:
-                line = line.strip()
+        #M83 E 相对 M82:E绝对
+        is_Relative =True #相对
+        tmpline=None
+        inloop=0
+        with open(gcode_file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                orgline=line = line.strip()
+                if line.startswith(';'):
+                    continue
+                parts = line.split(';')
+                if len(parts)<=0:
+                    continue
+                line =parts[0]
+                if line.strip()=='':
+                    continue
+                if line.startswith('M82'):
+                    is_Relative=False
+                    continue
+                if line.startswith('M83'):
+                    is_Relative = True
+                    continue
+                if line.startswith('M109') or line.startswith('M104'):
+                    temp=line.split("S")[1].split("*")[0]
+                    if float(temp)>0:
+                        self.extru_targettemp = temp
+                    continue
+                if line.startswith('M140') or line.startswith('M190'):
+                    temp=line.split("S")[1].split("*")[0]
+                    if float(temp) > 0:
+                        self.bed_targettemp = temp
+                    continue
                 # 处理G92重置指令
                 if line.startswith('G92 '):
                     if ' E' in line:
@@ -339,7 +388,8 @@ class GCodeParser:
 
                 # 提取E值
                 current_e = float(line[e_pos + 2:].split()[0])
-
+                # if current_e <0:
+                #     continue
                 # 计算增量
                 if prev_e is not None:
                     if is_reset:
@@ -347,10 +397,14 @@ class GCodeParser:
                         total_extrusion += current_e
                         is_reset = False
                     else:
-                        total_extrusion += current_e - prev_e
+                        if is_Relative==False:
+                            total_extrusion += current_e - prev_e
+                        else:
+                            total_extrusion += current_e
+
 
                 prev_e = current_e
-
+        self.is_Relative=is_Relative
         return total_extrusion
 
     # 从gcode文件读取总时间
@@ -387,7 +441,7 @@ class GCodeParser:
 
 if __name__ == '__main__':
     #gcode_file_path = 'D:\git\YLong\INLONG2025052101(UI)\GCODE\LC-GR3005通用-16分钟.gcode'
-    gcode_file_path = 'e:\pacf双座车尾2-1d19h-1949g.gcode'
+    gcode_file_path = 'D:\四套加测试件_1d23h13m.gcode'
     if os.path.exists(gcode_file_path):
         print(f"文件 {gcode_file_path} 存在。")
     else:
@@ -401,7 +455,7 @@ if __name__ == '__main__':
 
     parser.init_extrusion()
     total_ext1=0
-    with open(gcode_file_path, 'r') as file:
+    with open(gcode_file_path, 'r', encoding='utf-8') as file:
         for line1 in file:
             line = line1.strip()
             total_ext1 = parser.calculate_current_extrusion(line)
