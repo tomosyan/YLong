@@ -106,6 +106,7 @@ class printcore(QThread):
         # disconnected
         self.printer = None
         self.extru_temp_history = "0"
+        self.bed_temp_history = "0"
         # clear to send, enabled after responses
         # FIXME: should probably be changed to a sliding window approach
         self.clear = 0
@@ -375,6 +376,7 @@ class printcore(QThread):
                 return PR_EOF
             line = line_bytes.decode('utf-8', "ignore")  # 读到不属于编码字符集中的部分，忽略该部分
             if len(line) > 1:
+                logger_c.info("_readline from hardware :"+line)
                 if "filament exchange sucess, wait gcode" in line:
                     logger_c.info("wait gcode")
                     self.changeValue_motoroff.emit("filament exchange sucess, wait gcode")
@@ -392,6 +394,14 @@ class printcore(QThread):
                     self.changeValue_motoroff.emit(line)
                 if "INLONG" in line:
                     print("1111222333:",line)
+                if "Warn: e_heating, time out!! heater: target: " in line:
+                    self.changeValue_motoroff.emit(line)
+                if "Warn: e_heating, overrange!!" in line:
+                    self.changeValue_motoroff.emit(line)
+                if "Warn: e_heating, time out!!" in line:
+                    self.changeValue_motoroff.emit(line)
+                if ". heater: target: " in line:
+                    self.changeValue_motoroff.emit(line)
                 for handler in self.event_handler:
                     try:
                         handler.on_recv(line)
@@ -427,8 +437,7 @@ class printcore(QThread):
                 # SelectError branch, assume select is used only for socket printers
                 if len(e.args) > 1 and 'Bad file descriptor' in e.args[1]:
                     logger_c.info(("Can't read from printer (disconnected?) (SelectError {0}): {1}").format(e.errno,
-                                                                                                            decode_utf8(
-                                                                                                                e.strerror)))
+                                                                                                            decode_utf8(                                                                                                               e.strerror)))
                     return None
                 else:
                     logger_c.info(("SelectError ({0}): {1}").format(e.errno, decode_utf8(e.strerror)))
@@ -525,7 +534,7 @@ class printcore(QThread):
                         self._send(self.currentcommand, self.currentlineno, True)
                         self.sendfailures = 0
                 else:
-                    logger_c.error("readline %s" % line)
+                    logger_c.info("readline %s" % line)
                     if line.startswith('X:') and "Y:" in line and "Z:" in line and "Count" in line:
                         self.sendfailures += 0
                     else:
@@ -601,7 +610,8 @@ class printcore(QThread):
                 elif "zdiff" in line:
                     self.zdiff.emit(line)
                 elif "POS" in line or "|BEDLEVEL| done" in line or "PID" in line:
-                    # print(line)
+                    self.dibanlevel.emit(line)
+                elif "MARLIN_VERSION:" in line :# 固件版本号
                     self.dibanlevel.emit(line)
                 if line.lower().startswith("resend") or line.startswith("rs"):
                     for haystack in ["N:", "N", ":"]:
@@ -729,10 +739,8 @@ class printcore(QThread):
             return False
         self.send_now("G90")  # go to absolute coordinates
 
-        # xyFeed = " F3000"  # '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
-        # zFeed = " F1800"  # '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
-        xyFeed = '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
-        zFeed = '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
+        xyFeed = " F3000"  # '' if self.xy_feedrate is None else ' F' + str(self.xy_feedrate)
+        zFeed = " F1800"  # '' if self.z_feedrate is None else ' F' + str(self.z_feedrate)
 
         self.send_now("G1 X%s Y%s%s" % (self.pauseX, self.pauseY, xyFeed))
         self.send_now("G1 Z" + str(self.pauseZ) + zFeed)
@@ -816,7 +824,12 @@ class printcore(QThread):
         command = command.lstrip()
         if command.startswith(";@pause"):
             self.pause()
-
+    def removecmd(self,command):
+        # if command.startswith("M486"):
+        #     return True
+        # if command.startswith("M73"):
+        #     return True
+        return False
     def _sendnext(self):
         if not self.printer:
             return
@@ -914,6 +927,10 @@ class printcore(QThread):
 
     def _send(self, command, lineno=0, calcchecksum=False):
         # Only add checksums if over serial (tcp does the flow control itself)
+        if "M109" in command or "M104" in command:
+            logger_c.info("ext Temp Command : %s" % command)
+        if "M140" in command or "M190" in command:
+            logger_c.info("Bed Temp Command : %s" % command)
         if calcchecksum and not self.printer_tcp:
             prefix = "N" + str(lineno) + " " + command
             command_temp = prefix + "*" + str(self._checksum(prefix))
@@ -966,26 +983,30 @@ class printcore(QThread):
                     self.Evevt_jichuliang.emit(command)
                 if "M109" in command_temp or "M104" in command_temp:
                     tempStr = command_temp.split("S")[1].split("*")[0]
-                    if tempStr and tempStr.strip() and int(tempStr) > 200:
+                    if tempStr and tempStr.strip() and int(tempStr) > 0:
                         self.extru_temp_history = tempStr
-                if self.printer_tcp:
-                    try:
-                        self.printer.flush()
-                    except socket.timeout:
-                        pass
+                if "M140" in command_temp or "M190" in command_temp:
+                    tempStr = command_temp.split("S")[1].split("*")[0]
+                    if tempStr and tempStr.strip() and int(tempStr) > 0:
+                        self.bed_temp_history = tempStr
+                # if self.printer_tcp:
+                #     try:
+                #         self.printer.flush()
+                #     except socket.timeout:
+                #         pass
                 self.writefailures = 0
                 self.sendfailures = 0
                 logger_c.error("finish command %s" % command_temp)
-            except socket.error as e:
-                self.writefailures += 1
-                logger_c.error("socket error %s" % e + "command %s" % command_temp)
-                if e.errno is None:
-                    logger_c.error("Can't write to printer (disconnected ?):" +
-                                   "\n" + traceback.format_exc())
-                else:
-                    logger_c.info(("Can't write to printer (disconnected?) (Socket error {0}): {1}").format(e.errno,
-                                                                                                            decode_utf8(
-                                                                                                                e.strerror)))
+            # except socket.error as e:
+            #     self.writefailures += 1
+            #     logger_c.error("socket error %s" % e + "command %s" % command_temp)
+            #     if e.errno is None:
+            #         logger_c.error("Can't write to printer (disconnected ?):" +
+            #                        "\n" + traceback.format_exc())
+            #     else:
+            #         logger_c.info(("Can't write to printer (disconnected?) (Socket error {0}): {1}").format(e.errno,
+            #                                                                                                 decode_utf8(
+            #                                                                                                     e.strerror)))
                 # self.writefailures += 1
             except SerialException as e:
                 self.writefailures += 1

@@ -7,11 +7,13 @@ import threading
 import time
 from datetime import datetime
 from shutil import copyfile
-
+from PyQt5.QtGui import QCursor
 import cv2
 import numpy as np
 from PyQt5.QtSerialPort import QSerialPortInfo
-
+import sys
+import time
+from PyQt5.QtWidgets import QApplication, QProgressDialog
 from setup import Ui_MainWindow
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -28,14 +30,13 @@ from gcodefile_main import ui_dialog_file
 from log_main import ui_dialog_log
 from keboard_main import ui_dialog
 from log_main_duandu import ui_dialog_log_duandu as ui_dialog_log_duandu
-
 from HCNetSDK import *
 from PlayCtrl import *
 import re
 
 from gcode_getprinttime import GCodeParser
 from udiskTree import  USBFileExplorer
-
+from longPressButton import LongPressButton
 # 查找内存泄漏
 # leaking_objects = objgraph.show_backrefs(objgraph.by_type('str'), max_depth=5)
 # print(leaking_objects)
@@ -46,6 +47,53 @@ logger_a = logger.bind(name="a")
 logger_d = logger.bind(name="d")
 Operational_Sqlite = Sqlite()
 parser = GCodeParser()
+from PyQt5.QtCore import QObject, QEvent, Qt
+
+class EventFilter(QObject):
+    update_value = pyqtSignal(str)
+    def __init__(self):
+        super().__init__()
+        self.long_press_threshold = 500  # 长按时间阈值（毫秒）
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self._on_long_press)
+        self.is_pressed = False  # 标记按钮是否被按下
+        self.objname=''
+
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonPress:
+            self.is_pressed = True
+            self.objname = obj.objectName()
+            print("控件名称:", obj.objectName())
+            print("Short press")
+            self.timer.start(self.long_press_threshold)  # 启动计时器
+        elif event.type() == QEvent.MouseButtonRelease:
+            self.timer.stop()  # 停止计时器
+            if self.is_pressed:
+                # 如果按下时间不足阈值，视为短按
+                print("realse Short press")
+            self.is_pressed = False
+        elif event.type() == QEvent.TouchBegin:
+            self.is_pressed = True
+            self.objname = obj.objectName()
+            print("控件名称:", obj.objectName())
+            print("Short press")
+            self.timer.start(self.long_press_threshold)  # 启动计时器
+        elif event.type() == QEvent.TouchEnd:
+            self.timer.stop()  # 停止计时器
+            if self.is_pressed:
+                # 如果按下时间不足阈值，视为短按
+                print("realse Short press")
+            self.is_pressed = False
+        return super().eventFilter(obj, event)
+    def _on_long_press(self):
+        """计时器超时，触发长按事件"""
+        #self.timer.stop()
+        if self.is_pressed:
+            print("Long press detected!")
+            self.update_value.emit(self.objname)
+            # 在这里执行长按操作
+            #self.is_pressed = False  # 防止重复触发
 
 class FrameProcessor(QObject):
     update_signal = pyqtSignal(QPixmap)  # 用于跨线程更新UI的信号
@@ -101,7 +149,7 @@ class FrameProcessor(QObject):
         while self.running:
             try:
                 QThread.msleep(20)
-                frame_data = self.frame_queue.get(timeout=0.003)
+                frame_data = self.frame_queue.get(timeout=0.002)
 
                 # YUV转RGB
                 bgr_image = self.yuv_to_rgb(frame_data['buffer'], frame_data['width'], frame_data['height'])
@@ -137,6 +185,172 @@ class FrameProcessor(QObject):
     def stop(self):
         self.running = False
         self.processing_thread.join()
+
+
+import sys
+import time
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QVBoxLayout,
+    QLabel,
+    QProgressBar,
+    QPushButton
+)
+from PyQt5.QtCore import Qt, QTimer
+
+class SimpleDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        # 设置对话框属性
+        #self.setWindowTitle("简单对话框")
+        self.setFixedSize(150, 100)  # 固定大小
+
+        # 创建布局
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)  # 设置边距
+        layout.setSpacing(0)  # 控件间距
+
+        # 添加控件
+        self.label = QLabel("等待中...")
+        self.label.setAlignment(Qt.AlignCenter)
+
+        # 方法1：使用样式表设置背景色
+        self.setStyleSheet("""
+                    QDialog {
+                        background-color: #303030;  
+                    }
+                    QLabel {
+                        color: white;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                """)
+        # 将控件添加到布局
+        layout.addWidget(self.label)
+        # 设置对话框布局
+        self.setLayout(layout)
+        self.setWindowFlags(self.windowFlags() | Qt.FramelessWindowHint)
+    def setLabelText(self,text):
+        self.label.setText(text)
+
+
+class StringList:
+    def __init__(self, initial_list=None):
+        """
+        初始化字符串列表
+        :param initial_list: 初始列表（可选），默认为空列表
+        """
+        self.items = initial_list[:] if initial_list else []
+
+    def append(self, string):
+        """
+        在列表末尾添加字符串
+        :param string: 要添加的字符串
+        """
+        if not self.contains(string):
+            self.items.append(string)
+
+    def insert(self, index, string):
+        """
+        在指定位置插入字符串
+        :param index: 插入位置的索引
+        :param string: 要插入的字符串
+        """
+        if index < 0:
+            index = 0
+        elif index > len(self.items):
+            index = len(self.items)
+        self.items.insert(index, string)
+
+    def remove(self, string):
+        """
+        删除列表中第一个匹配的字符串
+        :param string: 要删除的字符串
+        :return: 成功删除返回True，未找到返回False
+        """
+        if string in self.items:
+            self.items.remove(string)
+            return True
+        return False
+
+    def remove_all(self, string):
+        """
+        删除列表中所有匹配的字符串
+        :param string: 要删除的字符串
+        :return: 删除的元素数量
+        """
+        count = self.items.count(string)
+        self.items = [item for item in self.items if item != string]
+        return count
+
+    def remove_at(self, index):
+        """
+        删除指定索引位置的元素
+        :param index: 要删除的元素的索引
+        :return: 被删除的元素
+        :raises IndexError: 如果索引超出范围
+        """
+        if 0 <= index < len(self.items):
+            return self.items.pop(index)
+        raise IndexError("Index out of range")
+
+    def contains(self, string):
+        """
+        判断列表中是否包含指定字符串
+        :param string: 要查找的字符串
+        :return: 存在返回True，否则返回False
+        """
+        return string in self.items
+
+    def count(self, string):
+        """
+        统计指定字符串在列表中出现的次数
+        :param string: 要统计的字符串
+        :return: 出现次数
+        """
+        return self.items.count(string)
+
+    def index_of(self, string):
+        """
+        查找指定字符串的索引
+        :param string: 要查找的字符串
+        :return: 第一个匹配项的索引，未找到返回-1
+        """
+        try:
+            return self.items.index(string)
+        except ValueError:
+            return -1
+
+    def clear(self):
+        """清空列表"""
+        self.items.clear()
+
+    def size(self):
+        """返回列表中的元素数量"""
+        return len(self.items)
+
+    def is_empty(self):
+        """判断列表是否为空"""
+        return len(self.items) == 0
+
+    def to_list(self):
+        """返回列表的副本"""
+        return self.items[:]
+
+    def __str__(self):
+        """返回列表的字符串表示"""
+        return str(self.items)
+
+    def __contains__(self, string):
+        """支持 in 操作符"""
+        return string in self.items
+
+    def __len__(self):
+        """支持 len() 函数"""
+        return len(self.items)
+
 class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     event_loadGcode_OK = pyqtSignal(str,int,int )  # 创建槽信号
     changeValue_runoutFlag = pyqtSignal(str)  # 创建槽信号
@@ -148,6 +362,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_log0 = None
         self.ui_log1 = None
         self.serialComName=''
+        self.laster_ready_ok=False
+        self.max_level = 0.0
+        self.min_level = 0.0
+        self.current_button_num=0
+        self.g_f_value=None
+        self.g_e_value=None
         # 初始化全屏标签
         self.fullscreen_label = None
         #当前碰头和热床的温度
@@ -160,8 +380,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.dl_state=0 # 0：初始值 3：断料关 4：断料开
         self.m_current_runstate=1 #1:running 2: resume 3:pause
         self.showLefttime=0.0 #显示剩余时间
+        self.extru_targettemp=0.0 # 喷头目标温度
+        self.bed_targettemp=0.0 #床温度
         #界面美化函数
         self.css_ui()
+
         #初始化数据
         self.choose_err_int = None
         self.choose_name = ""
@@ -201,6 +424,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.flag_printing = 0  # 是否在打印过程
         self.time_tole_1h = 0
         self.time_tole_10min = 0
+        self.hardwareVersion=""
+
 
         self.keyboard = ui_dialog()
         self.keyboard.hide()
@@ -271,7 +496,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.timer_use_left.timeout.connect(self.set_timer_line)
         else :
             self.timer_use_left.timeout.connect(self.set_timer_line_cal)
-        self.timer_use_left.setInterval(5000)
+        self.timer_use_left.setInterval(60000)
 
         try:
             # pass
@@ -363,7 +588,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 }
             ''')
 
-        # 添加按钮到组中
+        # 添加按钮到组中 微调 micro
         for i in range(8, 14):
             button = getattr(self, f"pushButton_microzup_{i}")
             self.distance_group.addButton(button)
@@ -392,7 +617,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # 创建按钮组
         self.bt_tp_group = QButtonGroup(self)
         self.bt_tp_group.setExclusive(True)  # 设置互斥
-        # 添加按钮到组中
+        # 添加按钮到组中 底板调平按钮
         for i in range(1, 56):
             button = getattr(self, f"pushButton_{i}")
             button.setStyleSheet('''
@@ -441,11 +666,85 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.changeValue_runoutFlag.connect(self.runout_ui_log)
         self.dyk_use()
+
         # #添加USB目录遍历功能
-        # device_tree = USBFileExplorer(
-        #     groupbox=self.groupBox_23,
-        #     headers=["设备名称", "状态"]
-        # )
+        self.listView_udisk.hide()
+        self.device_tree = USBFileExplorer(
+            groupbox=self.groupBox_udisk,
+            headers=["设备名称", "状态"]
+        )
+        # USB读取
+        self.pushButton_refreshu.clicked.connect(self.device_tree.refresh_usb_tree)
+        # 安装事件过滤器,实现长按调节
+        self.event_filter = EventFilter()
+        self.event_filter.update_value.connect(self.event_update_value)
+        self.pushButton_microzup.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_microzup.installEventFilter(self.event_filter)
+
+        self.pushButton_microzdown.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_microzdown.installEventFilter(self.event_filter)
+
+        self.pushButton_zup.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_zup.installEventFilter(self.event_filter)
+
+        self.pushButton_zdown.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_zdown.installEventFilter(self.event_filter)
+
+        self.pushButton_xright.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_xright.setAttribute(Qt.WA_AcceptTouchEvents)
+
+        self.pushButton_xleft.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_xleft.installEventFilter(self.event_filter)
+
+        self.pushButton_xright.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_xright.installEventFilter(self.event_filter)
+
+        self.pushButton_yup.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_yup.installEventFilter(self.event_filter)
+
+        self.pushButton_ydown.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.pushButton_ydown.installEventFilter(self.event_filter)
+
+        self.warningWindowstatusOpen=True
+        #存储异常关键字
+        self.warningList = StringList([])
+
+
+        print("初始列表:", self.warningList)
+
+        # 添加元素
+        self.warningList.append("date")
+        # self.warningList.append("date")
+        # self.warningList.append("date1")
+        # print("初始列表:", self.warningList)
+        self.p.send_now("L140")#获取版本号
+        self.p.send_now("L140")#获取版本号
+
+        # 自动调平和手动调平选中 连接信号和槽
+        self.checkbox_level_manual.stateChanged.connect(self.on_manual_changed)
+        self.checkbox_level_Auto.stateChanged.connect(self.on_auto_changed)
+
+    def on_manual_changed(self, state):
+        if state == Qt.Checked:
+            # 如果Manual被选中，取消Auto的选中
+            self.checkbox_level_Auto.blockSignals(True)  # 阻止信号触发循环
+            self.checkbox_level_Auto.setChecked(False)
+            self.checkbox_level_Auto.blockSignals(False)
+        else:
+            # 如果Manual被取消选中，检查Auto是否也未选中
+            if not self.checkbox_level_Auto.isChecked():
+                pass
+
+    def on_auto_changed(self, state):
+        if state == Qt.Checked:
+            # 如果Auto被选中，取消Manual的选中
+            self.checkbox_level_manual.blockSignals(True)  # 阻止信号触发循环
+            self.checkbox_level_manual.setChecked(False)
+            self.checkbox_level_manual.blockSignals(False)
+        else:
+            # 如果Auto被取消选中，检查Manual是否也未选中
+            if not self.checkbox_level_manual.isChecked():
+                pass
     def set_duanduliao_ui(self,uiobject):
         # 头部背景
         uiobject.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
@@ -519,14 +818,24 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_10.setText(str(self.s_authorization))
         #self.comboBox.setCurrentText(self.s_langID)
         self.label_bhtext.setText(str(self.s_devID))
-
     def write_settings(self,softversion):
         settings = QSettings("./File/config.ini", QSettings.IniFormat)
         settings.setValue("System/softwareID",softversion)
     def write_cmpiletimesettings(self,cmpiletime):
         settings = QSettings("./File/config.ini", QSettings.IniFormat)
         settings.setVa1lue("System/compiletime",cmpiletime)
-
+    def write_ini_settings(self,Tag,subname,subvalue):
+        settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        settings.beginGroup(Tag)
+        settings.setValue(subname, subvalue)
+        settings.endGroup()
+        settings.sync()
+    def read_ini_settings(self,Tag,subname):
+        settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        settings.beginGroup(Tag)
+        subvalue = settings.value(subname)
+        settings.endGroup()
+        return  subvalue
     def exit_log_pause_3(self, a):
         #暂停打印功能
         try:
@@ -555,8 +864,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.Value = self.lineEdit_ptset.text().split(".")[0].replace("℃", "")
             logger_a.info("runout_ui_log a:"+a +'\n')
             if a == "1":
-                if not self.duanliao_open:
-                    return
                 # 将断堵料期间需要下发的指令提前写入数据库，查询数据库，并轮循下发
                 sel = Operational_Sqlite.select_date(
                     "SELECT [Order] FROM BROKEN_BLACKED_MATERIAL WHERE Name='duanliao'")
@@ -734,8 +1041,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #if a == "filament exchange fail, broken":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("1")
-            logger_a.info("if  filament error, broken in a:\n")
+            logger_a.info("runout:"+a)
+            if self.warningWindowstatusOpen ==False:#不显示警告窗口
+                return
             if  "filament error, broken" in a:
+                # self.warningList.append("filament error, broken")
+                # if self.warningList.size() >=2: return
                 print("line:",a)
                 print("self.brokening:",self.brokening)
                 #print("self.label_start:",self.label_start.text())
@@ -746,6 +1057,45 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.changeValue_runoutFlag.emit("1")
                         self.brokening = True
                         logger_a.info("self.changeValue_runoutFlag.emit(1)\n")
+            if "Warn: e_heating, overrange!!" in a:
+                # if self.warningList.size() >= 2: return
+                # self.warningList.append("Warn: e_heating, overrange!!")
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
+                    self.exit_log_cancelprint()  # 先关闭  然后弹窗
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
+                    else:
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.show()
+                else:
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
+                    else:
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.show()
+            if "Warn: e_heating, time out!!" in a:
+                # self.warningList.append("Warn: e_heating, time out!!")
+                # if self.warningList.size() >= 2: return
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
+                    self.exit_log_cancelprint()  # 先关闭  然后弹窗
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
+                    else:
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.show()
+                else:
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
+                    else:
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
             #if a == "filament exchange fail, block":
             #    if self.label_start.text() != "START" and self.label_start.text() != "开始":
             #        self.changeValue_runoutFlag.emit("2")
@@ -765,13 +1115,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             #        self.blocking = True
 
             if a == "LOBOTICS MOTOR POWER OFF":
+                # self.warningList.append("LOBOTICS MOTOR POWER OFF")
+                # if self.warningList.size() >= 2: return
                 if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n电机驱动电源已断开")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "INLONG MOTOR POWER OFF")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
                 else:
@@ -779,17 +1131,19 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n电机驱动电源已断开")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "INLONG MOTOR POWER OFF")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
             if "LOBOTICS X" in a:
+                # self.warningList.append("LOBOTICS X")
+                # if self.warningList.size() >= 2: return
                 if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "X电机驱动错误!")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "X motor error!")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
                 else:
@@ -797,17 +1151,19 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "X电机驱动错误!")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "X motor error!")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
             if "LOBOTICS Y" in a:
+                # self.warningList.append("LOBOTICS Y")
+                # if self.warningList.size() >= 2: return
                 if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
                     self.exit_log_cancelprint()  # 先关闭  然后弹窗
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Y电机驱动错误!")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Y motor error!")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
                 else:
@@ -815,37 +1171,50 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Y电机驱动错误!")
                     else:
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Y motor error!")
-                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.show()
-            if "LOBOTICS Z" in a:#LOBOTICS Z
-                    print("  9898989819999999999:",a)
-                    if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
-                        self.exit_log_cancelprint()  # 先关闭  然后弹窗
-                        if self.comboBox.currentText() == "中文":
-                            self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
-                        else:
-                            self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
-                        self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
-                        self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                        self.ui_log_motorpoweroff.show()
+            if "LOBOTICS Z" in a:
+                # self.warningList.append("LOBOTICS Z")
+                # if self.warningList.size() >= 2: return
+                print("  9898989819999999999:",a)
+                if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
+                    self.exit_log_cancelprint()  # 先关闭  然后弹窗
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
                     else:
-                        if self.comboBox.currentText() == "中文":
-                            self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
-                        else:
-                            self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
-                        self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
-                        self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                        self.ui_log_motorpoweroff.show()
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.show()
+                else:
+                    if self.comboBox.currentText() == "中文":
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
+                    else:
+                        self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
+                    self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
+                    self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
+                    self.ui_log_motorpoweroff.show()
+                    self.exit_log_pause("normal")
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    def Ok_log_runout(self):
+        try:
+            self.p.send_now("G250 S110")  # 峰鸣消音
+            self.p.send_now("G250 S21")  # 蓝灯
+            self.ui_log_motorpoweroff.deleteLater()
+            self.warningWindowstatusOpen=False
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
     def exit_log_runout(self):
         try:
             self.p.send_now("G250 S110")  # 峰鸣消音
             self.p.send_now("G250 S21")  # 蓝灯
             self.ui_log_motorpoweroff.deleteLater()
+            self.warningWindowstatusOpen=False
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -933,7 +1302,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for proc in psutil.process_iter(['pid', 'name', 'memory_info']):
                     # print(proc.info['name'])
                     if proc.info['name'] == 'dwm.exe':
-                        # print(proc.info['pid'])
+                        #print(proc.info['pid'])
                         mem_info = proc.memory_info().rss  # bytes
                         # print(mem_info)
                         if mem_info > 1024 * 1024:  # resident set size, physical memory used by process
@@ -989,6 +1358,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not self.flag_printing :
                 if self.label_xyz.text() == self.local_position:
                     wendu = self.lineEdit_extru.text().split("℃")[0]
+                    if wendu=='':
+                        return
                     # 喷头温度异常弹窗
                     try:
                         if float(wendu) >= 450:
@@ -998,9 +1369,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 self.ui_log0 = ui_dialog_log("zhuyi", "CN", "喷头温度异常")
                             else:
                                 self.ui_log0 = ui_dialog_log("zhuyi", "EN", "Abnormal temperature of sprinkler head")
-                            if self.pengtou_abnormal_wendu_ui_show==0:
-                                self.ui_log0.show()
-                                self.pengtou_abnormal_wendu_ui_show = 1
+                            #if self.pengtou_abnormal_wendu_ui_show==0:
+                            self.ui_log0.show()
+                            #self.pengtou_abnormal_wendu_ui_show = 1
                             # 功能
                             self.writeExceptiontoDB("Abnormal temperature of sprinkler head")
                         else:
@@ -1028,10 +1399,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.ui_log1 = ui_dialog_log("zhuyi", "CN", "底板温度异常")
                         else:
                             self.ui_log1= ui_dialog_log("zhuyi", "EN", "Abnormal bottom plate temperature")
-                        if self.bed_abnormal_wendu_ui_show == 0:
-                            self.ui_log1.show()
-                            self.bed_abnormal_wendu_ui_show = 1
-                            self.writeExceptiontoDB("Abnormal temperature of the heating bed")
+                        #if self.bed_abnormal_wendu_ui_show == 0:
+                        self.ui_log1.show()
+                        #self.bed_abnormal_wendu_ui_show = 1
+                        self.writeExceptiontoDB("Abnormal temperature of the heating bed")
                     else:
                         if self.ui_log1 != None:
                             self.ui_log1.close()  # 关闭弹窗
@@ -1058,7 +1429,18 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(
                 e.__traceback__.tb_lineno))
-    #调平信息显示
+    #手动调平信息显示
+    def zdiff_level(self, a):
+        # zdiff: 0.213
+        try:
+            if a != None and self.current_button_num>0:
+                temp = a.split(": ")
+                button = getattr(self, f"pushButton_{self.current_button_num}")
+                button.setText(str(round(float(temp[1]), 2)))
+                #self.lineEdit_diban_show.setText(str(round(float(temp[1]), 2)))
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
     def level_value(self, a):  # 开启底板调平qwqew
         try:
             if "POS" in a:
@@ -1068,18 +1450,37 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 button_num = int(temp[0].split(" ")[1])
                 button = getattr(self, f"pushButton_{button_num}")
                 button.setText(temp[1])
+            if "MARLIN_VERSION:" in a:
+                temp = a.split("MARLIN_VERSION:")
+                temp[1] = temp[1].strip()
+                self.label_7.setText(temp[1])
+
             elif "|BEDLEVEL| done" in a:
                 temp_b = a.split("height: ")[1].replace("mm", "").split(" min height:")
                 temp_e = float(temp_b[0]) - float(temp_b[1])
-                self.label_max.setText("MAX:" + temp_b[0])
-                self.label_max_2.setText("MIN:" +temp_b[1])
+                #self.label_max.setText("MAX:" + temp_b[0].strip())
+                #self.label_max_2.setText("MIN:" +temp_b[1].strip())
+                self.max_level=round(float(temp_b[0].strip()), 2)
+                self.min_level = round(float(temp_b[1].strip()), 2)
+                self.label_max.setText("MAX:" + str(self.max_level))
+                self.label_max_2.setText("MIN:" + str(self.min_level))
                 if temp_e > 0.8:
-                    v = [["热床平面度超差", "热床平面度误差大于0.8mm，软件补偿效果较差，请确认原因并及时调整。\n当前误差值：" + str(round(temp_e, 4)), 'True',
+                    if self.comboBox.currentText() == "中文":
+                        v = [["热床平面度超差",
+                              "热床平面度误差大于0.8mm，软件补偿效果较差，请确认原因并及时调整。\n当前误差值：" + str(
+                                  round(temp_e, 4)), 'True',
+                              time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
+                        Operational_Sqlite.insert_dates(
+                            "insert into 'print_information' (title, inf, status, time) values (?,?, "
+                            "?,?)", v)
+                        self.update_log()
+                    else:
+                        v = [["The flatness of the heated bed exceeds the tolerance.", "The flatness error of the hot bed is greater than 0.8mm, and the software compensation effect is poor. Please confirm the cause and make timely adjustments.\nCurrent error value：" + str(round(temp_e, 4)), 'True',
                           time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())]]
-                    Operational_Sqlite.insert_dates(
-                        "insert into 'print_information' (title, inf, status, time) values (?,?, "
-                        "?,?)", v)
-                    self.update_log()
+                        Operational_Sqlite.insert_dates(
+                            "insert into 'print_information' (title, inf, status, time) values (?,?, "
+                            "?,?)", v)
+                        self.update_log()
             #elif "fail done" in a:
             #    self.label_15.hide()
             #    self.pushButton_level.setStyleSheet("border-image: url(.//Image/pushoff.png);color: white")
@@ -1090,17 +1491,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
             pass
-
-    def zdiff_level(self, a):
-        try:
-            print(a)
-            #if self.diban_inf != None:
-            #    temp = a.split(": ")
-            #    self.diban_inf.get(self.diban_new).setText(str(round(float(temp[1]), 2)))
-            #    self.lineEdit_diban_show.setText(str(round(float(temp[1]), 2)))
-        except Exception as e:
-            logger_a.error(str(e) + '\nerror file:{}'.format(
-                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
     def set_printtime(self, a):  # 结束打印
         pass
@@ -1151,6 +1541,27 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def exit_log_overprint(self):
         self.ui_log_overprint.deleteLater()
+
+    #获取当前gcode的rate和e值
+    def getFeedrateE(self,s):
+        #s = "G1 F2400 #535345"
+        parts = s.split()  # 分割字符串
+        f_value = None
+        e_value = None
+        tmp_f_value = None
+        tmp_e_value = None
+        for part in parts:
+            if part.startswith('F'):
+                tmp_f_value = float(part[1:])  # 提取F后内容并转为数值
+            elif part.startswith('E'):
+                tmp_e_value = float(part[1:])  # 提取E后内容并转为数值
+        if  tmp_f_value:
+            f_value=tmp_f_value
+        if  tmp_e_value:
+            e_value=tmp_e_value
+        # print("F 后面的值:", f_value)  # 输出: 2400.0
+        # print("E 后面的值:", e_value)  # 输出: -3.0
+        return  f_value,e_value
     #通过挤出量
     def jisuan_print_time(self, a):
         ################################################### update 20250701
@@ -1162,6 +1573,16 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.p.paused:
                 return
             self.current_E_jichu= parser.calculate_current_extrusion(a)
+            #获取回抽量和回抽速度，在数据库和信息栏显示
+            self.g_f_value,self.g_e_value=self.getFeedrateE(a)
+            if self.g_e_value==None:
+                return
+            if self.g_e_value<0:
+                if self.comboBox.currentText() == "中文":
+                    self.writeExceptiontoDB("回抽量："+str(abs(self.g_e_value)) +"  回抽速度:"+str(self.g_f_value))
+                else:
+                    self.writeExceptiontoDB("Recovery volume："+str(abs(self.g_e_value)) +"  Recovery speed:"+str(self.g_f_value))
+
             return
         return
         ################################################### update 20250701
@@ -1243,7 +1664,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if self.firststartprint==False:
                     self.getprinttimes(True,False)
                     self.firststartprint=True
-                self.print_time += 5  # 已打印时间+60
+                self.print_time += 60  # 已打印时间+60
                 if DEBUG:
                     self.label_16.setText("总E:" + str(self.total_E) + "当前E:" + str(self.current_E_jichu))#update 20250702
                 if self.current_E_jichu==0:
@@ -1695,6 +2116,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     f"制造商: {manufacturer}\n"
                     f"VID: 0x{vid:04X}, PID: 0x{pid:04X}"
                 )
+                return None
+            return None
+        return None
 
     def connect(self):
         try:
@@ -1757,7 +2181,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if self.choose_local_name in os.listdir("./GCODE"):
                     os.remove("./GCODE/" + self.choose_local_name)
                     self.get_local()
-
                     logger_a.info("REMOVE:" + str("./GCODE/" + self.choose_local_name) + " SUCCESS!")
 
         except Exception as e:
@@ -1824,11 +2247,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def set_xyz_line(self, x, y, z):
         self.label_xyz.setText("X:" + x + "    Y:" + y + "    Z:" + z)
         if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
-            #if self.filamentblock.isChecked():
+            if self.checkbox_level_Auto.isChecked():
                 if 2 < float(z) < 5:
                     self.p.send_now("L110 S81") #底板调平关
                 elif float(z) < 2:
-                    #self.p.send_now("L110 S80")
+                    self.p.send_now("L110 S80") #底板调平开
                     pass
 
     def DrawButton(self,parentWnd,btn,width,height,radius,background):
@@ -1937,10 +2360,36 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             color:white;
                                             background: rgba(0,0,0,0.3);
                                             border-top-left-radius: 0px;
-                                            border-top-right-radius: 25px;
+                                            border-top-right-radius: 40px;
                                             border-bottom-left-radius: 0px;
-                                            border-bottom-right-radius: 25px;
+                                            border-bottom-right-radius: 40px;
                                             opacity: 0.5;}''')
+        self.checkbox_level_manual.setStyleSheet("""
+           QCheckBox {
+                color: white;  /* 设置字体颜色为白色 */
+            }
+            QCheckBox::indicator {
+                width: 30px;
+                height: 30px;
+            }
+        """)
+        self.checkbox_level_Auto.setStyleSheet("""
+           QCheckBox {
+                color: white;  /* 设置字体颜色为白色 */
+            }
+            QCheckBox::indicator {
+                width: 30px;
+                height: 30px;
+            }
+        """)
+        # self.pushButton_tp_manual.setStyleSheet('''QPushButton{
+        #                                     color:white;
+        #                                     background: rgba(0,0,0,0.3);
+        #                                     border-top-left-radius: 25px;
+        #                                     border-top-right-radius: 25px;
+        #                                     border-bottom-left-radius: 25px;
+        #                                     border-bottom-right-radius: 25px;
+        #                                     opacity: 0.5;}''')
         # self.groupBox_tp.setStyleSheet('''QGroupBox{
         #                                     color:white;
         #                                     #background: rgba(0,0,0,0.6);
@@ -1952,9 +2401,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         #                                     opacity: 0.3;}''')
         self.groupBox_16.setStyleSheet("QGroupBox {"
                                                     "border: 0px solid gray;"
-                                                    "border-top-left-radius: 30px;"
+                                                    "border-top-left-radius: 40px;"
                                                     "border-top-right-radius: 0px;"
-                                                    "border-bottom-left-radius: 30px;"
+                                                    "border-bottom-left-radius: 40px;"
                                                     "border-bottom-right-radius:0px;"
                                                     "color:white;"
                                                     "background: rgba(0,0,0,0.1);"
@@ -2474,19 +2923,21 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                 border-radius: 8px;
                                 border: 3px solid rgba(255, 255, 255, 0.2);
                                 background-color: rgba(255, 255, 255, 0.1);
-                                padding: 5px;  /* 避免文字贴边 */
+                                padding: 1px;  /* 避免文字贴边 */
                             }
 
                             QListView::item {
                                 background: transparent;
                                 color: white;
-                                padding: 5px;
+                                padding: 1px;
                             }
 
                             QListView::item:selected {
                                 background: rgba(255, 255, 255, 0.3);  /* 选中项高亮 */
                                 color: black;
                             }
+                            
+                            
                         """)
             self.listView_udisk.setStyleSheet("""
                                         QListView {
@@ -2506,6 +2957,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             background: rgba(255, 255, 255, 0.3);  /* 选中项高亮 */
                                             color: black;
                                         }
+                                    """)
+            self.groupBox_udisk.setStyleSheet("""
+                                        QGroupBox {
+                                            border-radius: 8px;
+                                            border: 3px solid rgba(255, 255, 255, 0.2);
+                                            background-color: rgba(255, 255, 255, 0.1);
+                                            padding: 5px;  /* 避免文字贴边 */
+                                        }
+
                                     """)
             self.textEdit_history.setStyleSheet("""
                 QTextEdit {
@@ -2543,7 +3003,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.pushButton_removelocal.clicked.connect(self.remove_local)
             #self.pushButton_removelocal.hide()
             self.pushButton_refreshu.setStyleSheet("QPushButton{border-image:url(./Image/refresh.png);}")
-            self.pushButton_refreshu.clicked.connect(self.get_u)
+            #self.pushButton_refreshu.clicked.connect(self.get_u)
             self.pushButton_insert.setStyleSheet("QPushButton{border-image:url(./Image/insert.png);}")
             self.pushButton_insert.clicked.connect(self.save_u)
 
@@ -2940,6 +3400,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.label_e255_3.setText("调平")
                 self.pushButton_tp.setText("调平")
+                self.checkbox_level_manual.setText("打开手动调平")
+                self.checkbox_level_Auto.setText("打开自动调平")
                 self.lineEdit_send.setPlaceholderText("在此输入")
                 self.label_e255_2.setText("控制台")
 
@@ -3015,6 +3477,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.label_e255_3.setText("Level")
                 self.pushButton_tp.setText("Leveling")
+                self.checkbox_level_manual.setText("Manual")
+                self.checkbox_level_Auto.setText("Auto")
                 self.lineEdit_send.setPlaceholderText("Input Here")
                 self.label_e255_2.setText("Control")
 
@@ -3087,6 +3551,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.keyboard.content_line = ""
             self.keyboard.hide()
             self.set_ext_flag = 0
+            self.write_ini_settings("TEMP", "EXTR", self.current_set_pengtou_temp)
 
             logger_a.info("SET EXTRU TEMP:" + str(wendu) + " success!")
     def set_extru_target(self):
@@ -3188,7 +3653,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.fsfs_flag = 0
 
             logger_a.info("SET FAN SPEED:", str(wendu), " success!")
-
+    #工件散热引脚 PD12
     def set_fanspeed(self):
         speed = self.lineEdit_fanspeed.text()
         if speed != "":
@@ -3222,7 +3687,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.keyboard.content_line = ""
             self.keyboard.hide()
             self.set_bed_flag = 0
-
+            self.write_ini_settings("TEMP", "BED", self.current_set_bed_temp)
             logger_a.info("SET BED TEMP:" + str(wendu) + " success!")
 
     def set_bed_target(self):
@@ -3281,11 +3746,18 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-
-    def g28xy(self):  # 开启底板调平
-        self.p.send_now("G28")
-        self.p.send_now("L29")
-        self.diban_new = None
+    def voidButton(self):
+        for i in range(1, 56):
+            button = getattr(self, f"pushButton_{i}")
+            button.setText(str(i))
+    def g28xy(self):  # 开启底板自动调平
+        self.voidButton()
+        if self.checkbox_level_manual.isChecked():
+            self.on_tp_button_clicked(self.pushButton_1)
+        else:
+            self.p.send_now("G28")
+            self.p.send_now("L29") #自动  L31 手动
+            self.diban_new = None
 
     def sendline(self):
         try:
@@ -3491,8 +3963,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.pushButton_startprint.setText("休止")
 
             self.timer_use_left.start()
-            self.p.send_now("L109")
-            self.p.send_now("M109 S" + self.p.extru_temp_history)  # 恢复喷头温度
+            self.p.send_now("L109") #重新打印后断堵料参数清零
+            self.p.extru_temp_history=self.read_ini_settings("TEMP","EXTR")
+            self.p.bed_temp_history = self.read_ini_settings("TEMP", "BED")
+            self.p.send_now("M109 S" + str(self.p.extru_temp_history))  # 恢复喷头温度
+            self.p.send_now("M190 S" + str(self.p.bed_temp_history))  # 恢复床温度
+            self.p.send_now("G250 S31")  # 恢复打印打开绿灯
             self.brokening = False
             self.changeStartprintCaption(self.BT_STATE.PAUSE)
             self.m_current_runstate = 2#resume
@@ -3507,6 +3983,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.ui_log_resume.deleteLater()
         except Exception as e:
             print(e)
+            logger_a.error(e)
 
     def exit_log_pause_cancel(self):
         try:
@@ -3542,8 +4019,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             self.changeStartprintCaption(self.BT_STATE.RESUME)
             self.m_current_runstate = 3 #pause
-            self.current_runstate(self.ui_log_pauseprint,self.m_current_runstate)
-            self.ui_log_pauseprint.deleteLater()
+            if self.ui_log_pauseprint:
+                self.current_runstate(self.ui_log_pauseprint,self.m_current_runstate)
+                self.ui_log_pauseprint.deleteLater()
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3630,10 +4108,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.pushButton_startprint.setText("START")
             elif self.comboBox.currentText() == "日本語.":
                 self.pushButton_startprint.setText("スタート")
-            self.p.send_now("M104 S0")
-            QThread.msleep(50)
-            self.p.send_now("M140 S0")
-            QThread.msleep(50)
+            self.changeStartprintCaption(self.BT_STATE.START)
+
             self.timer_use_left.stop()
             self.rece_E_flag = 0
             self.current_E_jichu = 0.0
@@ -3659,11 +4135,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.flag_ble = 0,
             self.jichu_flag = 0
             self.p.send_now("L110 S81")
-            QThread.msleep(50)
-            self.p.send_now("M104 S0")
-            QThread.msleep(50)
-            self.p.send_now("M140 S0")
-            QThread.msleep(50)
             # 剩余时间初始化0s
             #self.label_totletime.setText("")
             # gcode初始化
@@ -3676,7 +4147,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # 总时间隐藏
             self.label_titlesy.hide()
             self.label_sy.hide()
-            self.changeStartprintCaption(self.BT_STATE.START)
+
             self.label_sy.setText(' ' + self.second_string_time(self.cal_print_total_time))
             self.label_totletime.setText(' ' + self.second_string_time(self.cal_print_total_time))  # 总时间
         except Exception as e:
@@ -3687,6 +4158,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.openFile.hide()
     def confim_choose_gcodefile(self):
         try:
+            self.label_totletime.setText("")
+            self.label_sy.setText("")
+            self.current_E_jichu = 0.0  # clear total E when change gcode file, otherwise or not
+            self.print_left_time = 0  # 剩余打印时间
+            self.print_total_time = 0  # 总打印时间
+            parser.total_time=0
             self.openFile.hide()
             self.gcodename = "./GCODE/" + self.choose_gcodefile
             if self.gcodename == "./GCODE/":
@@ -3747,10 +4224,10 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.Extruder_gcode = float(
                 extrusion_width.replace("; external perimeters extrusion width = ", "").replace("mm", ""))
 
-            for i in range(5):
-                if float(self.comboBox_2.itemText(i)) ==  self.Extruder_gcode:
-                    self.comboBox_2.setCurrentIndex(i)
-                    break
+            # for i in range(5):
+            #     if float(self.comboBox_2.itemText(i)) ==  self.Extruder_gcode:
+            #         self.comboBox_2.setCurrentIndex(i)
+            #         break
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -3758,9 +4235,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def load_gcode_async_thread(self, gcode):
         try:
+            self.total_E = self.calculate_E_total(self.filename)
+            self.write_ini_settings("TEMP","BED",parser.bed_targettemp)
+            self.write_ini_settings("TEMP", "EXTR", parser.extru_targettemp)
             self.load_gcode(self.filename, gcode=gcode)
             laycount=0
-            self.total_E = self.calculate_E_total(self.filename)
             # Add print time code
             if ISBY_CALGODE == 1:
                 time_seconds = parser.get_print_time(self.gcodename)
@@ -3775,7 +4254,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 laycount, time_seconds = self.fgcode.estimate_duration()
                 if time_seconds:
                     self.cal_print_total_time  = int(time_seconds.total_seconds())
-
                 else:
                     # print("未找到打印时间信息")
                     self.cal_print_total_time = 0
@@ -3790,7 +4268,30 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
+    #pushbutton按钮调整
+    def event_update_value(self,str):
+        if str=="pushButton_microzup":
+            self.micro_zzz()
+        if str=="pushButton_microzdown":
+            self.micro_zzz_down()
+        if str == "pushButton_zup":
+            self.do_move_z_left()
+        if str == "pushButton_zdown":
+            self.do_move_z_right()
 
+
+        if str=="pushButton_xleft":
+            self.do_move_x_left()
+        if str=="pushButton_xright":
+            self.do_move_x_right()
+        if str == "pushButton_yup":
+            self.do_move_y_left()
+        if str == "pushButton_ydown":
+            self.do_move_y_right()
+
+
+
+        pass
     def loadGcode_ui_log(self, a,laycnt,esttime):
         try:
             if a == "OK":
@@ -3825,9 +4326,15 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def save_u(self):
         try:
+            self.choose_name=self.device_tree.selectfilename
             if self.choose_name != "":
                 # if not os.path.exists(self.lst_list[0]+self.choose_name):
-                if not os.path.exists(self.usbpath() + self.choose_name):
+                path=self.usbpath()
+
+                if not os.path.isdir(str(path)):
+                    self.device_tree.refresh_usb_tree()
+                    return
+                if not os.path.exists(str(path) + self.choose_name):
                     self.ui_uuu = ui_dialog_log("zhuyi", "No existed file!\n Please update udisk!")
                     self.ui_uuu.pushButton.clicked.connect(self.exit_uuu_cance)
                     self.ui_uuu.pushButton_2.clicked.connect(self.exit_uuu_cance)
@@ -3837,7 +4344,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 file = open("./GCODE/" + self.choose_name, "a+")
                 file.close()
                 # copyfile(self.lst_list[0]+self.choose_name,"./GCODE/"+self.choose_name)
-                copyfile(self.usbpath() + self.choose_name, "./GCODE/" + self.choose_name)
+                copyfile(path + self.choose_name, "./GCODE/" + self.choose_name)
 
                 logger_a.info("SAVE:" + str("./GCODE/" + self.choose_name) + " SUCCESS!")
 
@@ -3870,12 +4377,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def loadGcodeFile(self):
         try:
-            self.label_totletime.setText("")
-            self.label_sy.setText("")
-            self.current_E_jichu = 0.0  # clear total E when change gcode file, otherwise or not
-            self.print_left_time = 0  # 剩余打印时间
-            self.print_total_time = 0  # 总打印时间
-            parser.total_time=0
+
             self.update_gcodefile()
             self.openFile.show()
         except Exception as e:
@@ -3922,6 +4424,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return result
 
     def usbpath(self):
+        drives = self.device_tree.get_usb_drives()
+        if not drives:
+            return ''
+        else:
+            return str(drives[0])
         if os.name == 'nt':
             disks = self.sh("wmic logicaldisk get deviceid, description",
                             print_msg=False).split('\n')
@@ -4114,10 +4621,39 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_system.setStyleSheet("color:white")
 
         self.tabWidget.setCurrentIndex(3)
+
+    def reset_cancel(self):
+        try:
+            self.ui_reset.deleteLater()
+        except Exception as e:
+            print(e)
+    def reset_ok(self):
+        try:
+            self.MoveToSystem()
+            self.p.disconnect()
+            self.connect()
+            QThread.sleep(1)
+            self.p.send_now("L130")  # 软复位
+            QThread.sleep(5)
+            self.connect()
+            self.p.send_now("G250 S31")  # 打开绿灯
+            self.p.send_now("G250 S100")  # 关闭蜂鸣器
+            self.exit_log_cancelprint()
+            QThread.sleep(2)
+            self.connect()
+            self.warningWindowstatusOpen = True
+            self.ui_reset.deleteLater()
+        except Exception as e:
+            print(e)
     def resetsystem(self):
-        self.MoveToSystem()
-        self.exit_log_cancelprint()
-        self.connect()
+        if self.comboBox.currentText() == "中文":
+            self.ui_reset = ui_dialog_log("zhuyi", "CN", "确认是否复位系统？")
+        else:
+            self.ui_reset = ui_dialog_log("zhuyi", "EN", "Confirm if the system needs to be reset?")
+
+        self.ui_reset.pushButton_2.clicked.connect(self.reset_ok)  # 确认
+        self.ui_reset.pushButton.clicked.connect(self.reset_cancel)  # 取消
+        self.ui_reset.show()
 
     def MoveToSystem(self):
         self.pushButton_vector.setStyleSheet("QPushButton{border-image:url(./Image/VectorOff.png);}")
@@ -4136,6 +4672,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_system.setStyleSheet("color:#F25F0D")
 
         self.tabWidget.setCurrentIndex(4)
+        self.p.send_now("L140")
+        self.p.send_now("L140")
 
     def do_move_x_fuwei(self):
         print("0000000000")
@@ -4233,173 +4771,207 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     #11*5按钮调平
     def on_tp_button_clicked(self, button):
         # 获取按钮编号
-        button_name = button.objectName()
-        button_num = int(button_name.split('_')[-1])
-        if button_num == 1:
-            self.p.send_now("G1 X76.69 Y137.05 F15000")
-            self.diban_new = "POS 1 "
-        if button_num == 2:
-            self.p.send_now("G1 X76.69 Y237.05 F15000")
-            self.diban_new = "POS 2 "
-        if button_num == 3:
-            self.p.send_now("G1 X76.69 Y337.05 F15000")
-            self.diban_new = "POS 3 "
-        if button_num == 4:
-            self.p.send_now("G1 X76.69 Y437.05 F15000")
-            self.diban_new = "POS 4 "
-        if button_num == 5:
-            self.p.send_now("G1 X76.69 Y537.05 F15000")
-            self.diban_new = "POS 5 "
-        if button_num == 6:
-            self.p.send_now("G1 X176.69 Y137.05 F15000")
-            self.diban_new = "POS 10 "
-        if button_num == 7:
-            self.p.send_now("G1 X176.69 Y237.05 F15000")
-            self.diban_new = "POS 9 "
-        if button_num == 8:
-            self.p.send_now("G1 X176.69 Y337.05 F15000")
-            self.diban_new = "POS 8 "
-        if button_num == 9:
-            self.p.send_now("G1 X176.69 Y437.05 F15000")
-            self.diban_new = "POS 7 "
-        if button_num == 10:
-            self.p.send_now("G1 X176.69 Y537.05 F15000")
-            self.diban_new = "POS 6 "
-        if button_num == 11:
-            self.p.send_now("G1 X276.69 Y137.05 F15000")
-            self.diban_new = "POS 11 "
-        if button_num == 12:
-            self.p.send_now("G1 X276.69 Y237.05 F15000")
-            self.diban_new = "POS 12 "
-        if button_num == 13:
-            self.p.send_now("G1 X276.69 Y337.05 F15000")
-            self.diban_new = "POS 13 "
-        if button_num == 14:
-            self.p.send_now("G1 X276.69 Y437.05 F15000")
-            self.diban_new = "POS 14 "
-        if button_num == 15:
-            self.p.send_now("G1 X276.69 Y537.05 F15000")
-            self.diban_new = "POS 5 "
-        if button_num == 16:
-            self.p.send_now("G1 X376.69 Y137.05 F15000")
-            self.diban_new = "POS 20 "
-        if button_num == 17:
-            self.p.send_now("G1 X376.69 Y237.05 F15000")
-            self.diban_new = "POS 19 "
-        if button_num == 18:
-            self.p.send_now("G1 X376.69 Y337.05 F15000")
-            self.diban_new = "POS 18 "
-        if button_num == 19:
-            self.p.send_now("G1 X376.69 Y437.05 F15000")
-            self.diban_new = "POS 17 "
-        if button_num == 20:
-            self.p.send_now("G1 X376.69 Y537.05 F15000")
-            self.diban_new = "POS 16 "
-        if button_num == 21:
-            self.p.send_now("G1 X476.69 Y137.05 F15000")
-            self.diban_new = "POS 21 "
-        if button_num == 22:
-            self.p.send_now("G1 X476.69 Y237.05 F15000")
-            self.diban_new = "POS 22 "
-        if button_num == 23:
-            self.p.send_now("G1 X476.69 Y337.05 F15000")
-            self.diban_new = "POS 23 "
-        if button_num == 24:
-            self.p.send_now("G1 X476.69 Y437.05 F15000")
-            self.diban_new = "POS 24 "
-        if button_num == 25:
-            self.p.send_now("G1 X476.69 Y537.05 F15000")
-            self.diban_new = "POS 25 "
-        if button_num == 26:
-            self.p.send_now("G1 X576.69 Y137.05 F15000")
-            self.diban_new = "POS 30 "
-        if button_num == 27:
-            self.p.send_now("G1 X576.69 Y237.05 F15000")
-            self.diban_new = "POS 29 "
-        if button_num == 28:
-            self.p.send_now("G1 X576.69 Y337.05 F15000")
-            self.diban_new = "POS 28 "
-        if button_num == 29:
-            self.p.send_now("G1 X576.69 Y437.05 F15000")
-            self.diban_new = "POS 27 "
-        if button_num == 30:
-            self.p.send_now("G1 X576.69 Y537.05 F15000")
-            self.diban_new = "POS 26 "
-        if button_num == 31:
-            self.p.send_now("G1 X676.69 Y137.05 F15000")
-            self.diban_new = "POS 31 "
-        if button_num == 32:
-            self.p.send_now("G1 X676.69 Y237.05 F15000")
-            self.diban_new = "POS 32 "
-        if button_num == 33:
-            self.p.send_now("G1 X676.69 Y337.05 F15000")
-            self.diban_new = "POS 33 "
-        if button_num == 34:
-            self.p.send_now("G1 X676.69 Y437.05 F15000")
-            self.diban_new = "POS 34 "
-        if button_num == 35:
-            self.p.send_now("G1 X676.69 Y537.05 F15000")
-            self.diban_new = "POS 35 "
-        if button_num == 36:
-            self.p.send_now("G1 X776.69 Y137.05 F15000")
-            self.diban_new = "POS 40 "
-        if button_num == 37:
-            self.p.send_now("G1 X776.69 Y237.05 F15000")
-            self.diban_new = "POS 39 "
-        if button_num == 38:
-            self.p.send_now("G1 X776.69 Y337.05 F15000")
-            self.diban_new = "POS 38 "
-        if button_num == 39:
-            self.p.send_now("G1 X776.69 Y437.05 F15000")
-            self.diban_new = "POS 37 "
-        if button_num == 40:
-            self.p.send_now("G1 X776.69 Y537.05 F15000")
-            self.diban_new = "POS 36 "
-        if button_num == 41:
-            self.p.send_now("G1 X876.69 Y137.05 F15000")
-            self.diban_new = "POS 41 "
-        if button_num == 42:
-            self.p.send_now("G1 X876.69 Y237.05 F15000")
-            self.diban_new = "POS 42 "
-        if button_num == 43:
-            self.p.send_now("G1 X876.69 Y337.05 F15000")
-            self.diban_new = "POS 43 "
-        if button_num == 44:
-            self.p.send_now("G1 X876.69 Y437.05 F15000")
-            self.diban_new = "POS 44 "
-        if button_num == 45:
-            self.p.send_now("G1 X876.69 Y537.05 F15000")
-            self.diban_new = "POS 45 "
-        if button_num == 46:
-            self.p.send_now("G1 X976.69 Y137.05 F15000")
-            self.diban_new = "POS 50 "
-        if button_num == 47:
-            self.p.send_now("G1 X976.69 Y237.05 F15000")
-            self.diban_new = "POS 49 "
-        if button_num == 48:
-            self.p.send_now("G1 X976.69 Y337.05 F15000")
-            self.diban_new = "POS 48 "
-        if button_num == 49:
-            self.p.send_now("G1 X976.69 Y437.05 F15000")
-            self.diban_new = "POS 47 "
-        if button_num == 50:
-            self.p.send_now("G1 X976.69 Y537.05 F15000")
-            self.diban_new = "POS 46 "
-        if button_num == 51:
-            self.p.send_now("G1 X1076.69 Y137.05 F15000")
-            self.diban_new = "POS 51 "
-        if button_num == 52:
-            self.p.send_now("G1 X1076.69 Y237.05 F15000")
-            self.diban_new = "POS 52 "
-        if button_num == 53:
-            self.p.send_now("G1 X1076.69 Y337.05 F15000")
-            self.diban_new = "POS 53 "
-        if button_num == 54:
-            self.p.send_now("G1 X1076.69 Y437.05 F15000")
-            self.diban_new = "POS 54 "
-        if button_num == 55:
-            self.p.send_now("G1 X1076.69 Y537.05 F15000")
-            self.diban_new = "POS 55 "
+
+        if self.checkbox_level_manual.isChecked():
+            # 创建并显示对话框
+            dialog = SimpleDialog()
+            if self.comboBox.currentText() == "中文":
+                dialog.setLabelText("等待中...")
+            else:
+                dialog.setLabelText("Waiting...")
+
+            global_pos = QCursor.pos()  # 返回QPoint对象
+            # 设置为模态对话框（阻塞其他窗口）
+            dialog.setModal(True)
+            dialog.move(global_pos+QPoint(-75,-50))
+            # 显示对话框
+            dialog.show()
+            QApplication.processEvents()  # 保持UI响应
+
+            # if self.laster_ready_ok==False:
+            #     self.p.send_now("L32")
+            #     time.sleep(10)
+            #     self.laster_ready_ok=True
+            button_name = button.objectName()
+            self.current_button_num=button_num = int(button_name.split('_')[-1])
+            # button = getattr(self, f"pushButton_{button_num}")
+            # button.setText('wait...')
+            if button_num == 1:
+                self.p.send_now("G28")#归零
+                time.sleep(3)
+                self.p.send_now("L32")#获取ad/mm
+                self.p.send_now("G1 X76.69 Y137.05 F15000")
+                self.diban_new = "POS 1 "
+                #self.p.send_now("L31")#获取零点AD值
+                time.sleep(2)
+                dialog.close()
+                return
+            if button_num == 2:
+                self.p.send_now("G1 X76.69 Y237.05 F15000")
+                self.diban_new = "POS 2 "
+            if button_num == 3:
+                self.p.send_now("G1 X76.69 Y337.05 F15000")
+                self.diban_new = "POS 3 "
+            if button_num == 4:
+                self.p.send_now("G1 X76.69 Y437.05 F15000")
+                self.diban_new = "POS 4 "
+            if button_num == 5:
+                self.p.send_now("G1 X76.69 Y537.05 F15000")
+                self.diban_new = "POS 5 "
+            if button_num == 6:
+                self.p.send_now("G1 X176.69 Y137.05 F15000")
+                self.diban_new = "POS 10 "
+            if button_num == 7:
+                self.p.send_now("G1 X176.69 Y237.05 F15000")
+                self.diban_new = "POS 9 "
+            if button_num == 8:
+                self.p.send_now("G1 X176.69 Y337.05 F15000")
+                self.diban_new = "POS 8 "
+            if button_num == 9:
+                self.p.send_now("G1 X176.69 Y437.05 F15000")
+                self.diban_new = "POS 7 "
+            if button_num == 10:
+                self.p.send_now("G1 X176.69 Y537.05 F15000")
+                self.diban_new = "POS 6 "
+            if button_num == 11:
+                self.p.send_now("G1 X276.69 Y137.05 F15000")
+                self.diban_new = "POS 11 "
+            if button_num == 12:
+                self.p.send_now("G1 X276.69 Y237.05 F15000")
+                self.diban_new = "POS 12 "
+            if button_num == 13:
+                self.p.send_now("G1 X276.69 Y337.05 F15000")
+                self.diban_new = "POS 13 "
+            if button_num == 14:
+                self.p.send_now("G1 X276.69 Y437.05 F15000")
+                self.diban_new = "POS 14 "
+            if button_num == 15:
+                self.p.send_now("G1 X276.69 Y537.05 F15000")
+                self.diban_new = "POS 5 "
+            if button_num == 16:
+                self.p.send_now("G1 X376.69 Y137.05 F15000")
+                self.diban_new = "POS 20 "
+            if button_num == 17:
+                self.p.send_now("G1 X376.69 Y237.05 F15000")
+                self.diban_new = "POS 19 "
+            if button_num == 18:
+                self.p.send_now("G1 X376.69 Y337.05 F15000")
+                self.diban_new = "POS 18 "
+            if button_num == 19:
+                self.p.send_now("G1 X376.69 Y437.05 F15000")
+                self.diban_new = "POS 17 "
+            if button_num == 20:
+                self.p.send_now("G1 X376.69 Y537.05 F15000")
+                self.diban_new = "POS 16 "
+            if button_num == 21:
+                self.p.send_now("G1 X476.69 Y137.05 F15000")
+                self.diban_new = "POS 21 "
+            if button_num == 22:
+                self.p.send_now("G1 X476.69 Y237.05 F15000")
+                self.diban_new = "POS 22 "
+            if button_num == 23:
+                self.p.send_now("G1 X476.69 Y337.05 F15000")
+                self.diban_new = "POS 23 "
+            if button_num == 24:
+                self.p.send_now("G1 X476.69 Y437.05 F15000")
+                self.diban_new = "POS 24 "
+            if button_num == 25:
+                self.p.send_now("G1 X476.69 Y537.05 F15000")
+                self.diban_new = "POS 25 "
+            if button_num == 26:
+                self.p.send_now("G1 X576.69 Y137.05 F15000")
+                self.diban_new = "POS 30 "
+            if button_num == 27:
+                self.p.send_now("G1 X576.69 Y237.05 F15000")
+                self.diban_new = "POS 29 "
+            if button_num == 28:
+                self.p.send_now("G1 X576.69 Y337.05 F15000")
+                self.diban_new = "POS 28 "
+            if button_num == 29:
+                self.p.send_now("G1 X576.69 Y437.05 F15000")
+                self.diban_new = "POS 27 "
+            if button_num == 30:
+                self.p.send_now("G1 X576.69 Y537.05 F15000")
+                self.diban_new = "POS 26 "
+            if button_num == 31:
+                self.p.send_now("G1 X676.69 Y137.05 F15000")
+                self.diban_new = "POS 31 "
+            if button_num == 32:
+                self.p.send_now("G1 X676.69 Y237.05 F15000")
+                self.diban_new = "POS 32 "
+            if button_num == 33:
+                self.p.send_now("G1 X676.69 Y337.05 F15000")
+                self.diban_new = "POS 33 "
+            if button_num == 34:
+                self.p.send_now("G1 X676.69 Y437.05 F15000")
+                self.diban_new = "POS 34 "
+            if button_num == 35:
+                self.p.send_now("G1 X676.69 Y537.05 F15000")
+                self.diban_new = "POS 35 "
+            if button_num == 36:
+                self.p.send_now("G1 X776.69 Y137.05 F15000")
+                self.diban_new = "POS 40 "
+            if button_num == 37:
+                self.p.send_now("G1 X776.69 Y237.05 F15000")
+                self.diban_new = "POS 39 "
+            if button_num == 38:
+                self.p.send_now("G1 X776.69 Y337.05 F15000")
+                self.diban_new = "POS 38 "
+            if button_num == 39:
+                self.p.send_now("G1 X776.69 Y437.05 F15000")
+                self.diban_new = "POS 37 "
+            if button_num == 40:
+                self.p.send_now("G1 X776.69 Y537.05 F15000")
+                self.diban_new = "POS 36 "
+            if button_num == 41:
+                self.p.send_now("G1 X876.69 Y137.05 F15000")
+                self.diban_new = "POS 41 "
+            if button_num == 42:
+                self.p.send_now("G1 X876.69 Y237.05 F15000")
+                self.diban_new = "POS 42 "
+            if button_num == 43:
+                self.p.send_now("G1 X876.69 Y337.05 F15000")
+                self.diban_new = "POS 43 "
+            if button_num == 44:
+                self.p.send_now("G1 X876.69 Y437.05 F15000")
+                self.diban_new = "POS 44 "
+            if button_num == 45:
+                self.p.send_now("G1 X876.69 Y537.05 F15000")
+                self.diban_new = "POS 45 "
+            if button_num == 46:
+                self.p.send_now("G1 X976.69 Y137.05 F15000")
+                self.diban_new = "POS 50 "
+            if button_num == 47:
+                self.p.send_now("G1 X976.69 Y237.05 F15000")
+                self.diban_new = "POS 49 "
+            if button_num == 48:
+                self.p.send_now("G1 X976.69 Y337.05 F15000")
+                self.diban_new = "POS 48 "
+            if button_num == 49:
+                self.p.send_now("G1 X976.69 Y437.05 F15000")
+                self.diban_new = "POS 47 "
+            if button_num == 50:
+                self.p.send_now("G1 X976.69 Y537.05 F15000")
+                self.diban_new = "POS 46 "
+            if button_num == 51:
+                self.p.send_now("G1 X1076.69 Y137.05 F15000")
+                self.diban_new = "POS 51 "
+            if button_num == 52:
+                self.p.send_now("G1 X1076.69 Y237.05 F15000")
+                self.diban_new = "POS 52 "
+            if button_num == 53:
+                self.p.send_now("G1 X1076.69 Y337.05 F15000")
+                self.diban_new = "POS 53 "
+            if button_num == 54:
+                self.p.send_now("G1 X1076.69 Y437.05 F15000")
+                self.diban_new = "POS 54 "
+            if button_num == 55:
+                self.p.send_now("G1 X1076.69 Y537.05 F15000")
+                self.diban_new = "POS 55 "
+            time.sleep(3)
+            self.p.send_now("L31")
+            time.sleep(2)
+            dialog.close()
 
     def on_distance_button_clicked(self, button):
         # 获取按钮编号
@@ -4421,7 +4993,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 DEBUG =0
 #1：打印时间通过计算GCODE获取 0：通过挤出量算
 ISBY_CALGODE=0
-SOFTWARE_VERSION='V2.0.0.5'
+SOFTWARE_VERSION='V2.0.0.9'
 if __name__ == "__main__":
     try:
         import sys

@@ -331,7 +331,6 @@ class GCodeParser:
     def calculate_total_extrusion(self,gcode_file_path):
         """
         计算G-code中的总挤出量，正确处理G92 E0重置指令
-        :param gcode_lines: 包含G-code指令的列表
         :return: 总挤出量（单位：mm）
         """
         total_extrusion = 0.0

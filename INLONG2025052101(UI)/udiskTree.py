@@ -95,7 +95,7 @@ class USBFileExplorer(QGroupBox):
         self.tree_view.setHeaderHidden(True)
         self.tree_view.setSelectionBehavior(QTreeView.SelectRows)
         self.tree_view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tree_view.customContextMenuRequested.connect(self.show_context_menu)
+        #self.tree_view.customContextMenuRequested.connect(self.show_context_menu)
         self.tree_view.clicked.connect(self.show_selected_path)  # 新增点击事件
         # 添加到GroupBox布局
         self.groupbox.layout().addWidget(self.tree_view)
@@ -290,9 +290,9 @@ class USBFileExplorer(QGroupBox):
             self.model.appendRow(drive_item)
             self.populate_tree(drive_item, drive)
 
-        self.tree_view.expandToDepth(1)  # 默认展开第一层
         self.apply_styles()
-
+        #self.tree_view.collapse_all()
+        self.tree_view.expandToDepth(0)  # 默认展开第一层
     def show_selected_path(self, index):
         """显示当前选中项的路径"""
         path = self.get_selected_path()
