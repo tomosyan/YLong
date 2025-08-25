@@ -24,7 +24,7 @@
     <item row="1" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -7208,7 +7208,7 @@ opacity: 0.3</string>
                  <string notr="true">color:white</string>
                 </property>
                 <property name="text">
-                 <string>授权：</string>
+                 <string>运行时间：</string>
                 </property>
                </widget>
               </item>

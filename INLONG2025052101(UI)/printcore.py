@@ -94,6 +94,7 @@ class printcore(QThread):
     printer_offline = pyqtSignal(str)
     infor_firmware = pyqtSignal(str)  # 返回下位机的回复的信息
 
+
     def __init__(self, port=None, baud=None, dtr=None):
         super(printcore, self).__init__()
         """Initializes a printcore instance. Pass the port and baud rate to
@@ -613,6 +614,8 @@ class printcore(QThread):
                     self.dibanlevel.emit(line)
                 elif "MARLIN_VERSION:" in line :# 固件版本号
                     self.dibanlevel.emit(line)
+                elif "echo:Print time:" in line:#获取打印时间
+                    self.infor_firmware.emit(line)
                 if line.lower().startswith("resend") or line.startswith("rs"):
                     for haystack in ["N:", "N", ":"]:
                         line = line.replace(haystack, " ")

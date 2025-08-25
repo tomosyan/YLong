@@ -2963,7 +2963,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -3137,7 +3137,7 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "V1.1"))
         self.label_9.setText(_translate("MainWindow", "IP地址："))
         self.label_8.setText(_translate("MainWindow", "127.0.0.1"))
-        self.label_11.setText(_translate("MainWindow", "授权："))
+        self.label_11.setText(_translate("MainWindow", "运行时间："))
         self.label_10.setText(_translate("MainWindow", "2025-02-28"))
         self.label_13.setText(_translate("MainWindow", "语言："))
         self.comboBox.setItemText(0, _translate("MainWindow", "中文"))

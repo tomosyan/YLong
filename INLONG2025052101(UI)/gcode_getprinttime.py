@@ -337,7 +337,7 @@ class GCodeParser:
         prev_e = None  # 用于记录前一个E值
         is_reset = False  # 标记是否遇到重置指令
         #M83 E 相对 M82:E绝对
-        is_Relative =True #相对
+        is_Relative =False #相对
         tmpline=None
         inloop=0
         with open(gcode_file_path, "r", encoding="utf-8") as f:
@@ -440,7 +440,7 @@ class GCodeParser:
 
 if __name__ == '__main__':
     #gcode_file_path = 'D:\git\YLong\INLONG2025052101(UI)\GCODE\LC-GR3005通用-16分钟.gcode'
-    gcode_file_path = 'D:\四套加测试件_1d23h13m.gcode'
+    gcode_file_path = r'F:\新建文件夹\dist\GCODE\8月17-7888g-4d19h中间板_PPS-CF 12mm壁厚50-A-1_347.1.gcode'
     if os.path.exists(gcode_file_path):
         print(f"文件 {gcode_file_path} 存在。")
     else:

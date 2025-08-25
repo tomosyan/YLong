@@ -368,6 +368,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_button_num=0
         self.g_f_value=None
         self.g_e_value=None
+        self.print_hardtime = 0
         # 初始化全屏标签
         self.fullscreen_label = None
         #当前碰头和热床的温度
@@ -480,6 +481,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.p.system_state.connect(self.print_system_state)
 
         self.p.changeValue_motoroff.connect(self.runoutordu)
+
+        self.p.infor_firmware.connect(self.getHardwarePrintTime)#获取固件task打印时间
 
         self.event_loadGcode_OK.connect(self.loadGcode_ui_log)
 
@@ -1020,6 +1023,48 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Operational_Sqlite.insert_dates(
             "insert into 'print_information' (title, inf, status, time) values (?,?, ?,?)", v)
         self.update_log()
+        pass
+
+    def convert_time_to_seconds(self,time_str):
+        # 提取时间组件
+        years = re.search(r'(\d+)y', time_str)
+        hours = re.search(r'(\d+)h', time_str)
+        minutes = re.search(r'(\d+)m', time_str)
+        seconds = re.search(r'(\d+)s', time_str)
+
+        # 计算总秒数
+        total_seconds = 0
+        if years:
+            total_seconds += int(years.group(1)) * 365 * 24 * 60 * 60  # 年→秒 (假设1年=365天)
+        if hours:
+            total_seconds += int(hours.group(1)) * 60 * 60  # 小时→秒
+        if minutes:
+            total_seconds += int(minutes.group(1)) * 60  # 分钟→秒
+        if seconds:
+            total_seconds += int(seconds.group(1))  # 秒
+
+        return total_seconds
+    #获取固件打印时间
+    def getHardwarePrintTime(self, a):
+        # time_dict = {}
+        # for match in re.finditer(r'(\d+)([yhmds])', a):
+        #     value, unit = match.groups()
+        #     time_dict[unit] = int(value)
+        # print("时间字典:", time_dict)  # 输出: {'y': 10, 'h': 1, 'm': 21, 's': 40}
+        self.print_hardtime=0
+        b = a.replace("\n", "")
+        v = [['01', '01',b,'01']]
+        Operational_Sqlite.insert_dates(
+            "insert into 'Machine_During_Time' (ID, MachineID, EveryTime, TimeCount) values (?,?,?,?)", v)
+        #self.update_log()
+        sel = Operational_Sqlite.select_date("SELECT ID, MachineID, EveryTime, TimeCount FROM Machine_During_Time")
+        if sel[0] == 'ok':
+            for i in range(len(sel[1])):
+                self.print_hardtime += self.convert_time_to_seconds(str(sel[1][i][2]))
+        if self.comboBox.currentText() == "中文":
+            self.label_10.setText(str(self.print_hardtime) + " 秒")
+        else:
+            self.label_10.setText(str(self.print_hardtime) + " S")
         pass
     #报故处理
     def runoutordu(self, a):
@@ -2094,6 +2139,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def scan_serial_ports(self):
         """扫描并显示所有可用的USB串口设备"""
         # 获取所有可用串口
+        self.serialComName=''
         ports = QSerialPortInfo.availablePorts()
 
         if not ports:
@@ -2116,9 +2162,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     f"制造商: {manufacturer}\n"
                     f"VID: 0x{vid:04X}, PID: 0x{pid:04X}"
                 )
-                return None
-            return None
-        return None
+            #self.writeExceptiontoDB(port_info.portName())
 
     def connect(self):
         try:
@@ -3363,7 +3407,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.label_5.setText("软件版本号:")
                 self.label_6.setText("控制版本号:")
                 self.label_9.setText("IP地址:")
-                self.label_11.setText("授权:")
+                self.label_11.setText("运行时间:")
 
                 self.label_12.setText("应用")
                 self.label_13.setText("语言:")
@@ -3437,7 +3481,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.label_5.setText("SoftVersion:")
                 self.label_6.setText("ControlVersion:")
                 self.label_9.setText("IPAdress:")
-                self.label_11.setText("Accredit:")
+                self.label_11.setText("RunTime:")
                 self.label_12.setText("APP")
                 self.label_13.setText("Language:")
                 self.label_update.setText("update")
@@ -3981,6 +4025,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # self.m_current_runstate = 2#resume
             # self.current_runstate(self.ui_log_resume,self.m_current_runstate)
             self.ui_log_resume.deleteLater()
+
         except Exception as e:
             print(e)
             logger_a.error(e)
@@ -4022,6 +4067,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if self.ui_log_pauseprint:
                 self.current_runstate(self.ui_log_pauseprint,self.m_current_runstate)
                 self.ui_log_pauseprint.deleteLater()
+            self.p.send_now("M76\n")
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -4083,6 +4129,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.current_runstate(self.ui_log_startprint,self.m_current_runstate)
                     self.ui_log_startprint.deleteLater()
                     self.firststartprint = False
+                    self.p.send_now("M75\n")
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -4150,6 +4197,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             self.label_sy.setText(' ' + self.second_string_time(self.cal_print_total_time))
             self.label_totletime.setText(' ' + self.second_string_time(self.cal_print_total_time))  # 总时间
+            self.p.send_now("M77")#Stop print timer
+            QThread.msleep(100)
+            self.p.send_now("M31")  # 获取固件打印时间
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -4158,6 +4208,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.openFile.hide()
     def confim_choose_gcodefile(self):
         try:
+            #self.getHardwarePrintTime("echo:Print time: 12y 1h 21m 40s ")
             self.label_totletime.setText("")
             self.label_sy.setText("")
             self.current_E_jichu = 0.0  # clear total E when change gcode file, otherwise or not
@@ -4638,7 +4689,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.connect()
             self.p.send_now("G250 S31")  # 打开绿灯
             self.p.send_now("G250 S100")  # 关闭蜂鸣器
-            self.exit_log_cancelprint()
+            #self.exit_log_cancelprint()
             QThread.sleep(2)
             self.connect()
             self.warningWindowstatusOpen = True

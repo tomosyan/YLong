@@ -10,6 +10,7 @@ class Sqlite:
 
     def __int__(self):
         # 连接到数据库（如果不存在则创建）
+        self.outList_Value = []
         pass
 
     def __enter__(self):
