@@ -71,6 +71,16 @@ class Sqlite:
         except Exception as e:
             return "err", e
 
+    def delete_date_sql(self, sql):  # 删除所有记录
+        try:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            conn.commit()
+            cursor.close()
+        except sqlite3.Error as e:
+            return "err", e
+        except Exception as e:
+            return "err", e
     def update_date(self, sql):  # 更新一条记录
         try:
             cursor = conn.cursor()

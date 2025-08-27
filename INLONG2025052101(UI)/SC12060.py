@@ -51,6 +51,8 @@ from PyQt5.QtCore import QObject, QEvent, Qt
 
 class EventFilter(QObject):
     update_value = pyqtSignal(str)
+    # 定义一个双击信号
+    doubleClicked = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.long_press_threshold = 500  # 长按时间阈值（毫秒）
@@ -58,9 +60,12 @@ class EventFilter(QObject):
         self.timer.timeout.connect(self._on_long_press)
         self.is_pressed = False  # 标记按钮是否被按下
         self.objname=''
-
-
     def eventFilter(self, obj, event):
+            # 当检测到鼠标双击时，发射双击信号
+        self.objname=obj.objectName()
+        if event.type() == QEvent.MouseButtonDblClick:  # 判断是否是左键双击
+            self.doubleClicked.emit(self.objname)
+        # 调用父类方法以确保默认行为仍会发生（可选）
         if event.type() == QEvent.MouseButtonPress:
             self.is_pressed = True
             self.objname = obj.objectName()
@@ -148,8 +153,8 @@ class FrameProcessor(QObject):
     def process_frames(self):
         while self.running:
             try:
-                QThread.msleep(20)
-                frame_data = self.frame_queue.get(timeout=0.002)
+                QThread.msleep(30)
+                frame_data = self.frame_queue.get(timeout=0.01)
 
                 # YUV转RGB
                 bgr_image = self.yuv_to_rgb(frame_data['buffer'], frame_data['width'], frame_data['height'])
@@ -363,6 +368,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui_log1 = None
         self.serialComName=''
         self.laster_ready_ok=False
+        self.device_tree=None
         self.max_level = 0.0
         self.min_level = 0.0
         self.current_button_num=0
@@ -489,7 +495,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.update_log()
 
-        self.connect()
+        #self.connect()
 
         self.flag_D = False
 
@@ -654,6 +660,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.write_settings(self.soft_verion)
         # 读取系统配置
         self.read_settings()
+
+        self.connect()
         # 引导弹窗
         if self.comboBox.currentText() == "中文":
             self.ui_log_power = ui_dialog_log("yindao", "CN",
@@ -664,8 +672,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                               "motor of xyz")
         self.ui_log_power.pushButton.clicked.connect(self.exit_log_poweron)
         self.ui_log_power.pushButton_2.clicked.connect(self.exit_log_poweron_2)
-        self.ui_log_power.show()
-        self.flag_pause = 0
+        if not DEBUG:
+            self.ui_log_power.show()
+            self.flag_pause = 0
 
         self.changeValue_runoutFlag.connect(self.runout_ui_log)
         self.dyk_use()
@@ -708,24 +717,58 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_ydown.setAttribute(Qt.WA_AcceptTouchEvents)
         self.pushButton_ydown.installEventFilter(self.event_filter)
 
+        self.label_10.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.label_10.installEventFilter(self.event_filter)
+
+        self.label_xyz.setAttribute(Qt.WA_AcceptTouchEvents)
+        self.label_xyz.installEventFilter(self.event_filter)
+        self.event_filter.doubleClicked.connect(self.show_popup)
+
         self.warningWindowstatusOpen=True
-        #存储异常关键字
-        self.warningList = StringList([])
-
-
-        print("初始列表:", self.warningList)
-
-        # 添加元素
-        self.warningList.append("date")
-        # self.warningList.append("date")
-        # self.warningList.append("date1")
-        # print("初始列表:", self.warningList)
-        self.p.send_now("L140")#获取版本号
         self.p.send_now("L140")#获取版本号
 
         # 自动调平和手动调平选中 连接信号和槽
         self.checkbox_level_manual.stateChanged.connect(self.on_manual_changed)
         self.checkbox_level_Auto.stateChanged.connect(self.on_auto_changed)
+
+        self.lineEdit_extru.setText("0")
+        #获取固件运行时间
+        self.gethardRunningtime()
+
+    def show_popup(self,obj_name):
+
+        if obj_name=='label_xyz':
+            self.label_xyz.setText(self.read_POS_ini_settings("POS", "XYZ"))
+        elif obj_name=='label_10':
+            if self.comboBox.currentText() == "中文":
+                self.ui_zero = ui_dialog_log("zhuyi", "CN", "确认是否清零？")
+            else:
+                self.ui_zero = ui_dialog_log("zhuyi", "EN", "Confirm if it has been reset to zero?")
+
+            self.ui_zero.pushButton_2.clicked.connect(self.zero_ok)  # 确认
+            self.ui_zero.pushButton.clicked.connect(self.zero_cancel)  # 取消
+            self.ui_zero.show()
+    def gethardRunningtime(self):
+        self.print_hardtime=0
+        sel = Operational_Sqlite.select_date("SELECT ID, MachineID, EveryTime, TimeCount FROM Machine_During_Time")
+        if sel[0] == 'ok':
+            for i in range(len(sel[1])):
+                self.print_hardtime += self.convert_time_to_seconds(str(sel[1][i][2]))
+        if self.comboBox.currentText() == "中文":
+            self.label_10.setText(str(self.print_hardtime) + " 秒")
+        else:
+            self.label_10.setText(str(self.print_hardtime) + " S")
+    def zero_ok(self):
+        sel = Operational_Sqlite.delete_date_sql("DELETE FROM Machine_During_Time ")
+        self.ui_zero.deleteLater()
+        self.gethardRunningtime()
+
+    def zero_cancel(self):
+        try:
+            self.ui_zero.deleteLater()
+        except Exception as e:
+            logger_a.error(str(e) + '\nerror file:{}'.format(
+                e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
     def on_manual_changed(self, state):
         if state == Qt.Checked:
@@ -835,6 +878,18 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         settings.sync()
     def read_ini_settings(self,Tag,subname):
         settings = QSettings("./File/config.ini", QSettings.IniFormat)
+        settings.beginGroup(Tag)
+        subvalue = settings.value(subname)
+        settings.endGroup()
+        return  subvalue
+    def write_POS_ini_settings(self,Tag,subname,subvalue):
+        settings = QSettings("./File/log.ini", QSettings.IniFormat)
+        settings.beginGroup(Tag)
+        settings.setValue(subname, subvalue)
+        settings.endGroup()
+        settings.sync()
+    def read_POS_ini_settings(self,Tag,subname):
+        settings = QSettings("./File/log.ini", QSettings.IniFormat)
         settings.beginGroup(Tag)
         subvalue = settings.value(subname)
         settings.endGroup()
@@ -1057,15 +1112,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Operational_Sqlite.insert_dates(
             "insert into 'Machine_During_Time' (ID, MachineID, EveryTime, TimeCount) values (?,?,?,?)", v)
         #self.update_log()
-        sel = Operational_Sqlite.select_date("SELECT ID, MachineID, EveryTime, TimeCount FROM Machine_During_Time")
-        if sel[0] == 'ok':
-            for i in range(len(sel[1])):
-                self.print_hardtime += self.convert_time_to_seconds(str(sel[1][i][2]))
-        if self.comboBox.currentText() == "中文":
-            self.label_10.setText(str(self.print_hardtime) + " 秒")
-        else:
-            self.label_10.setText(str(self.print_hardtime) + " S")
-        pass
+        self.gethardRunningtime()
     #报故处理
     def runoutordu(self, a):
         try:
@@ -1113,7 +1160,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
                 else:
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
@@ -1121,7 +1169,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
             if "Warn: e_heating, time out!!" in a:
                 # self.warningList.append("Warn: e_heating, time out!!")
                 # if self.warningList.size() >= 2: return
@@ -1133,7 +1182,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Abnormal nozzle temperature. Please check!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.exit_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
                 else:
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n喷头温度异常,请检查！")
@@ -1170,7 +1220,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "INLONG MOTOR POWER OFF")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
                 else:
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "\n电机驱动电源已断开")
@@ -1178,7 +1229,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "INLONG MOTOR POWER OFF")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
             if "LOBOTICS X" in a:
                 # self.warningList.append("LOBOTICS X")
                 # if self.warningList.size() >= 2: return
@@ -1190,7 +1242,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "X motor error!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
                 else:
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "X电机驱动错误!")
@@ -1198,7 +1251,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "X motor error!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
             if "LOBOTICS Y" in a:
                 # self.warningList.append("LOBOTICS Y")
                 # if self.warningList.size() >= 2: return
@@ -1218,7 +1272,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Y motor error!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
             if "LOBOTICS Z" in a:
                 # self.warningList.append("LOBOTICS Z")
                 # if self.warningList.size() >= 2: return
@@ -1231,7 +1286,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
                 else:
                     if self.comboBox.currentText() == "中文":
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "CN", "Z电机驱动错误!")
@@ -1239,8 +1295,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.ui_log_motorpoweroff = ui_dialog_log("zhuyi", "EN", "Z motor error!")
                     self.ui_log_motorpoweroff.pushButton.clicked.connect(self.Ok_log_runout)
                     self.ui_log_motorpoweroff.pushButton_2.clicked.connect(self.exit_log_runout)
-                    self.ui_log_motorpoweroff.show()
-                    self.exit_log_pause("normal")
+                    if not DEBUG:
+                        self.ui_log_motorpoweroff.show()
+                        self.exit_log_pause("normal")
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
@@ -1415,7 +1472,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             else:
                                 self.ui_log0 = ui_dialog_log("zhuyi", "EN", "Abnormal temperature of sprinkler head")
                             #if self.pengtou_abnormal_wendu_ui_show==0:
-                            self.ui_log0.show()
+                            if not DEBUG:
+                                self.ui_log0.show()
                             #self.pengtou_abnormal_wendu_ui_show = 1
                             # 功能
                             self.writeExceptiontoDB("Abnormal temperature of sprinkler head")
@@ -1445,7 +1503,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         else:
                             self.ui_log1= ui_dialog_log("zhuyi", "EN", "Abnormal bottom plate temperature")
                         #if self.bed_abnormal_wendu_ui_show == 0:
-                        self.ui_log1.show()
+                        if not DEBUG:
+                            self.ui_log1.show()
                         #self.bed_abnormal_wendu_ui_show = 1
                         self.writeExceptiontoDB("Abnormal temperature of the heating bed")
                     else:
@@ -1992,12 +2051,12 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             print(f"退出全屏时发生错误: {e}")
             self.is_fullscreen = False
 
-    def eventFilter(self, obj, event):
-        if event.type() == QtCore.QEvent.KeyPress:
-            if event.key() == QtCore.Qt.Key_Escape:
-                self.exit_fullscreen()
-                return True
-        return super().eventFilter(obj, event)
+    # def eventFilter(self, obj, event):
+    #     if event.type() == QtCore.QEvent.KeyPress:
+    #         if event.key() == QtCore.Qt.Key_Escape:
+    #             self.exit_fullscreen()
+    #             return True
+    #     return super().eventFilter(obj, event)
     #点击使能提示框确认和取消事件
     def exit_log_poweron(self):
         try:
@@ -2289,7 +2348,11 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEdit_rcset.setText(str(d) + '℃')
     #显示X,Y,Z当前坐标 同时处理Z轴在不同位置的事件处理
     def set_xyz_line(self, x, y, z):
-        self.label_xyz.setText("X:" + x + "    Y:" + y + "    Z:" + z)
+        pos_str="X:" + x + "    Y:" + y + "    Z:" + z
+        self.label_xyz.setText(pos_str)
+        if ((self.pushButton_startprint.text().strip() != "开始")
+                and (self.pushButton_startprint.text().strip() != "START")):
+            self.write_POS_ini_settings("POS", "XYZ", pos_str)
         if self.pushButton_startprint.text().strip() == "PAUSE" or self.pushButton_startprint.text().strip() == "暂停":
             if self.checkbox_level_Auto.isChecked():
                 if 2 < float(z) < 5:
@@ -4209,6 +4272,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def confim_choose_gcodefile(self):
         try:
             #self.getHardwarePrintTime("echo:Print time: 12y 1h 21m 40s ")
+            #self.set_xyz_line(str(10.1),str(22.4),str(40.001))
             self.label_totletime.setText("")
             self.label_sy.setText("")
             self.current_E_jichu = 0.0  # clear total E when change gcode file, otherwise or not
@@ -5044,14 +5108,17 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 DEBUG =0
 #1：打印时间通过计算GCODE获取 0：通过挤出量算
 ISBY_CALGODE=0
-SOFTWARE_VERSION='V2.0.0.9'
+SOFTWARE_VERSION='V2.0.1.1a'
+from PyQt5 import QtCore, QtWidgets, QtGui
 if __name__ == "__main__":
     try:
         import sys
+
+        QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_UseDesktopOpenGL)
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
         #first.set_time_line(2, 1)
-        first.show()
+        #first.show()
         first.showFullScreen()
         sys.exit(app.exec_())
     except Exception as e:

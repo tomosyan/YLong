@@ -540,8 +540,8 @@ class printcore(QThread):
                         self.sendfailures += 0
                     else:
                         self.sendfailures = 0
-                if line is not None:
-                    self.infor_firmware.emit(line)
+                # if line is not None:
+                #     self.infor_firmware.emit(line)
                 if line is None:
                     logger_c.debug('_readline() is None, exiting _listen()')
                     self.printer_offline.emit("2")
