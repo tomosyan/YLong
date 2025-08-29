@@ -67,6 +67,7 @@ class USBFileExplorer(QGroupBox):
         """
         super().__init__(parent)
         self.selectfilename=''
+        self.selectpath=''
         # 保存对原始GroupBox的引用
         self.groupbox = groupbox
 
@@ -299,6 +300,7 @@ class USBFileExplorer(QGroupBox):
         if path:
             if os.path.isdir(path):
                 print(f"当前选中目录: {path}")
+                self.selectpath=path
             else:
                 filename = os.path.basename(path)
                 self.selectfilename=filename

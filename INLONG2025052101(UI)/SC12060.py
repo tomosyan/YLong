@@ -62,11 +62,10 @@ class EventFilter(QObject):
         self.objname=''
     def eventFilter(self, obj, event):
             # 当检测到鼠标双击时，发射双击信号
-        self.objname=obj.objectName()
         if event.type() == QEvent.MouseButtonDblClick:  # 判断是否是左键双击
-            self.doubleClicked.emit(self.objname)
+            self.doubleClicked.emit(obj.objectName())
         # 调用父类方法以确保默认行为仍会发生（可选）
-        if event.type() == QEvent.MouseButtonPress:
+        elif event.type() == QEvent.MouseButtonPress:
             self.is_pressed = True
             self.objname = obj.objectName()
             print("控件名称:", obj.objectName())
@@ -355,6 +354,7 @@ class StringList:
     def __len__(self):
         """支持 len() 函数"""
         return len(self.items)
+
 
 class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
     event_loadGcode_OK = pyqtSignal(str,int,int )  # 创建槽信号
@@ -690,6 +690,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # 安装事件过滤器,实现长按调节
         self.event_filter = EventFilter()
         self.event_filter.update_value.connect(self.event_update_value)
+        self.event_filter.doubleClicked.connect(self.show_popup)
         self.pushButton_microzup.setAttribute(Qt.WA_AcceptTouchEvents)
         self.pushButton_microzup.installEventFilter(self.event_filter)
 
@@ -722,7 +723,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.label_xyz.setAttribute(Qt.WA_AcceptTouchEvents)
         self.label_xyz.installEventFilter(self.event_filter)
-        self.event_filter.doubleClicked.connect(self.show_popup)
+
 
         self.warningWindowstatusOpen=True
         self.p.send_now("L140")#获取版本号
@@ -1495,6 +1496,8 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                             self.p.send_now("M104 S0")
                             self.time_tole_10min = 0
                     wendudiban = self.lineEdit_bed.text().split("℃")[0]
+                    if wendudiban=='':
+                        return
                     if float(wendudiban) > 150:
                         self.p.send_now("G250 S889\n")  # 关安全门
                         self.p.send_now("M190 S0")
@@ -1639,6 +1642,9 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self.ui_log_overprint = ui_dialog_log("zhuyi", "EN", "AFTER PRINTING")
             self.changeStartprintCaption(self.BT_STATE.START)
+            self.p.send_now("M77")#Stop print timer
+            QThread.msleep(100)
+            self.p.send_now("M31")  # 获取固件打印时间
             self.ui_log_overprint.pushButton.clicked.connect(self.exit_log_overprint)
             self.ui_log_overprint.pushButton_2.clicked.connect(self.exit_log_overprint)
             self.ui_log_overprint.show()
@@ -4438,19 +4444,24 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
-
+    def exit_uuu_cance(self):
+        try:
+            self.ui_uuu.deleteLater()
+        except Exception as e:
+            print(e)
     def save_u(self):
         try:
             self.choose_name=self.device_tree.selectfilename
+            self.choose_path=self.device_tree.get_selected_path()
             if self.choose_name != "":
                 # if not os.path.exists(self.lst_list[0]+self.choose_name):
                 path=self.usbpath()
-
                 if not os.path.isdir(str(path)):
                     self.device_tree.refresh_usb_tree()
                     return
-                if not os.path.exists(str(path) + self.choose_name):
-                    self.ui_uuu = ui_dialog_log("zhuyi", "No existed file!\n Please update udisk!")
+
+                if not os.path.exists(self.choose_path): #str(path) + self.choose_name
+                    self.ui_uuu = ui_dialog_log("zhuyi", "CN", "File no Exist，please check U disk！")
                     self.ui_uuu.pushButton.clicked.connect(self.exit_uuu_cance)
                     self.ui_uuu.pushButton_2.clicked.connect(self.exit_uuu_cance)
                     self.ui_uuu.show()
@@ -4459,7 +4470,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 file = open("./GCODE/" + self.choose_name, "a+")
                 file.close()
                 # copyfile(self.lst_list[0]+self.choose_name,"./GCODE/"+self.choose_name)
-                copyfile(path + self.choose_name, "./GCODE/" + self.choose_name)
+                copyfile(self.choose_path, "./GCODE/" + self.choose_name)
 
                 logger_a.info("SAVE:" + str("./GCODE/" + self.choose_name) + " SUCCESS!")
 
@@ -4492,7 +4503,6 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def loadGcodeFile(self):
         try:
-
             self.update_gcodefile()
             self.openFile.show()
         except Exception as e:
@@ -4565,15 +4575,56 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             logger_a.error(str(e) + '\nerror file:{}'.format(
                 e.__traceback__.tb_frame.f_globals["__file__"]) + '\nerror line:{}'.format(e.__traceback__.tb_lineno))
 
+    def refresh_file_list(self):
+        """刷新文件列表并更新ListView"""
+        try:
+            # 检查目录是否存在
+            gcode_dir = "./GCODE"
+            if not os.path.exists(gcode_dir):
+                self.file_list_now = []
+                logger_a.info("./GCODE 不存在")
+                return
+            # 获取文件列表并处理异常
+            try:
+                files = os.listdir(gcode_dir)
+            except PermissionError:
+                self.file_list_now = []
+                logger_a.info("os.listdir(gcode_dir) 异常")
+                return
+            # 安全地获取文件修改时间并排序
+            valid_files = []
+            for file in files:
+                file_path = os.path.join(gcode_dir, file)
+                try:
+                    # 跳过目录，只处理文件
+                    if os.path.isfile(file_path):
+                        mtime = os.path.getmtime(file_path)
+                        valid_files.append((file, mtime))
+                except (OSError, FileNotFoundError):
+                    # 跳过无法访问的文件
+                    logger_a.info("跳过无法访问的文件，文件无法访问")
+                    continue
+            # 按修改时间排序（最新的在前）
+            valid_files.sort(key=lambda x: x[1], reverse=True)
+            self.file_list_now = [file for file, mtime in valid_files]
+            # 更新ListView模型
+            slm = QStringListModel()
+            slm.setStringList(self.file_list_now)
+            self.listView_now.setModel(slm)
+        except Exception as e:
+            self.file_list_now = []
+            logger_a.info("refresh_file_list 异常："+str(e))
     def get_local(self):
-        self.file_list_now = os.listdir("./GCODE")
-        slm = QStringListModel()  # 创建mode
-        self.file_list_now = sorted(self.file_list_now,
-                                    key=lambda file: os.path.getmtime(os.path.join("./GCODE", file)))
-        self.file_list_now.reverse()
-        slm.setStringList(self.file_list_now)
-        # slm.setStringList(self.file_list_now)  # 将数据设置到model
-        self.listView_now.setModel(slm)  # 绑定 listView 和 model
+        # self.file_list_now = os.listdir("./GCODE")
+        # slm = QStringListModel()  # 创建mode
+        # self.file_list_now = sorted(self.file_list_now,
+        #                             key=lambda file: os.path.getmtime(os.path.join("./GCODE", file)))
+        # self.file_list_now.reverse()
+        # slm.setStringList(self.file_list_now)
+        # # slm.setStringList(self.file_list_now)  # 将数据设置到model
+        # self.listView_now.setModel(slm)  # 绑定 listView 和 model
+
+        self.refresh_file_list()
         self.listView_now.clicked.connect(self.local_clickedlist)  # listview 的点击事件
 
         logger_a.info("GET GCODE SUCCESS!")
@@ -5086,7 +5137,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
             time.sleep(3)
             self.p.send_now("L31")
             time.sleep(2)
-            dialog.close()
+            dialog.deleteLater()
 
     def on_distance_button_clicked(self, button):
         # 获取按钮编号
@@ -5108,19 +5159,21 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
 DEBUG =0
 #1：打印时间通过计算GCODE获取 0：通过挤出量算
 ISBY_CALGODE=0
-SOFTWARE_VERSION='V2.0.1.1a'
+SOFTWARE_VERSION='V2.0.1.1c'
 from PyQt5 import QtCore, QtWidgets, QtGui
 if __name__ == "__main__":
+    first=None
+    app=None
     try:
         import sys
-
         QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_UseDesktopOpenGL)
         app = QtWidgets.QApplication(sys.argv)
         first = Ui_mainwindow()
         #first.set_time_line(2, 1)
         #first.show()
-        first.showFullScreen()
-        sys.exit(app.exec_())
     except Exception as e:
         print(e)
         logger_a.error(f"if __name__ ==__main__:   {str(e)}")
+
+    first.showFullScreen()
+    sys.exit(app.exec_())
