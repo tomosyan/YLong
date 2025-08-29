@@ -4453,7 +4453,7 @@ class Ui_mainwindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             self.choose_name=self.device_tree.selectfilename
             self.choose_path=self.device_tree.get_selected_path()
-            if self.choose_name != "":
+            if self.choose_name != "" and self.choose_path:
                 # if not os.path.exists(self.lst_list[0]+self.choose_name):
                 path=self.usbpath()
                 if not os.path.isdir(str(path)):
